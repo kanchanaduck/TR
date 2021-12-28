@@ -1,0 +1,49 @@
+<div class="row text-capitalize">
+    <div class="col-4 offset-4">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <div class="input-group-text">
+                    course no.
+                </div>
+            </div>
+            <input type="text" class="form-control" placeholder="Enter key..." value="CPT-001" #txtcourse_no>
+        </div>
+    </div>
+</div>
+<hr>
+<div class="row">
+    <div class="col-12">
+        <table datatable [dtOptions]="dtOptions" class="table table-bordered table-hover table-sm">
+            <thead>
+                <tr class="text-uppercase">
+                    <th>no.</th>
+                    <th>emp_no</th>
+                    <th>status_eng</th>
+                    <th>gname_eng</th>
+                    <th>fname_eng</th>
+                    <th>posn_name</th>
+                    <th>dept_abb_name</th>
+                    <th>div_abb_name</th>
+                    <th>status_th</th>
+                    <th>gname_th</th>
+                    <th>fname_th</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of data_grid; let i = index">
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ item.emp_no }}</td>
+                    <td>{{ item.status_eng }}</td>
+                    <td>{{ item.gname_eng }}</td>
+                    <td>{{ item.fname_eng }}</td>
+                    <td>{{ item.posn_name }}</td>
+                    <td>{{ item.dept_abb_name }}</td>
+                    <td>{{ item.div_abb_name }}</td>
+                    <td>{{ item.status_th }}</td>
+                    <td>{{ item.gname_th }}</td>
+                    <td>{{ item.fname_th }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

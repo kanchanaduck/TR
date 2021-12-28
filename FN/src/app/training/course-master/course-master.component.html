@@ -1,0 +1,130 @@
+<div class="card card-body">
+    <div class="row">
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Course no.</label>
+            <input type="text" class="form-control" required>
+        </div><!-- form-group -->
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Thai Name</label>
+            <input type="text" class="form-control" required>
+        </div><!-- form-group -->
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">English Name</label>
+            <input type="text" class="form-control" required>
+        </div><!-- form-group -->
+    </div>
+    
+    <div class="row">
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Group</label>
+            <input type="text" class="form-control" required>
+        </div><!-- form-group -->
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Capacity</label>
+            <input type="text" class="form-control" required>
+        </div><!-- form-group -->
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Required course</label>
+            <input type="text" class="form-control" required>
+        </div><!-- form-group -->
+    </div>
+
+    <div class="row">
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Day</label>
+            <input type="text" class="form-control" required>
+        </div><!-- form-group -->
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Category</label>
+            <input type="text" class="form-control" required>
+        </div><!-- form-group -->
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Level</label>
+            <input type="text" class="form-control" required>
+        </div><!-- form-group -->
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Band</label>
+            <input type="text" class="form-control" required>
+        </div><!-- form-group -->
+    </div>
+</div>
+
+
+<div class="row pt-2">
+    <div class="col-12">
+        <table datatable [dtOptions]="dtOptions" class="table table-bordered table-hover" id="example">
+            <thead>
+                <tr class="text-uppercase">
+                    <th class="text-center">
+                        <input type="checkbox" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()" [attr.aria-label]="checkboxLabel()">
+                    </th>
+                    <th>no.</th>
+                    <th>course no.</th>
+                    <th>thai course name</th>
+                    <th>english course name</th>
+                    <th>Category</th>
+                    <th>days</th>
+                    <th>Group</th>
+                    <th>Manage</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of data_grid; let i = index">
+                    <th class="text-center">
+                        <input type="checkbox" (click)="$event.stopPropagation()" (change)="checkCheckBoxvalue(item,$event)" [checked]="selection.isSelected(item)" [attr.aria-label]="checkboxLabel(item)">
+                    </th>
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ item.course_no }}</td>
+                    <td>{{ item.course_name_th }}</td>
+                    <td>{{ item.course_name_en }}</td>
+                    <td>{{ item.category }}</td>
+                    <td>{{ item.days }}</td>
+                    <td>{{ item.dept_abb_name }}</td>
+                    <td>
+                        <i class="far fa-edit" (click)="fn_edit(item)"></i>
+                        <i class="far fa-trash-alt"></i>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title text-capitalize" id="modal-basic-title">{{m_title}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body text-capitalize">
+        <div class="row">
+            <div class="col-12">course no. (max length 7)
+                <input class="form-control" type="text" #inputCourseNo required minlength="0" maxlength="7">
+            </div>
+        </div>
+        <div class="row pt-2">
+            <div class="col-12">thai course name
+                <input class="form-control" type="text" #inputThaName required minlength="0" maxlength="200">
+            </div>
+        </div>
+        <div class="row pt-2">
+            <div class="col-12">english course name
+                <input class="form-control" type="text" #inputEngName required minlength="0" maxlength="200">
+            </div>
+        </div>
+        <div class="row pt-2">
+            <div class="col-12">days (max length 2)
+                <input class="form-control" type="text" #inputDay required minlength="0" maxlength="2">
+            </div>
+        </div>
+        <div class="row pt-2">
+            <div class="col-12">group<input class="form-control" type="text" readonly="" value="MPL"></div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-az-primary" (click)="modal.close('Save click')">Save</button>
+        <button type="button" class="btn btn-outline-dark" (click)="modal.close('Close click')">Close</button>
+    </div>
+</ng-template>
+

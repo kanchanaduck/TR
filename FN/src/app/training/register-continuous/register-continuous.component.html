@@ -1,0 +1,289 @@
+<div [formGroup]="form">
+    <div class="row text-capitalize">
+        <div class="col-4">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        course no.
+                    </div>
+                </div>
+                <input type="text" class="form-control" placeholder="Enter key..." (keyup)="onKeyCourse($event)" formControlName="frm_course" [ngClass]="{ 'is-invalid': submitted && f.frm_course.errors }" #txtcourse_no>
+                <div *ngIf="submitted && f.frm_course.errors" class="invalid-feedback">
+                    <div *ngIf="f.frm_course.errors.required">course is required</div>
+                    <div *ngIf="f.frm_course.errors.minlength">
+                        min 11 characters
+                    </div>
+                    <div *ngIf="f.frm_course.errors.maxlength">
+                        max 20 characters
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        thai name
+                    </div>
+                </div>
+                <input type="text" class="form-control" readonly #txtcourse_name_th>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        english name
+                    </div>
+                </div>
+                <input type="text" class="form-control" readonly #txtcourse_name_en>
+            </div>
+        </div>
+    </div>
+    <div class="row text-capitalize text-muted pt-2">
+        <div class="col-3">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        from&nbsp;&nbsp;&nbsp;<i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
+                    </div>
+                </div>
+                <input class="form-control" readonly #txtdate_from>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        to&nbsp;&nbsp;&nbsp;<i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
+                    </div>
+                </div>
+                <input class="form-control" readonly #txtdate_to>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="row">
+                <div class="col-7">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                time in
+                            </div>
+                        </div>
+                        <input class="form-control" readonly #txttime_in_hh>
+                    </div>
+                </div>
+                <div class="col-5" style="margin-left: -20px;">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                :
+                            </div>
+                        </div>
+                        <input class="form-control" readonly #txttime_in_mm>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="row">
+                <div class="col-7">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                time out
+                            </div>
+                        </div>
+                        <input class="form-control" readonly #txttime_out_hh>
+                    </div>
+                </div>
+                <div class="col-5" style="margin-left: -20px;">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                :
+                            </div>
+                        </div>
+                        <input class="form-control" readonly #txttime_out_mm>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row text-capitalize text-muted pt-2">
+        <div class="col-3">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        qty receive
+                    </div>
+                </div>
+                <input type="text" class="form-control" readonly #txtqty>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        group
+                    </div>
+                </div>
+                <input type="text" class="form-control" readonly #txtgroup>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        place
+                    </div>
+                </div>
+                <input class="form-control" readonly #txtplace>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="row text-capitalize text-muted">
+        <div class="col-1 pt-4">emp no.
+            <div style="position: absolute; top:20px; right: -5px;">
+                <i class="typcn typcn-info-large tx-24 lh--9 op-6 pointer" (click)="open(content)"></i>
+            </div>
+        </div>
+        <div class="col-2">
+            from
+            <input type="text" class="form-control" formControlName="frm_emp_no_from" [ngClass]="{ 'is-invalid': submitted && f.frm_emp_no_from.errors }" #txtemp_no_from>
+            <div *ngIf="submitted && f.frm_emp_no_from.errors" class="invalid-feedback">
+                <div *ngIf="f.frm_emp_no_from.errors.required">required</div>
+                <div *ngIf="f.frm_emp_no_from.errors.minlength">
+                    min 1 characters
+                </div>
+                <div *ngIf="f.frm_emp_no_from.errors.maxlength">
+                    max 4 characters
+                </div>
+            </div>
+        </div>
+        <div class="col-2">
+            to
+            <input type="text" class="form-control" formControlName="frm_emp_no_to" [ngClass]="{ 'is-invalid': submitted && f.frm_emp_no_to.errors }" #txtemp_no_to>
+            <div *ngIf="submitted && f.frm_emp_no_to.errors" class="invalid-feedback">
+                <div *ngIf="f.frm_emp_no_to.errors.required">required</div>
+                <div *ngIf="f.frm_emp_no_to.errors.minlength">
+                    min 1 characters
+                </div>
+                <div *ngIf="f.frm_emp_no_to.errors.maxlength">
+                    max 4 characters
+                </div>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="row">
+                <div class="col-7">
+                    pre-test
+                    <input type="text" class="form-control" formControlName="frm_pre_test_score" [ngClass]="{ 'is-invalid': submitted && f.frm_pre_test_score.errors }" (keyup)="onKey_pre_test_score($event)" #txtpre_test_score>
+                    <div *ngIf="submitted && f.frm_pre_test_score.errors" class="invalid-feedback">
+                        <div *ngIf="f.frm_pre_test_score.errors.required">required</div>
+                        <div *ngIf="f.frm_pre_test_score.errors.minlength">
+                            min 1 characters
+                        </div>
+                        <div *ngIf="f.frm_pre_test_score.errors.maxlength">
+                            max 3 characters
+                        </div>
+                    </div>
+                </div>
+                <div class="col-5"><span class="invisible">pre_test_grade</span> <input type="text" class="form-control" readonly="" #txtpre_test_grade></div>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="row">
+                <div class="col-7">
+                    post-test
+                    <input type="text" class="form-control" formControlName="frm_post_test_score" [ngClass]="{ 'is-invalid': submitted && f.frm_post_test_score.errors }" (keyup)="onKey_post_test_score($event)" #txtpost_test_score>
+                    <div *ngIf="submitted && f.frm_post_test_score.errors" class="invalid-feedback">
+                        <div *ngIf="f.frm_post_test_score.errors.required">required</div>
+                        <div *ngIf="f.frm_post_test_score.errors.minlength">
+                            min 1 characters
+                        </div>
+                        <div *ngIf="f.frm_post_test_score.errors.maxlength">
+                            max 3 characters
+                        </div>
+                    </div>
+                </div>
+                <div class="col-5">
+                    <span class="invisible">post_test_grade</span> <input type="text" class="form-control" readonly="" #txtpost_test_grade>
+                </div>
+            </div>
+        </div>
+        <div class="col-1">
+            total
+            <input type="text" class="form-control" readonly="" #txttotal>
+        </div>
+        <div class="col-2 text-right pt-3">
+            <button type="button" class="btn btn-az-primary btn-sm" (click)="fn_save()">Save</button>
+            <button type="button" class="btn btn-outline-dark btn-sm" (click)="fn_clear()">Clear</button>
+        </div>
+    </div>
+</div>
+<hr>
+<table datatable [dtOptions]="dtOptions" class="table table-bordered table-hover table-sm">
+    <thead>
+        <tr class="text-uppercase">
+            <th>no.</th>
+            <th>employee no.</th>
+            <th>name</th>
+            <th>band</th>
+            <th>department</th>
+            <th>ENTRA DATE</th>
+            <th>RESIGN DATE</th>
+            <th>PRE-RESULT</th>
+            <th>POST-RESULT</th>
+            <th>manage</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of data_grid; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ item.emp_no }}</td>
+            <td>{{ item.sname_eng }}&nbsp;{{ item.gname_eng }}&nbsp;{{ item.fname_eng }}</td>
+            <td>{{ item.band }}</td>
+            <td>{{item.dept_code}}:{{ item.dept_abb_name }}</td>
+            <td>{{ item.prob_date }}</td>
+            <td>{{ item.resn_date }}</td>
+            <td>{{ item.pre_test_grade }}</td>
+            <td>{{ item.post_test_grade }}</td>
+            <td>
+                <i class="far fa-trash-alt pointer" (click)="fn_delete(item)"></i>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<ng-template #content let-modal>
+    <div class="modal-body text-capitalize">
+        <div class="row">
+            <div class="col-11">
+                <h4 class="tx-indigo" id="modal-basic-title">Standard Point</h4>
+            </div>
+            <div class="col-1">
+                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+        <div class="row tx-indigo">
+            <div class="col-12 p-2">
+                <div class="row">
+                    <div class="col-6">80 – 100 : A </div>
+                    <div class="col-6">50 – 59 : D => Fail Paper Test </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">70 – 79 : B => Pass </div>
+                    <div class="col-6">1 – 49 : E </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">60 – 69 : C </div>
+                    <div class="col-6">0 : F => Fail Attendance </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
