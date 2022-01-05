@@ -1,0 +1,93 @@
+<div class="card card-info card-body p-2 mb-3">
+    <div>The Center is responsible for approving the final course registration and being able to see the learning and teaching information of students and teachers for the whole company</div>
+    <div>Center มีหน้าที่เพื่อ approve การลงทะเบียนคอร์สในขั้นตอนสุดท้าย และสามารถมองเห็นข้อมูลการเรียนและสอนของผู้เรียนและผู้สอนได้ทั้งบริษัท</div>
+</div>
+
+<table datatable [dtOptions]="dtOptions" class="table table-bordered table-hover" id="example">
+    <thead>
+        <tr>
+            <th class="text-center">EMP NO.</th>
+            <th class="text-center">STATUS</th>
+            <th class="text-center">FIRSTNAME</th>
+            <th class="text-center">LASTNAME</th>
+            <th class="text-center">POSITION NAME</th>
+            <th class="text-center">DIVISION</th>
+            <th class="text-center">DEPARTMENT</th>
+            <th class="text-center">MANAGE</th>
+        </tr>
+    </thead>
+    <tbody> 
+        <tr>
+            <td class="tx-13">J100528</td>
+            <td class="tx-13">MR.</td>
+            <td class="tx-13">FUMIHIKO</td>
+            <td class="tx-13">SATO</td>
+            <td class="tx-13">(JP) DIVISION MANAGER</td>
+            <td class="tx-13 text-center">CPD</td>
+            <td class="tx-13 text-center">MTP</td>
+            <td class="text-center tx-13">
+                <a href="javascript:;" (click)="fn_delete()"><i class="far fa-trash-alt"></i></a>
+            </td>
+        </tr>
+        <tr>
+            <td class="tx-13">005645</td>
+            <td class="tx-13">MS.</td>
+            <td class="tx-13">WANPEN</td>
+            <td class="tx-13">KHONGCHATREE</td>
+            <td class="tx-13">(J2) SENIOR STAFF / BUYER</td>
+            <td class="tx-13 text-center">CPD</td>
+            <td class="tx-13 text-center">MTP</td>
+            <td class="text-center tx-13">
+                <a href="javascript:;" (click)="fn_delete()"><i class="far fa-trash-alt"></i></a>
+            </td>
+        </tr>
+        <tr>
+            <td class="tx-13">011005</td>
+            <td class="tx-13">MS.</td>
+            <td class="tx-13">PAWEENA</td>
+            <td class="tx-13">WUNGWICHA</td>
+            <td class="tx-13">(J2) STAFF / BUYER</td>
+            <td class="tx-13 text-center">CPD</td>
+            <td class="tx-13 text-center">MTP</td>
+            <td class="text-center tx-13">
+                <a href="javascript:;" (click)="fn_delete()"><i class="far fa-trash-alt"></i></a>
+            </td>
+        </tr>
+        <tr>
+            <td class="tx-13">013703</td>
+            <td class="tx-13">MS.</td>
+            <td class="tx-13">JUTAMAS</td>
+            <td class="tx-13">SAENGPAKDEE</td>
+            <td class="tx-13">(J2) STAFF / BUYER</td>
+            <td class="tx-13 text-center">CPD</td>
+            <td class="tx-13 text-center">MTP</td>
+            <td class="text-center tx-13">
+                <a href="javascript:;" (click)="fn_delete()"><i class="far fa-trash-alt"></i></a>
+            </td>
+        </tr>
+        <tr>
+            <td class="tx-13">013704</td>
+            <td class="tx-13">MS.</td>
+            <td class="tx-13">NAPASSAKORN</td>
+            <td class="tx-13">SINGTAYOM</td>
+            <td class="tx-13">(J2) STAFF / BUYER</td>
+            <td class="tx-13 text-center">CPD</td>
+            <td class="tx-13 text-center">MTP</td>
+            <td class="text-center tx-13">
+                <a href="javascript:;" (click)="fn_delete()"><i class="far fa-trash-alt"></i></a>
+            </td>
+        </tr>
+        <tr>
+            <td class="tx-13">016039</td>
+            <td class="tx-13">MS.</td>
+            <td class="tx-13">NOPNAWAT</td>
+            <td class="tx-13">CHATPHONGKARUNA</td>
+            <td class="tx-13">(J2) STAFF / BUYER</td>
+            <td class="tx-13 text-center">CPD</td>
+            <td class="tx-13 text-center">MTP</td>
+            <td class="text-center tx-13">
+                <a href="javascript:;" (click)="fn_delete()"><i class="far fa-trash-alt"></i></a>
+            </td>
+        </tr>
+    </tbody>
+</table>

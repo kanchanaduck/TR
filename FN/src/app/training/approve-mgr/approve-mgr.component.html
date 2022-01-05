@@ -1,0 +1,214 @@
+<div [formGroup]="form">
+    <div class="row text-capitalize">
+        <div class="col-3">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        course no.
+                    </div>
+                </div>
+                <input type="text" class="form-control" placeholder="Enter key..." (keyup)="onKeyCourse($event)" formControlName="frm_course" [ngClass]="{ 'is-invalid': submitted && f.frm_course.errors }" #txtcourse_no>
+                <div *ngIf="submitted && f.frm_course.errors" class="invalid-feedback">
+                    <div *ngIf="f.frm_course.errors.required">course no is required</div>
+                    <div *ngIf="f.frm_course.errors.minlength">
+                        min 11 characters
+                    </div>
+                    <div *ngIf="f.frm_course.errors.maxlength">
+                        max 20 characters
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-5">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        course
+                    </div>
+                </div>
+                <input type="text" class="form-control" readonly="" #txtcourse_name>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        group
+                    </div>
+                </div>
+                <input type="text" class="form-control" readonly="" #txtgroup>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        qty receive
+                    </div>
+                </div>
+                <input type="text" class="form-control" readonly="" #txtqty>
+            </div>
+        </div>
+    </div>
+    <div class="row text-capitalize pt-2">
+        <div class="col-3">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        from&nbsp;&nbsp;&nbsp;<i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
+                    </div>
+                </div>
+                <input class="form-control" readonly #txtdate_from>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        to&nbsp;&nbsp;&nbsp;<i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
+                    </div>
+                </div>
+                <input class="form-control" readonly #txtdate_to>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="input-group pt-2 align-items-center">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        band
+                    </div>
+                </div>
+                <input type="checkbox" [checked]="ck_e" disabled>&nbsp;<span>E</span>&nbsp;&nbsp;
+                <input type="checkbox" [checked]="ck_j1" disabled>&nbsp;<span>J1</span>&nbsp;&nbsp;
+                <input type="checkbox" [checked]="ck_j2" disabled>&nbsp;<span>J2</span>&nbsp;&nbsp;
+                <input type="checkbox" [checked]="ck_j3" disabled>&nbsp;<span>J3</span>&nbsp;&nbsp;
+                <input type="checkbox" [checked]="ck_j4" disabled>&nbsp;<span>J4</span>&nbsp;&nbsp;
+                <input type="checkbox" [checked]="ck_m1" disabled>&nbsp;<span>M1</span>&nbsp;&nbsp;
+                <input type="checkbox" [checked]="ck_m2" disabled>&nbsp;<span>M2</span>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="row text-capitalize">
+        <div class="col-2">
+            emp no.
+            <input type="text" class="form-control" placeholder="Enter key..." (keyup)="onKeyEmpno($event)" formControlName="frm_emp_no" [ngClass]="{ 'is-invalid': submitted && f.frm_emp_no.errors }" #txtemp_no>
+            <div *ngIf="submitted && f.frm_emp_no.errors" class="invalid-feedback">
+                <div *ngIf="f.frm_emp_no.errors.required">emp no is required</div>
+                <div *ngIf="f.frm_emp_no.errors.minlength">
+                    min 6 characters
+                </div>
+                <div *ngIf="f.frm_emp_no.errors.maxlength">
+                    max 7 characters
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            name
+            <input type="text" class="form-control" readonly="" #txtfull_name>
+        </div>
+        <div class="col-2">
+            position
+            <input type="text" class="form-control" readonly="" #txtposition>
+        </div>
+        <div class="col-1">
+            band
+            <input type="text" class="form-control" readonly="" #txtband>
+        </div>
+        <div class="col-2">
+            department
+            <input type="text" class="form-control" readonly="" #txtdept>
+        </div>
+        <div class="col-2 text-right pt-3">
+            <button type="button" class="btn btn-az-primary btn-sm" (click)="fn_save()">Save</button>
+            <button type="button" class="btn btn-outline-dark btn-sm" (click)="fn_clear()">Clear</button>
+        </div>
+    </div>
+    <hr>
+    <div class="row text-capitalize pt-2">
+        <div class="col-1">import</div>
+        <div class="col-4">
+            <div class="custom-file">
+                <input type="file" class="custom-file-input" id="customFile">
+                <label class="custom-file-label" for="customFile">Choose file</label>
+            </div>
+        </div>
+        <div class="col-7 pt-1 tx-indigo">
+            <i class="fas fa-cloud-download-alt tx-24 lh--9 op-6"></i>
+            <i class="fas fa-cloud-upload-alt tx-24 lh--9 op-6"></i>
+        </div>
+    </div>
+</div>
+<hr>
+<ul class="nav nav-tabs text-capitalize" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="your-tab" data-toggle="tab" href="#your" role="tab" aria-controls="your" aria-selected="true">your division.</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="other-tab" data-toggle="tab" href="#other" role="tab" aria-controls="other" aria-selected="false">other division.</a>
+    </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="your" role="tabpanel" aria-labelledby="your-tab">
+        <table datatable [dtOptions]="dtOptions" class="table table-bordered table-hover table-sm">
+            <thead>
+                <tr class="text-uppercase">
+                    <th class="text-center">
+                        <input type="checkbox" (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()" [attr.aria-label]="checkboxLabel()">
+                    </th>
+                    <th>no.</th>
+                    <th>employee no.</th>
+                    <th>name</th>
+                    <th>position</th>
+                    <th>band</th>
+                    <th>department</th>
+                    <th>status</th>
+                    <th>manage</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of data_grid; let i = index">
+                    <th class="text-center">
+                        <input type="checkbox" (click)="$event.stopPropagation()" (change)="checkCheckBoxvalue(item,$event)" [checked]="selection.isSelected(item)" [attr.aria-label]="checkboxLabel(item)">
+                    </th>
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ item.emp_no }}</td>
+                    <td>{{ item.sname_eng }}&nbsp;{{ item.gname_eng }}&nbsp;{{ item.fname_eng }}</td>
+                    <td>{{ item.posn_ename }}</td>
+                    <td>{{ item.band }}</td>
+                    <td>{{item.dept_code}}:{{ item.dept_abb_name }}</td>
+                    <td>{{ item.status }}</td>
+                    <td>
+                        <i class="far fa-trash-alt pointer" (click)="fn_delete(item)"></i>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="tab-pane fade" id="other" role="tabpanel" aria-labelledby="other-tab">
+        <table datatable [dtOptions]="dtOptions_other" class="table table-bordered table-hover table-sm">
+            <thead>
+                <tr class="text-uppercase">
+                    <th>no.</th>
+                    <th>employee no.</th>
+                    <th>name</th>
+                    <th>position</th>
+                    <th>band</th>
+                    <th>department</th>
+                    <th>status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of data_grid_other; let i = index">
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ item.emp_no }}</td>
+                    <td>{{ item.sname_eng }}&nbsp;{{ item.gname_eng }}&nbsp;{{ item.fname_eng }}</td>
+                    <td>{{ item.posn_ename }}</td>
+                    <td>{{ item.band }}</td>
+                    <td>{{item.dept_code}}:{{ item.dept_abb_name }}</td>
+                    <td>{{ item.status }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
