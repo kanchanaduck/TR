@@ -9,10 +9,14 @@ import axios from 'axios';
 export class HeaderComponent implements OnInit {
 
   menus: any=[];
+  now:number;
 
   constructor() { }
 
   ngOnInit() {
+    setInterval(() => {
+      this.now = Date.now();
+    }, 1);
 
     axios.get('/assets/menus.json').then(response => (
       this.menus = response.data
