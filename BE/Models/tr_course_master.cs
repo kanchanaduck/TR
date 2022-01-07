@@ -35,7 +35,7 @@ namespace AngularFirst.Models
         public string updated_by { get; set; }
         public bool? status_active { get; set; }
         public ICollection<tb_band> band { get; set; }
-        public List<tr_course_master_band> course_master_band { get; set; }
+        public List<tr_course_master_band> course_master_band { get; } = new List<tr_course_master_band>();
     }
 
     public enum Level

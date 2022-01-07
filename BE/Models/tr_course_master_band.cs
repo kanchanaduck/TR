@@ -11,11 +11,11 @@ namespace AngularFirst.Models
     public class tr_course_master_band
     {
         [MaxLength(7)]
-        [ForeignKey("course")]
         public string course_no { get; set; }
-        public tr_course_master course_master { get; set; }
-        [ForeignKey("band")]
+        [ForeignKey("courseFK")]
+        public virtual tr_course_master course_master { get; set; }
         public string band_text { get; set; }
-        public tb_band band { get; set; }
+        [ForeignKey("bandFK")]
+        public virtual tb_band band { get; set; }
     }
 }

@@ -30,12 +30,12 @@ namespace AngularFirst.Data
                     j => j
                         .HasOne(cb => cb.course)
                         .WithMany(c => c.course_band)
-                        .HasForeignKey(cb => cb.course_no),
+                        .HasForeignKey(cb => cb.course_no)/* ,
                     j =>
                     {
                         j.HasKey(b => new { b.course_no, b.band });
                         j.HasIndex(b =>  b.band_text );
-                    });
+                    } */);
 
             modelBuilder
                 .Entity<tb_band>()
