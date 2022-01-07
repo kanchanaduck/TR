@@ -14,16 +14,31 @@ namespace AngularFirst.Models
         public string dept_abb_name { get; set; }
         public int days { get; set; }
         public int capacity { get; set; }
-        public bool open_register { get; set; }
-        public DateTime start_date  { get; set; }
-        public DateTime end_date { get; set; }
-        public DateTime time_in { get; set; }
-        public DateTime time_out { get; set; }
+        public bool? open_register { get; set; }
+        [Required]
+         [Column(TypeName = "date")]
+        public DateTime date_start { get; set; } 
+        [Required]
+         [Column(TypeName = "date")]
+        public DateTime date_end { get; set; } 
+        [Required]
+        [Column(TypeName = "time")]
+        public TimeSpan time_in { get; set; } 
+        [Required]
+        [Column(TypeName = "time")]
+        public TimeSpan time_out { get; set; }
+        [Required]
         public string place { get; set; }
-        public DateTime created_at { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime created_at { get; set; } 
         public string created_by { get; set; }
-        public DateTime updated_at { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime updated_at { get; set; } 
         public string updated_by { get; set; }
-        public bool status_active { get; set; }
+        public bool? status_active { get; set; }
+        public ICollection<tb_band> bands { get; set; }
+        public List<tr_course_band> course_band { get; set; }
+        public ICollection<tr_trainer> trainers { get; set; }
+        public List<tr_trainer> triner_no { get; set; }
     }
 }

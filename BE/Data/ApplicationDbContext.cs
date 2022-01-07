@@ -17,20 +17,57 @@ namespace AngularFirst.Data
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
         }
-        
-        public DbSet<tb_menus> tb_menus { get; set; }
-        public DbSet<tb_roles> tb_roles { get; set; }
+         protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<tr_course>()
+                .HasMany(c => c.bands)
+                .WithMany(c => c.courses)
+                .UsingEntity<tr_course_band>(
+                    j => j
+                        .HasOne(cb => cb.band)
+                        .WithMany(b => b.course_band)
+                        .HasForeignKey(cb => cb.band),
+                    j => j
+                        .HasOne(cb => cb.course)
+                        .WithMany(c => c.course_band)
+                        .HasForeignKey(cb => cb.course_no),
+                    j =>
+                    {
+                        j.HasKey(b => new { b.course_no, b.band });
+                        j.HasIndex(b =>  b.band_text );
+                    });
+
+            modelBuilder
+                .Entity<tb_band>()
+                .HasData(
+                    new tb_band { band = "E" },
+                    new tb_band { band = "J1" },
+                    new tb_band { band = "J2" },
+                    new tb_band { band = "J3" },
+                    new tb_band { band = "J4" },
+                    new tb_band { band = "M1" },
+                    new tb_band { band = "M2" },
+                    new tb_band { band = "JP" }
+                );
+        }
+        public DbSet<tb_band> tb_band { get; set; }
         public DbSet<tb_employee_role_claims> tb_employee_role_claims { get; set; }
-        public DbSet<tb_role_menu_claims> tb_role_menu_claims { get; set; }
-        public DbSet<tb_course_band> tb_course_band { get; set; }
-        public DbSet<tb_course_trainer> tb_course_trainer { get; set; }
         public DbSet<tb_employee> tb_employee { get; set; }
-        public DbSet<tr_employee_history> tr_employee_history { get; set; }
-        public DbSet<tb_master_course_band> tb_master_course_band { get; set; }
-        public DbSet<tr_band> tr_band { get; set; }
+        public DbSet<tb_menus> tb_menus { get; set; }
+        public DbSet<tb_role_menu_claims> tb_role_menu_claims { get; set; }
+        public DbSet<tb_role> tb_role { get; set; }
+        public DbSet<tr_center> tr_center { get; set; }
+        public DbSet<tr_course_master_band> tr_course_master_band { get; set; }
+        public DbSet<tr_course_master> tr_course_master { get; set; }
+        public DbSet< tr_course_registration>  tr_course_registration { get; set; }
+        public DbSet<tr_course_score> tr_course_score { get; set; }
+        public DbSet<tr_course_trainer> tr_course_trainer { get; set; }
+        public DbSet<tr_course_band> tr_course_band { get; set; }
         public DbSet<tr_course> tr_course { get; set; }
-        public DbSet<tr_master_course> tr_master_course { get; set; }
+        public DbSet<tr_stakeholder> tr_stakeholder { get; set; }
+        public DbSet<tr_survey_detail> tr_survey_detail { get; set; }
+        public DbSet<tr_survey_file> tr_survey_file{ get; set; }
+        public DbSet<tr_survey_setting> tr_survey_setting { get; set; }
         public DbSet<tr_trainer> tr_trainer { get; set; }
-        public DbSet<tr_v_trainer> tr_v_trainer { get; set; }
     }
 }

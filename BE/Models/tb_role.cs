@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AngularFirst.Models
 {
-    public class tb_roles
+    public class tb_role
     {
         [Key]
         public int role_id { get; set; }

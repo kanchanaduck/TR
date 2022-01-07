@@ -7,7 +7,10 @@ namespace AngularFirst.Models
 {
     public class tb_employee
     {
+        [Column("old_emp_no", Order = 0)]
+        public string old_emp_no { get; set; }
         [Key]
+        [Column("emp_no", Order = 1)]
         public string emp_no { get; set; }
         
         [StringLength(10)]
@@ -22,6 +25,18 @@ namespace AngularFirst.Models
         public string gname_tha { get; set; }
         [StringLength(30)]
         public string fname_tha { get; set; }
+        public string fullname_tha{
+            get
+            {
+                return gname_tha + " " + fname_tha;
+            }
+        }
+        public string fullname_eng{
+            get
+            {
+                return gname_eng + " " + fname_eng;
+            }
+        }
         [StringLength(2)]
         public string div_cls { get; set; }
         [StringLength(50)]

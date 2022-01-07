@@ -20,8 +20,8 @@ namespace AngularFirst.Models
         public string spare4 { get; set; }
         [Required]
         [DataType(DataType.Date)]
-        public DateTime update_date { get; set; }
+        public DateTime updated_date { get; set; }
         [Required]
-        public string update_by { get; set; }
+        public string updated_by { get; set; }
     }
 }

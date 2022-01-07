@@ -4,14 +4,16 @@ using AngularFirst.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AngularFirst.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220107063956_DeleteRelationShipWithBandCourse")]
+    partial class DeleteRelationShipWithBandCourse
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -467,23 +469,6 @@ namespace AngularFirst.Migrations
                     b.ToTable("tr_course");
                 });
 
-            modelBuilder.Entity("AngularFirst.Models.tr_course_band", b =>
-                {
-                    b.Property<string>("band1")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("course_no1")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasIndex("band1");
-
-                    b.HasIndex("course_no1");
-
-                    b.ToTable("tr_course_band");
-                });
-
             modelBuilder.Entity("AngularFirst.Models.tr_course_master", b =>
                 {
                     b.Property<string>("course_no")
@@ -539,26 +524,6 @@ namespace AngularFirst.Migrations
 
                     b
                         .HasComment("ตารางเก็บข้อมูลคอร์ส 6 หลัก เพื่อช่วยในการเปิดคอร์ส");
-                });
-
-            modelBuilder.Entity("AngularFirst.Models.tr_course_master_band", b =>
-                {
-                    b.Property<string>("band1")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("course_no1")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(7)");
-
-                    b.HasIndex("band1");
-
-                    b.HasIndex("course_no1");
-
-                    b.ToTable("tr_course_master_band");
-
-                    b
-                        .HasComment("ตารางจับคู่คอร์สมาสเตอร์และแบนด์");
                 });
 
             modelBuilder.Entity("AngularFirst.Models.tr_course_registration", b =>
@@ -1196,44 +1161,6 @@ namespace AngularFirst.Migrations
                         .HasForeignKey("parent_menu_code");
 
                     b.Navigation("parent");
-                });
-
-            modelBuilder.Entity("AngularFirst.Models.tr_course_band", b =>
-                {
-                    b.HasOne("AngularFirst.Models.tb_band", "band")
-                        .WithMany()
-                        .HasForeignKey("band1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AngularFirst.Models.tr_course", "course_no")
-                        .WithMany()
-                        .HasForeignKey("course_no1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("band");
-
-                    b.Navigation("course_no");
-                });
-
-            modelBuilder.Entity("AngularFirst.Models.tr_course_master_band", b =>
-                {
-                    b.HasOne("AngularFirst.Models.tb_band", "band")
-                        .WithMany()
-                        .HasForeignKey("band1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AngularFirst.Models.tr_course_master", "course_no")
-                        .WithMany()
-                        .HasForeignKey("course_no1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("band");
-
-                    b.Navigation("course_no");
                 });
 
             modelBuilder.Entity("AngularFirst.Models.tr_course_registration", b =>
