@@ -10,10 +10,12 @@ namespace AngularFirst.Models
     public class tr_course_trainer
     {
         public string course_no { get; set; }
+        /* [NotMapped]
         [ForeignKey("course_no")]
-        public tr_course course { get; set; }
+        public tr_course course { get; set; } */
         public int trainer_no { get; set; }
+        /* [NotMapped]
         [ForeignKey("trainer")]
-        public tr_trainer trainer { get; set; }
+        public tr_trainer trainer { get; set; } */
     }
 }

@@ -19,23 +19,24 @@ namespace AngularFirst.Data
         }
          protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<tr_course>()
+            base.OnModelCreating(modelBuilder);
+          /*   modelBuilder.Entity<tr_course>()
                 .HasMany(c => c.bands)
                 .WithMany(c => c.courses)
                 .UsingEntity<tr_course_band>(
                     j => j
-                        .HasOne(cb => cb.band)
+                        .HasOne(cb => cb.bands)
                         .WithMany(b => b.course_band)
-                        .HasForeignKey(cb => cb.band),
+                        .HasForeignKey(cb => cb.bands),
                     j => j
                         .HasOne(cb => cb.course)
                         .WithMany(c => c.course_band)
-                        .HasForeignKey(cb => cb.course_no)/* ,
+                        .HasForeignKey(cb => cb.course_no),
                     j =>
                     {
                         j.HasKey(b => new { b.course_no, b.band });
                         j.HasIndex(b =>  b.band_text );
-                    } */);
+                    } );*/
 
             modelBuilder
                 .Entity<tb_band>()
