@@ -12,6 +12,7 @@ export class TrainerComponent implements OnInit {
   dtOptions: any = {};
   external = false;
   emp_no = '';
+  internal_trainer: any = {};
 
   constructor(
   ) { }
@@ -78,11 +79,14 @@ export class TrainerComponent implements OnInit {
   }
 
   fillEmpNo(event: any) { 
+      let response;
       if(this.emp_no.length==6){
         const body = {
           command: `SELECT * FROM admin.v_emp_data_all_cpt WHERE emp_no='${this.emp_no}' ORDER BY emp_no ASC, band DESC`
         }
-        const response = axios.post('http://cptsvs531:1000/middleware/oracle/hrms', body);
+        response = axios.post('http://cptsvs531:1000/middleware/oracle/hrms', body);
+     this.internal_trainer = response;
+     console.log(response)
      }
   }
 

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AngularFirst.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220109153657_Test")]
-    partial class Test
+    [Migration("20220110005655_EditRelationship")]
+    partial class EditRelationship
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -2,7 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using Newtonsoft.Json.Converters;
 
 namespace AngularFirst.Models
 {
@@ -38,12 +43,16 @@ namespace AngularFirst.Models
        [NotMapped]
         public List<tr_course_master_band> course_master_band { get; } = new List<tr_course_master_band>(); */
     }
-
+    // [JsonConverter(typeof(StringEnumConverter))]
     public enum Level
     {
+        // [EnumMember(Value = "None")]
         None,
+        // [EnumMember(Value = "Basic")]
         Basic,
+        // [EnumMember(Value = "Intermediate")]
         Intermediate,
+        // [EnumMember(Value = "Advanced")]
         Advanced
         
     }

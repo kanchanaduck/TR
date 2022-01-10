@@ -16,7 +16,7 @@ namespace AngularFirst.Models
         public int capacity { get; set; }
         public bool? open_register { get; set; }
         [Required]
-         [Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime date_start { get; set; } 
         [Required]
          [Column(TypeName = "date")]
@@ -30,7 +30,7 @@ namespace AngularFirst.Models
         [Required]
         public string place { get; set; }
         [Column(TypeName = "datetime")]
-        public DateTime created_at { get; set; } 
+        public DateTime? created_at { get; set; } 
         public string created_by { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime updated_at { get; set; } 

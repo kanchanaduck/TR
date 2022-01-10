@@ -39,6 +39,34 @@ namespace AngularFirst.Data
                     } );*/
 
             modelBuilder
+            .Entity<tr_course_master>()
+            .Property(e => e.level)
+            .HasConversion(
+                v => v.ToString(),
+                v => (Level)Enum.Parse(typeof(Level), v));
+
+            modelBuilder
+            .Entity<tr_course_score>()
+            .Property(e => e.pre_test_grade)
+            .HasConversion(
+                v => v.ToString(),
+                v => (Grade)Enum.Parse(typeof(Grade), v));
+
+            modelBuilder
+            .Entity<tr_course_score>()
+            .Property(e => e.post_test_grade)
+            .HasConversion(
+                v => v.ToString(),
+                v => (Grade)Enum.Parse(typeof(Grade), v));
+            
+            modelBuilder
+            .Entity<tr_course_master>()
+            .Property(e => e.level)
+            .HasConversion(
+                v => v.ToString(),
+                v => (Level)Enum.Parse(typeof(Level), v));
+
+            modelBuilder
                 .Entity<tb_band>()
                 .HasData(
                     new tb_band { band = "E" },
@@ -50,6 +78,8 @@ namespace AngularFirst.Data
                     new tb_band { band = "M2" },
                     new tb_band { band = "JP" }
                 );
+
+            
         }
         public DbSet<tb_band> tb_band { get; set; }
         public DbSet<tb_employee_role_claims> tb_employee_role_claims { get; set; }

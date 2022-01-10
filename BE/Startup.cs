@@ -135,13 +135,13 @@ namespace AngularFirst
 
             app.UseCors(MyAllowSpecificOrigins);
 
-            app.UseApiResponseAndExceptionWrapper<MapResponseObject>(
+            /* app.UseApiResponseAndExceptionWrapper<MapResponseObject>(
                 new AutoWrapperOptions { 
                     IsApiOnly = false,
                     WrapWhenApiPathStartsWith = "/api",
                     ShowStatusCode = true
                 } 
-            ); 
+            );  */
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AngularFirst.Migrations
 {
-    public partial class TableFirstVersion : Migration
+    public partial class EditRelationship : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -33,6 +33,14 @@ namespace AngularFirst.Migrations
                 table: "tr_trainer");
 
             migrationBuilder.DropColumn(
+                name: "end_date",
+                table: "tr_course");
+
+            migrationBuilder.DropColumn(
+                name: "start_date",
+                table: "tr_course");
+
+            migrationBuilder.DropColumn(
                 name: "role_id",
                 table: "tb_employee_role_claims");
 
@@ -41,14 +49,14 @@ namespace AngularFirst.Migrations
                 table: "tb_employee_role_claims");
 
             migrationBuilder.RenameColumn(
-                name: "start_date",
-                table: "tr_course",
-                newName: "date_start");
+                name: "update_date",
+                table: "tb_role_menu_claims",
+                newName: "updated_date");
 
             migrationBuilder.RenameColumn(
-                name: "end_date",
-                table: "tr_course",
-                newName: "date_end");
+                name: "update_by",
+                table: "tb_role_menu_claims",
+                newName: "updated_by");
 
             migrationBuilder.RenameColumn(
                 name: "update_date",
@@ -70,12 +78,19 @@ namespace AngularFirst.Migrations
                 oldType: "nvarchar(max)",
                 oldNullable: true);
 
+            migrationBuilder.AlterColumn<bool>(
+                name: "status_active",
+                table: "tr_trainer",
+                type: "bit",
+                nullable: true,
+                oldClrType: typeof(bool),
+                oldType: "bit");
+
             migrationBuilder.AddColumn<bool>(
                 name: "resign",
                 table: "tr_trainer",
                 type: "bit",
-                nullable: false,
-                defaultValue: false);
+                nullable: true);
 
             migrationBuilder.AddColumn<int>(
                 name: "trainer_type",
@@ -83,6 +98,38 @@ namespace AngularFirst.Migrations
                 type: "int",
                 nullable: false,
                 defaultValue: 0);
+
+            migrationBuilder.AlterColumn<DateTime>(
+                name: "updated_at",
+                table: "tr_course",
+                type: "datetime",
+                nullable: false,
+                oldClrType: typeof(DateTime),
+                oldType: "datetime2");
+
+            migrationBuilder.AlterColumn<TimeSpan>(
+                name: "time_out",
+                table: "tr_course",
+                type: "time",
+                nullable: false,
+                oldClrType: typeof(DateTime),
+                oldType: "datetime2");
+
+            migrationBuilder.AlterColumn<TimeSpan>(
+                name: "time_in",
+                table: "tr_course",
+                type: "time",
+                nullable: false,
+                oldClrType: typeof(DateTime),
+                oldType: "datetime2");
+
+            migrationBuilder.AlterColumn<bool>(
+                name: "status_active",
+                table: "tr_course",
+                type: "bit",
+                nullable: true,
+                oldClrType: typeof(bool),
+                oldType: "bit");
 
             migrationBuilder.AlterColumn<string>(
                 name: "place",
@@ -94,11 +141,35 @@ namespace AngularFirst.Migrations
                 oldType: "nvarchar(max)",
                 oldNullable: true);
 
-            migrationBuilder.AddColumn<string>(
-                name: "bandcourse_no",
+            migrationBuilder.AlterColumn<bool>(
+                name: "open_register",
                 table: "tr_course",
-                type: "nvarchar(450)",
-                nullable: true);
+                type: "bit",
+                nullable: true,
+                oldClrType: typeof(bool),
+                oldType: "bit");
+
+            migrationBuilder.AlterColumn<DateTime>(
+                name: "created_at",
+                table: "tr_course",
+                type: "datetime",
+                nullable: false,
+                oldClrType: typeof(DateTime),
+                oldType: "datetime2");
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "date_end",
+                table: "tr_course",
+                type: "date",
+                nullable: false,
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "date_start",
+                table: "tr_course",
+                type: "date",
+                nullable: false,
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "created_at",
@@ -126,12 +197,18 @@ namespace AngularFirst.Migrations
                 type: "int",
                 nullable: true);
 
+            migrationBuilder.AddColumn<string>(
+                name: "old_emp_no",
+                table: "tb_employee",
+                type: "nvarchar(max)",
+                nullable: true);
+
             migrationBuilder.CreateTable(
                 name: "tb_band",
                 columns: table => new
                 {
                     band = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    status_active = table.Column<bool>(type: "bit", nullable: false)
+                    status_active = table.Column<bool>(type: "bit", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -165,9 +242,9 @@ namespace AngularFirst.Migrations
                     center_no = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     emp_no = table.Column<string>(type: "nvarchar(7)", maxLength: 7, nullable: true),
-                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime", nullable: false),
                     created_by = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    updated_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime", nullable: false),
                     updated_by = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -177,16 +254,52 @@ namespace AngularFirst.Migrations
                 comment: "ตารางเก็บข้อมูลcenter");
 
             migrationBuilder.CreateTable(
-                name: "tr_course_master_band",
+                name: "tr_course_band",
                 columns: table => new
                 {
-                    course_no = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    band = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    course_no = table.Column<string>(type: "nvarchar(7)", maxLength: 7, nullable: true),
+                    band_text = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_tr_course_master_band", x => x.course_no);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "tr_course_master",
+                columns: table => new
+                {
+                    course_no = table.Column<string>(type: "nvarchar(7)", maxLength: 7, nullable: false),
+                    course_name_th = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    course_name_en = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    dept_abb_name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    capacity = table.Column<int>(type: "int", nullable: false),
+                    prev_course_no = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    days = table.Column<int>(type: "int", nullable: false),
+                    category = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    level = table.Column<int>(type: "int", nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime", nullable: false),
+                    created_by = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    updated_at = table.Column<DateTime>(type: "datetime", nullable: false),
+                    updated_by = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    status_active = table.Column<bool>(type: "bit", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tr_course_master", x => x.course_no);
+                },
+                comment: "ตารางเก็บข้อมูลคอร์ส 6 หลัก เพื่อช่วยในการเปิดคอร์ส");
+
+            migrationBuilder.CreateTable(
+                name: "tr_course_master_band",
+                columns: table => new
+                {
+                    course_no = table.Column<string>(type: "nvarchar(7)", maxLength: 7, nullable: true),
+                    band_text = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                },
+                comment: "ตารางจับคู่คอร์สมาสเตอร์และแบนด์");
 
             migrationBuilder.CreateTable(
                 name: "tr_course_registration",
@@ -199,14 +312,14 @@ namespace AngularFirst.Migrations
                     seq_no = table.Column<int>(type: "int", nullable: false),
                     last_status = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     remark = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    register_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    register_at = table.Column<DateTime>(type: "datetime", nullable: false),
                     register_by = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    manager_approved_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    manager_approved_at = table.Column<DateTime>(type: "datetime", nullable: false),
                     manager_approved_by = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    manager_approved_checked = table.Column<bool>(type: "bit", nullable: false),
-                    center_approved_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    manager_approved_checked = table.Column<bool>(type: "bit", nullable: true),
+                    center_approved_at = table.Column<DateTime>(type: "datetime", nullable: false),
                     center_approved_by = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    center_approved_checked = table.Column<bool>(type: "bit", nullable: false)
+                    center_approved_checked = table.Column<bool>(type: "bit", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -230,15 +343,15 @@ namespace AngularFirst.Migrations
                 name: "tr_course_score",
                 columns: table => new
                 {
-                    yearcourse_no = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    course_no = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     emp_no1 = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     pre_test_score = table.Column<int>(type: "int", nullable: false),
                     pre_test_grade = table.Column<int>(type: "int", nullable: false),
                     post_test_score = table.Column<int>(type: "int", nullable: false),
                     post_test_grade = table.Column<int>(type: "int", nullable: false),
-                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime", nullable: false),
                     created_by = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    updated_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime", nullable: false),
                     updated_by = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -249,12 +362,6 @@ namespace AngularFirst.Migrations
                         principalTable: "tb_employee",
                         principalColumn: "emp_no",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_tr_course_score_tr_course_yearcourse_no",
-                        column: x => x.yearcourse_no,
-                        principalTable: "tr_course",
-                        principalColumn: "course_no",
-                        onDelete: ReferentialAction.Restrict);
                 },
                 comment: "ตารางเก็บคะแนนและเกรด");
 
@@ -262,23 +369,11 @@ namespace AngularFirst.Migrations
                 name: "tr_course_trainer",
                 columns: table => new
                 {
-                    course_no1 = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    trainer_no1 = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    course_no = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    trainer_no = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.ForeignKey(
-                        name: "FK_tr_course_trainer_tr_course_course_no1",
-                        column: x => x.course_no1,
-                        principalTable: "tr_course",
-                        principalColumn: "course_no",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_tr_course_trainer_tr_trainer_trainer_no1",
-                        column: x => x.trainer_no1,
-                        principalTable: "tr_trainer",
-                        principalColumn: "trainer_no",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -294,8 +389,6 @@ namespace AngularFirst.Migrations
                     role = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     organization = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     level = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    resign = table.Column<bool>(type: "bit", nullable: false),
-                    status_active = table.Column<bool>(type: "bit", nullable: false),
                     remark = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
                     created_by = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -307,44 +400,6 @@ namespace AngularFirst.Migrations
                     table.PrimaryKey("PK_tr_stakeholder", x => x.id);
                 },
                 comment: "ตารางเก็บข้อมูลผู้ที่เกี่ยวข้อง");
-
-            migrationBuilder.CreateTable(
-                name: "tr_survey_detail",
-                columns: table => new
-                {
-                    year = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: false),
-                    division = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    department = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    emp_no = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    course_no = table.Column<string>(type: "nvarchar(max)", nullable: false, comment: "เลขคอร์ส 6 หลัก"),
-                    month = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    file_name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    created_by = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    updated_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    updated_by = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_tr_survey_detail", x => x.year);
-                },
-                comment: "ตารางเก็บข้อมูลการ survey");
-
-            migrationBuilder.CreateTable(
-                name: "tr_survey_file",
-                columns: table => new
-                {
-                    year = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: true),
-                    file_name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    approved = table.Column<bool>(type: "bit", nullable: false),
-                    organization = table.Column<string>(type: "nvarchar(max)", nullable: false, comment: "เก็บ division หรือ department ที่ committee คนนั้นรับผิดชอบ"),
-                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    created_by = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                },
-                comment: "ตารางเก็บไฟล์ในการ survey");
 
             migrationBuilder.CreateTable(
                 name: "tr_survey_setting",
@@ -362,62 +417,81 @@ namespace AngularFirst.Migrations
                 {
                     table.PrimaryKey("PK_tr_survey_setting", x => x.year);
                 },
-                comment: "ตารางเก็บ period การ survey");
+                comment: "ตารางเก็บ period การ survey เฉพาะคอร์สของ MTP");
 
             migrationBuilder.CreateTable(
-                name: "tr_course_band",
+                name: "tr_survey_detail",
                 columns: table => new
                 {
-                    course_no = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    band1 = table.Column<string>(type: "nvarchar(450)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_tr_course_band", x => x.course_no);
-                    table.ForeignKey(
-                        name: "FK_tr_course_band_tb_band_band1",
-                        column: x => x.band1,
-                        principalTable: "tb_band",
-                        principalColumn: "band",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "tr_course_master",
-                columns: table => new
-                {
-                    course_no = table.Column<string>(type: "nvarchar(7)", maxLength: 7, nullable: false),
-                    course_name_th = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    course_name_en = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    dept_abb_name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    capacity = table.Column<int>(type: "int", nullable: false),
-                    prev_course_no = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    days = table.Column<int>(type: "int", nullable: false),
-                    category = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    level = table.Column<int>(type: "int", nullable: false),
-                    bandcourse_no = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    year1 = table.Column<string>(type: "nvarchar(4)", nullable: true),
+                    division = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    department = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    emp_no1 = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    course_no = table.Column<string>(type: "nvarchar(max)", nullable: false, comment: "เลขคอร์ส 6 หลัก"),
+                    month = table.Column<int>(type: "int", nullable: false, comment: "เก็บเดือนที่ต้องการเรียน"),
+                    file_name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
                     created_by = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     updated_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    updated_by = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    status_active = table.Column<bool>(type: "bit", nullable: false)
+                    updated_by = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_tr_course_master", x => x.course_no);
                     table.ForeignKey(
-                        name: "FK_tr_course_master_tr_course_master_band_bandcourse_no",
-                        column: x => x.bandcourse_no,
-                        principalTable: "tr_course_master_band",
-                        principalColumn: "course_no",
+                        name: "FK_tr_survey_detail_tb_employee_emp_no1",
+                        column: x => x.emp_no1,
+                        principalTable: "tb_employee",
+                        principalColumn: "emp_no",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_tr_survey_detail_tr_survey_setting_year1",
+                        column: x => x.year1,
+                        principalTable: "tr_survey_setting",
+                        principalColumn: "year",
                         onDelete: ReferentialAction.Restrict);
                 },
-                comment: "ตารางเก็บข้อมูลคอร์ส 6 หลัก เพื่อช่วยในการเปิดคอร์ส");
+                comment: "ตารางเก็บข้อมูลการ survey");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_tr_course_bandcourse_no",
-                table: "tr_course",
-                column: "bandcourse_no");
+            migrationBuilder.CreateTable(
+                name: "tr_survey_file",
+                columns: table => new
+                {
+                    file_id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    year1 = table.Column<string>(type: "nvarchar(4)", nullable: true),
+                    file_name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    approved = table.Column<bool>(type: "bit", nullable: false),
+                    organization = table.Column<string>(type: "nvarchar(max)", nullable: false, comment: "เก็บ division หรือ department ที่ committee คนนั้นรับผิดชอบ"),
+                    level = table.Column<string>(type: "nvarchar(max)", nullable: false, comment: "Level"),
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    created_by = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tr_survey_file", x => x.file_id);
+                    table.ForeignKey(
+                        name: "FK_tr_survey_file_tr_survey_setting_year1",
+                        column: x => x.year1,
+                        principalTable: "tr_survey_setting",
+                        principalColumn: "year",
+                        onDelete: ReferentialAction.Restrict);
+                },
+                comment: "ตารางเก็บไฟล์ในการ survey");
+
+            migrationBuilder.InsertData(
+                table: "tb_band",
+                columns: new[] { "band", "status_active" },
+                values: new object[,]
+                {
+                    { "E", null },
+                    { "J1", null },
+                    { "J2", null },
+                    { "J3", null },
+                    { "J4", null },
+                    { "M1", null },
+                    { "M2", null },
+                    { "JP", null }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_tb_employee_role_claims_emp_no1",
@@ -428,16 +502,6 @@ namespace AngularFirst.Migrations
                 name: "IX_tb_employee_role_claims_role_id1",
                 table: "tb_employee_role_claims",
                 column: "role_id1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_tr_course_band_band1",
-                table: "tr_course_band",
-                column: "band1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_tr_course_master_bandcourse_no",
-                table: "tr_course_master",
-                column: "bandcourse_no");
 
             migrationBuilder.CreateIndex(
                 name: "IX_tr_course_registration_course_no1",
@@ -455,19 +519,19 @@ namespace AngularFirst.Migrations
                 column: "emp_no1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_tr_course_score_yearcourse_no",
-                table: "tr_course_score",
-                column: "yearcourse_no");
+                name: "IX_tr_survey_detail_emp_no1",
+                table: "tr_survey_detail",
+                column: "emp_no1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_tr_course_trainer_course_no1",
-                table: "tr_course_trainer",
-                column: "course_no1");
+                name: "IX_tr_survey_detail_year1",
+                table: "tr_survey_detail",
+                column: "year1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_tr_course_trainer_trainer_no1",
-                table: "tr_course_trainer",
-                column: "trainer_no1");
+                name: "IX_tr_survey_file_year1",
+                table: "tr_survey_file",
+                column: "year1");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_tb_employee_role_claims_tb_employee_emp_no1",
@@ -484,14 +548,6 @@ namespace AngularFirst.Migrations
                 principalTable: "tb_role",
                 principalColumn: "role_id",
                 onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_tr_course_tr_course_band_bandcourse_no",
-                table: "tr_course",
-                column: "bandcourse_no",
-                principalTable: "tr_course_band",
-                principalColumn: "course_no",
-                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -504,9 +560,8 @@ namespace AngularFirst.Migrations
                 name: "FK_tb_employee_role_claims_tb_role_role_id1",
                 table: "tb_employee_role_claims");
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_tr_course_tr_course_band_bandcourse_no",
-                table: "tr_course");
+            migrationBuilder.DropTable(
+                name: "tb_band");
 
             migrationBuilder.DropTable(
                 name: "tb_role");
@@ -519,6 +574,9 @@ namespace AngularFirst.Migrations
 
             migrationBuilder.DropTable(
                 name: "tr_course_master");
+
+            migrationBuilder.DropTable(
+                name: "tr_course_master_band");
 
             migrationBuilder.DropTable(
                 name: "tr_course_registration");
@@ -541,16 +599,6 @@ namespace AngularFirst.Migrations
             migrationBuilder.DropTable(
                 name: "tr_survey_setting");
 
-            migrationBuilder.DropTable(
-                name: "tb_band");
-
-            migrationBuilder.DropTable(
-                name: "tr_course_master_band");
-
-            migrationBuilder.DropIndex(
-                name: "IX_tr_course_bandcourse_no",
-                table: "tr_course");
-
             migrationBuilder.DropIndex(
                 name: "IX_tb_employee_role_claims_emp_no1",
                 table: "tb_employee_role_claims");
@@ -568,7 +616,11 @@ namespace AngularFirst.Migrations
                 table: "tr_trainer");
 
             migrationBuilder.DropColumn(
-                name: "bandcourse_no",
+                name: "date_end",
+                table: "tr_course");
+
+            migrationBuilder.DropColumn(
+                name: "date_start",
                 table: "tr_course");
 
             migrationBuilder.DropColumn(
@@ -587,15 +639,19 @@ namespace AngularFirst.Migrations
                 name: "role_id1",
                 table: "tb_employee_role_claims");
 
-            migrationBuilder.RenameColumn(
-                name: "date_start",
-                table: "tr_course",
-                newName: "start_date");
+            migrationBuilder.DropColumn(
+                name: "old_emp_no",
+                table: "tb_employee");
 
             migrationBuilder.RenameColumn(
-                name: "date_end",
-                table: "tr_course",
-                newName: "end_date");
+                name: "updated_date",
+                table: "tb_role_menu_claims",
+                newName: "update_date");
+
+            migrationBuilder.RenameColumn(
+                name: "updated_by",
+                table: "tb_role_menu_claims",
+                newName: "update_by");
 
             migrationBuilder.RenameColumn(
                 name: "updated_by",
@@ -615,12 +671,56 @@ namespace AngularFirst.Migrations
                 oldClrType: typeof(string),
                 oldType: "nvarchar(max)");
 
+            migrationBuilder.AlterColumn<bool>(
+                name: "status_active",
+                table: "tr_trainer",
+                type: "bit",
+                nullable: false,
+                defaultValue: false,
+                oldClrType: typeof(bool),
+                oldType: "bit",
+                oldNullable: true);
+
             migrationBuilder.AddColumn<string>(
                 name: "type",
                 table: "tr_trainer",
                 type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "");
+
+            migrationBuilder.AlterColumn<DateTime>(
+                name: "updated_at",
+                table: "tr_course",
+                type: "datetime2",
+                nullable: false,
+                oldClrType: typeof(DateTime),
+                oldType: "datetime");
+
+            migrationBuilder.AlterColumn<DateTime>(
+                name: "time_out",
+                table: "tr_course",
+                type: "datetime2",
+                nullable: false,
+                oldClrType: typeof(TimeSpan),
+                oldType: "time");
+
+            migrationBuilder.AlterColumn<DateTime>(
+                name: "time_in",
+                table: "tr_course",
+                type: "datetime2",
+                nullable: false,
+                oldClrType: typeof(TimeSpan),
+                oldType: "time");
+
+            migrationBuilder.AlterColumn<bool>(
+                name: "status_active",
+                table: "tr_course",
+                type: "bit",
+                nullable: false,
+                defaultValue: false,
+                oldClrType: typeof(bool),
+                oldType: "bit",
+                oldNullable: true);
 
             migrationBuilder.AlterColumn<string>(
                 name: "place",
@@ -629,6 +729,38 @@ namespace AngularFirst.Migrations
                 nullable: true,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(max)");
+
+            migrationBuilder.AlterColumn<bool>(
+                name: "open_register",
+                table: "tr_course",
+                type: "bit",
+                nullable: false,
+                defaultValue: false,
+                oldClrType: typeof(bool),
+                oldType: "bit",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<DateTime>(
+                name: "created_at",
+                table: "tr_course",
+                type: "datetime2",
+                nullable: false,
+                oldClrType: typeof(DateTime),
+                oldType: "datetime");
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "end_date",
+                table: "tr_course",
+                type: "datetime2",
+                nullable: false,
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "start_date",
+                table: "tr_course",
+                type: "datetime2",
+                nullable: false,
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
             migrationBuilder.AddColumn<string>(
                 name: "role_id",

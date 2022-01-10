@@ -63,7 +63,10 @@ namespace AngularFirst.Models
         public string posn_ename { get; set; }
         [StringLength(100)]
         public string email { get; set; }
-        public DateTime resn_date { get; set; }
-        public DateTime prob_date { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime? resn_date { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime? prob_date { get; set; }
     }
 }
+

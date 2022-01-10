@@ -1,5 +1,5 @@
 <div class="card card-body mb-3">
-    <h1>{{emp_no}}</h1>
+    <!-- <h1>{{emp_no}}</h1> -->
     <div class="row text-center">
         <div class="offset-4 col-2">
             <label class="rdiobox">
@@ -18,19 +18,30 @@
     <div class="row">
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Emp no.</label>
-            <input type="text" name="emp_no" class="form-control" required [(ngModel)]="emp_no" (keyup)="fillEmpNo($event)">
+            <input type="text" name="emp_no" class="form-control" required 
+                [(ngModel)]="emp_no" 
+                (keyup)="fillEmpNo($event)" 
+                [disabled]="external">
         </div><!-- form-group -->
         <div class="form-group col mb-0">
-            <label class="az-content-label tx-11 tx-medium tx-gray-600">Name</label>
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Title name</label>
+            <input type="text" class="form-control" required [disabled]="!external">
+        </div><!-- form-group -->
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">FIRSTNAME</label>
+            <input type="text" class="form-control" required [disabled]="!external">
+        </div><!-- form-group -->
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">LASTNAME</label>
             <input type="text" class="form-control" required [disabled]="!external">
         </div><!-- form-group -->
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Org</label>
-            <input type="text" class="form-control" required>
+            <input type="text" class="form-control" required [disabled]="!external">
         </div><!-- form-group -->
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Status</label>
-            <input type="text" class="form-control" required readonly>
+            <input type="text" class="form-control" required [disabled]>
         </div><!-- form-group -->
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600"> </label>

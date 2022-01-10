@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AngularFirst.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220106121450_TableFirstVersion")]
-    partial class TableFirstVersion
+    [Migration("20220110062521_AlterEmployeeTableProbDate")]
+    partial class AlterEmployeeTableProbDate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -91,18 +91,53 @@ namespace AngularFirst.Migrations
                     b.Property<string>("band")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<bool>("status_active")
+                    b.Property<bool?>("status_active")
                         .HasColumnType("bit");
 
                     b.HasKey("band");
 
                     b.ToTable("tb_band");
+
+                    b.HasData(
+                        new
+                        {
+                            band = "E"
+                        },
+                        new
+                        {
+                            band = "J1"
+                        },
+                        new
+                        {
+                            band = "J2"
+                        },
+                        new
+                        {
+                            band = "J3"
+                        },
+                        new
+                        {
+                            band = "J4"
+                        },
+                        new
+                        {
+                            band = "M1"
+                        },
+                        new
+                        {
+                            band = "M2"
+                        },
+                        new
+                        {
+                            band = "JP"
+                        });
                 });
 
             modelBuilder.Entity("AngularFirst.Models.tb_employee", b =>
                 {
                     b.Property<string>("emp_no")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("emp_no");
 
                     b.Property<string>("band")
                         .HasMaxLength(3)
@@ -152,6 +187,10 @@ namespace AngularFirst.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
+                    b.Property<string>("old_emp_no")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("old_emp_no");
+
                     b.Property<string>("posn_code")
                         .HasMaxLength(3)
                         .HasColumnType("nvarchar(3)");
@@ -160,11 +199,11 @@ namespace AngularFirst.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<DateTime>("prob_date")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTime?>("prob_date")
+                        .HasColumnType("datetime");
 
-                    b.Property<DateTime>("resn_date")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTime?>("resn_date")
+                        .HasColumnType("datetime");
 
                     b.Property<string>("sname_eng")
                         .HasMaxLength(10)
@@ -352,11 +391,11 @@ namespace AngularFirst.Migrations
                     b.Property<string>("spare4")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("update_by")
+                    b.Property<string>("updated_by")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("update_date")
+                    b.Property<DateTime>("updated_date")
                         .HasColumnType("datetime2");
 
                     b.HasKey("id");
@@ -372,7 +411,7 @@ namespace AngularFirst.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("created_at")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("created_by")
                         .HasColumnType("nvarchar(max)");
@@ -382,7 +421,7 @@ namespace AngularFirst.Migrations
                         .HasColumnType("nvarchar(7)");
 
                     b.Property<DateTime>("updated_at")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("updated_by")
                         .HasColumnType("nvarchar(max)");
@@ -400,9 +439,6 @@ namespace AngularFirst.Migrations
                     b.Property<string>("course_no")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("bandcourse_no")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int>("capacity")
                         .HasColumnType("int");
 
@@ -412,17 +448,17 @@ namespace AngularFirst.Migrations
                     b.Property<string>("course_name_th")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("created_at")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTime?>("created_at")
+                        .HasColumnType("datetime");
 
                     b.Property<string>("created_by")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("date_end")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date");
 
                     b.Property<DateTime>("date_start")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date");
 
                     b.Property<int>("days")
                         .HasColumnType("int");
@@ -430,46 +466,41 @@ namespace AngularFirst.Migrations
                     b.Property<string>("dept_abb_name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("open_register")
+                    b.Property<bool?>("open_register")
                         .HasColumnType("bit");
 
                     b.Property<string>("place")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("status_active")
+                    b.Property<bool?>("status_active")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("time_in")
-                        .HasColumnType("datetime2");
+                    b.Property<TimeSpan>("time_in")
+                        .HasColumnType("time");
 
-                    b.Property<DateTime>("time_out")
-                        .HasColumnType("datetime2");
+                    b.Property<TimeSpan>("time_out")
+                        .HasColumnType("time");
 
                     b.Property<DateTime>("updated_at")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("updated_by")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("course_no");
 
-                    b.HasIndex("bandcourse_no");
-
                     b.ToTable("tr_course");
                 });
 
             modelBuilder.Entity("AngularFirst.Models.tr_course_band", b =>
                 {
+                    b.Property<string>("band_text")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("course_no")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("band1")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("course_no");
-
-                    b.HasIndex("band1");
+                        .HasMaxLength(7)
+                        .HasColumnType("nvarchar(7)");
 
                     b.ToTable("tr_course_band");
                 });
@@ -479,9 +510,6 @@ namespace AngularFirst.Migrations
                     b.Property<string>("course_no")
                         .HasMaxLength(7)
                         .HasColumnType("nvarchar(7)");
-
-                    b.Property<string>("bandcourse_no")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("capacity")
                         .HasColumnType("int");
@@ -498,7 +526,7 @@ namespace AngularFirst.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("created_at")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("created_by")
                         .HasColumnType("nvarchar(max)");
@@ -510,25 +538,24 @@ namespace AngularFirst.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("level")
-                        .HasColumnType("int");
+                    b.Property<string>("level")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("prev_course_no")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("status_active")
+                    b.Property<bool?>("status_active")
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("updated_at")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("updated_by")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("course_no");
-
-                    b.HasIndex("bandcourse_no");
 
                     b.ToTable("tr_course_master");
 
@@ -538,15 +565,17 @@ namespace AngularFirst.Migrations
 
             modelBuilder.Entity("AngularFirst.Models.tr_course_master_band", b =>
                 {
-                    b.Property<string>("course_no")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("band")
+                    b.Property<string>("band_text")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("course_no");
+                    b.Property<string>("course_no")
+                        .HasMaxLength(7)
+                        .HasColumnType("nvarchar(7)");
 
                     b.ToTable("tr_course_master_band");
+
+                    b
+                        .HasComment("ตารางจับคู่คอร์สมาสเตอร์และแบนด์");
                 });
 
             modelBuilder.Entity("AngularFirst.Models.tr_course_registration", b =>
@@ -557,12 +586,12 @@ namespace AngularFirst.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("center_approved_at")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("center_approved_by")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("center_approved_checked")
+                    b.Property<bool?>("center_approved_checked")
                         .HasColumnType("bit");
 
                     b.Property<string>("course_no1")
@@ -575,16 +604,16 @@ namespace AngularFirst.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("manager_approved_at")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("manager_approved_by")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("manager_approved_checked")
+                    b.Property<bool?>("manager_approved_checked")
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("register_at")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("register_by")
                         .HasColumnType("nvarchar(max)");
@@ -609,8 +638,11 @@ namespace AngularFirst.Migrations
 
             modelBuilder.Entity("AngularFirst.Models.tr_course_score", b =>
                 {
+                    b.Property<string>("course_no")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("created_at")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("created_by")
                         .HasColumnType("nvarchar(max)");
@@ -618,31 +650,28 @@ namespace AngularFirst.Migrations
                     b.Property<string>("emp_no1")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("post_test_grade")
-                        .HasColumnType("int");
+                    b.Property<string>("post_test_grade")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("post_test_score")
                         .HasColumnType("int");
 
-                    b.Property<int>("pre_test_grade")
-                        .HasColumnType("int");
+                    b.Property<string>("pre_test_grade")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("pre_test_score")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("updated_at")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("updated_by")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("yearcourse_no")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasIndex("emp_no1");
-
-                    b.HasIndex("yearcourse_no");
 
                     b.ToTable("tr_course_score");
 
@@ -652,15 +681,11 @@ namespace AngularFirst.Migrations
 
             modelBuilder.Entity("AngularFirst.Models.tr_course_trainer", b =>
                 {
-                    b.Property<string>("course_no1")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("course_no")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("trainer_no1")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasIndex("course_no1");
-
-                    b.HasIndex("trainer_no1");
+                    b.Property<int>("trainer_no")
+                        .HasColumnType("int");
 
                     b.ToTable("tr_course_trainer");
                 });
@@ -699,18 +724,12 @@ namespace AngularFirst.Migrations
                     b.Property<string>("remark")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("resign")
-                        .HasColumnType("bit");
-
                     b.Property<string>("role")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("sname_en")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("status_active")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime>("updated_at")
                         .HasColumnType("datetime2");
@@ -728,10 +747,6 @@ namespace AngularFirst.Migrations
 
             modelBuilder.Entity("AngularFirst.Models.tr_survey_detail", b =>
                 {
-                    b.Property<string>("year")
-                        .HasMaxLength(4)
-                        .HasColumnType("nvarchar(4)");
-
                     b.Property<string>("course_no")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
@@ -751,17 +766,17 @@ namespace AngularFirst.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("emp_no")
+                    b.Property<string>("emp_no1")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("file_name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("month")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("month")
+                        .HasColumnType("int")
+                        .HasComment("เก็บเดือนที่ต้องการเรียน");
 
                     b.Property<DateTime>("updated_at")
                         .HasColumnType("datetime2");
@@ -769,7 +784,12 @@ namespace AngularFirst.Migrations
                     b.Property<string>("updated_by")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("year");
+                    b.Property<string>("year1")
+                        .HasColumnType("nvarchar(4)");
+
+                    b.HasIndex("emp_no1");
+
+                    b.HasIndex("year1");
 
                     b.ToTable("tr_survey_detail");
 
@@ -779,7 +799,13 @@ namespace AngularFirst.Migrations
 
             modelBuilder.Entity("AngularFirst.Models.tr_survey_file", b =>
                 {
-                    b.Property<bool>("approved")
+                    b.Property<int>("file_id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool?>("approved")
+                        .IsRequired()
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("created_at")
@@ -792,14 +818,22 @@ namespace AngularFirst.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("level")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasComment("Level");
+
                     b.Property<string>("organization")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasComment("เก็บ division หรือ department ที่ committee คนนั้นรับผิดชอบ");
 
-                    b.Property<string>("year")
-                        .HasMaxLength(4)
+                    b.Property<string>("year1")
                         .HasColumnType("nvarchar(4)");
+
+                    b.HasKey("file_id");
+
+                    b.HasIndex("year1");
 
                     b.ToTable("tr_survey_file");
 
@@ -837,7 +871,7 @@ namespace AngularFirst.Migrations
                     b.ToTable("tr_survey_setting");
 
                     b
-                        .HasComment("ตารางเก็บ period การ survey");
+                        .HasComment("ตารางเก็บ period การ survey เฉพาะคอร์สของ MTP");
                 });
 
             modelBuilder.Entity("AngularFirst.Models.tr_trainer", b =>
@@ -875,7 +909,7 @@ namespace AngularFirst.Migrations
                     b.Property<string>("remark")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("resign")
+                    b.Property<bool?>("resign")
                         .HasColumnType("bit");
 
                     b.Property<string>("sname_en")
@@ -885,7 +919,7 @@ namespace AngularFirst.Migrations
                     b.Property<string>("sname_th")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("status_active")
+                    b.Property<bool?>("status_active")
                         .HasColumnType("bit");
 
                     b.Property<int>("trainer_type")
@@ -1168,33 +1202,6 @@ namespace AngularFirst.Migrations
                     b.Navigation("parent");
                 });
 
-            modelBuilder.Entity("AngularFirst.Models.tr_course", b =>
-                {
-                    b.HasOne("AngularFirst.Models.tr_course_band", "band")
-                        .WithMany()
-                        .HasForeignKey("bandcourse_no");
-
-                    b.Navigation("band");
-                });
-
-            modelBuilder.Entity("AngularFirst.Models.tr_course_band", b =>
-                {
-                    b.HasOne("AngularFirst.Models.tb_band", "band")
-                        .WithMany()
-                        .HasForeignKey("band1");
-
-                    b.Navigation("band");
-                });
-
-            modelBuilder.Entity("AngularFirst.Models.tr_course_master", b =>
-                {
-                    b.HasOne("AngularFirst.Models.tr_course_master_band", "band")
-                        .WithMany()
-                        .HasForeignKey("bandcourse_no");
-
-                    b.Navigation("band");
-                });
-
             modelBuilder.Entity("AngularFirst.Models.tr_course_registration", b =>
                 {
                     b.HasOne("AngularFirst.Models.tr_course", "course_no")
@@ -1216,28 +1223,33 @@ namespace AngularFirst.Migrations
                         .WithMany()
                         .HasForeignKey("emp_no1");
 
-                    b.HasOne("AngularFirst.Models.tr_course", "year")
+                    b.Navigation("emp_no");
+                });
+
+            modelBuilder.Entity("AngularFirst.Models.tr_survey_detail", b =>
+                {
+                    b.HasOne("AngularFirst.Models.tb_employee", "emp_no")
                         .WithMany()
-                        .HasForeignKey("yearcourse_no");
+                        .HasForeignKey("emp_no1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AngularFirst.Models.tr_survey_setting", "year")
+                        .WithMany()
+                        .HasForeignKey("year1");
 
                     b.Navigation("emp_no");
 
                     b.Navigation("year");
                 });
 
-            modelBuilder.Entity("AngularFirst.Models.tr_course_trainer", b =>
+            modelBuilder.Entity("AngularFirst.Models.tr_survey_file", b =>
                 {
-                    b.HasOne("AngularFirst.Models.tr_course", "course_no")
+                    b.HasOne("AngularFirst.Models.tr_survey_setting", "year")
                         .WithMany()
-                        .HasForeignKey("course_no1");
+                        .HasForeignKey("year1");
 
-                    b.HasOne("AngularFirst.Models.tr_trainer", "trainer_no")
-                        .WithMany()
-                        .HasForeignKey("trainer_no1");
-
-                    b.Navigation("course_no");
-
-                    b.Navigation("trainer_no");
+                    b.Navigation("year");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
