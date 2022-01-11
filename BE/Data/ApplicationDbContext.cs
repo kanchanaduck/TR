@@ -20,51 +20,39 @@ namespace AngularFirst.Data
          protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-          /*   modelBuilder.Entity<tr_course>()
-                .HasMany(c => c.bands)
-                .WithMany(c => c.courses)
-                .UsingEntity<tr_course_band>(
-                    j => j
-                        .HasOne(cb => cb.bands)
-                        .WithMany(b => b.course_band)
-                        .HasForeignKey(cb => cb.bands),
-                    j => j
-                        .HasOne(cb => cb.course)
-                        .WithMany(c => c.course_band)
-                        .HasForeignKey(cb => cb.course_no),
-                    j =>
-                    {
-                        j.HasKey(b => new { b.course_no, b.band });
-                        j.HasIndex(b =>  b.band_text );
-                    } );*/
 
             modelBuilder
-            .Entity<tr_course_master>()
-            .Property(e => e.level)
-            .HasConversion(
-                v => v.ToString(),
-                v => (Level)Enum.Parse(typeof(Level), v));
+                .Entity<tr_course>()
+                .HasMany(p => p.trainers)
+                .WithMany(p => p.courses)
+                .UsingEntity(j => j.ToTable("tr_course_trainer"));
 
             modelBuilder
-            .Entity<tr_course_score>()
-            .Property(e => e.pre_test_grade)
-            .HasConversion(
-                v => v.ToString(),
-                v => (Grade)Enum.Parse(typeof(Grade), v));
+                .Entity<tr_course>()
+                .HasMany(p => p.bands)
+                .WithMany(p => p.courses)
+                .UsingEntity(j => j.ToTable("tr_course_band"));
 
-            modelBuilder
-            .Entity<tr_course_score>()
-            .Property(e => e.post_test_grade)
-            .HasConversion(
-                v => v.ToString(),
-                v => (Grade)Enum.Parse(typeof(Grade), v));
             
             modelBuilder
-            .Entity<tr_course_master>()
-            .Property(e => e.level)
-            .HasConversion(
-                v => v.ToString(),
-                v => (Level)Enum.Parse(typeof(Level), v));
+                .Entity<tr_trainer>()
+                .HasMany(p => p.courses)
+                .WithMany(p => p.trainers)
+                .UsingEntity(j => j.ToTable("tr_course_trainer"));
+
+            modelBuilder
+                .Entity<tb_band>()
+                .HasMany(p => p.courses)
+                .WithMany(p => p.bands)
+                .UsingEntity(j => j.ToTable("tr_course_band"));
+
+            modelBuilder
+                .Entity<tr_course_master>()
+                .HasMany(p => p.bands)
+                .WithMany(p => p.course_masters)
+                .UsingEntity(j => j.ToTable("tr_course_master_band"));
+
+            
 
             modelBuilder
                 .Entity<tb_band>()

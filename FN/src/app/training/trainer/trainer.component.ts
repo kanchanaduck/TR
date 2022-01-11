@@ -78,16 +78,28 @@ export class TrainerComponent implements OnInit {
     };
   }
 
-  fillEmpNo(event: any) { 
+  /* async fillEmpNo(event: any) { 
       let response;
       if(this.emp_no.length==6){
         const body = {
           command: `SELECT * FROM admin.v_emp_data_all_cpt WHERE emp_no='${this.emp_no}' ORDER BY emp_no ASC, band DESC`
         }
-        response = axios.post('http://cptsvs531:1000/middleware/oracle/hrms', body);
+        response = await axios.post('http://cptsvs531:1000/middleware/oracle/hrms', body);
      this.internal_trainer = response;
      console.log(response)
      }
-  }
+  } */
+
+  fillEmpNo(event: any) { 
+    let response;
+    if(this.emp_no.length==6){
+      const body = {
+        command: `SELECT * FROM admin.v_emp_data_all_cpt WHERE emp_no='${this.emp_no}' ORDER BY emp_no ASC, band DESC`
+      }
+      response = axios.post('http://cptsvs531:1000/middleware/oracle/hrms', body);
+   this.internal_trainer = response;
+   console.log(response)
+   }
+}
 
 }

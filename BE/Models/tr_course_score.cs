@@ -14,10 +14,10 @@ namespace AngularFirst.Models
         public tb_employee emp_no { get; set; }
         [Range(0, 100)]
         public int pre_test_score { get; set; }
-        public Grade pre_test_grade { get; set; }
+        public char pre_test_grade { get; set; }
         [Range(0, 100)]
         public int post_test_score { get; set; }
-        public Grade post_test_grade { get; set; }
+        public char post_test_grade { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime created_at { get; set; }
         public string created_by { get; set; }
@@ -26,8 +26,5 @@ namespace AngularFirst.Models
         public DateTime updated_at { get; set; }  
         [Required]
         public string updated_by { get; set; }
-    }
-    public enum Grade{
-        A,B,C,D,E,F
     }
 }

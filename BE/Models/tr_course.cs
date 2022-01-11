@@ -36,11 +36,7 @@ namespace AngularFirst.Models
         public DateTime updated_at { get; set; } 
         public string updated_by { get; set; }
         public bool? status_active { get; set; }
-       /*  public ICollection<tb_band> bands { get; set; }
-        [NotMapped]
-        public List<tr_course_band> course_band { get; } = new List<tr_course_band>();
-        public ICollection<tr_trainer> trainers { get; set; }
-        [NotMapped]        
-        public List<tr_trainer> triner_no { get; } = new List<tr_trainer>(); */
+        public virtual ICollection<tb_band> bands { get; set; }
+        public virtual ICollection<tr_trainer> trainers { get; set; } 
     }
 }

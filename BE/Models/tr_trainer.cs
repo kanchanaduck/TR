@@ -13,30 +13,26 @@ namespace AngularFirst.Models
         public string trainer_no { get; set; }  
         [MaxLength(7)]    
         public string emp_no { get; set; }
-        [Required]
         public string sname_en { get; set; }
-        [Required]
         public string gname_en { get; set; }
-        [Required]
         public string fname_en { get; set; }
         public string sname_th { get; set; }
         public string gname_th { get; set; }
         public string fname_th { get; set; }
         [Required]
-        public TrainerType trainer_type { get; set; }
+        public string trainer_type { get; set; }
         public string organization { get; set; }
         public bool? resign { get; set; }
         public bool? status_active { get; set; }
         public string remark { get; set; }
+        [Column(TypeName = "datetime")]
         public DateTime created_at { get; set; }
         public string created_by { get; set; }
         [Required]
+        [Column(TypeName = "datetime")]
         public DateTime updated_at { get; set; }
         [Required]
         public string updated_by { get; set; }
-    }
-    public enum TrainerType{
-        Internal,
-        External
+        public virtual ICollection<tr_course> courses { get; set; } 
     }
 }

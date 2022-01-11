@@ -56,7 +56,7 @@
             <thead>
                 <tr class="text-uppercase">
                     <th class="text-center">
-                        <input type="checkbox" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()" [attr.aria-label]="checkboxLabel()">
+                        <input type="checkbox">
                     </th>
                     <th>no.</th>
                     <th>course no.</th>
@@ -69,9 +69,9 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let item of data_grid; let i = index">
+                <tr *ngFor="let item of course_master; let i = index">
                     <th class="text-center">
-                        <input type="checkbox" (click)="$event.stopPropagation()" (change)="checkCheckBoxvalue(item,$event)" [checked]="selection.isSelected(item)" [attr.aria-label]="checkboxLabel(item)">
+                        <input type="checkbox">
                     </th>
                     <td>{{ i + 1 }}</td>
                     <td>{{ item.course_no }}</td>
@@ -81,7 +81,7 @@
                     <td>{{ item.days }}</td>
                     <td>{{ item.dept_abb_name }}</td>
                     <td>
-                        <i class="far fa-edit" (click)="fn_edit(item)"></i>
+                        <i class="far fa-edit"></i>
                         <i class="far fa-trash-alt"></i>
                     </td>
                 </tr>
@@ -89,42 +89,4 @@
         </table>
     </div>
 </div>
-
-<ng-template #content let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title text-capitalize" id="modal-basic-title">{{m_title}}</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body text-capitalize">
-        <div class="row">
-            <div class="col-12">course no. (max length 7)
-                <input class="form-control" type="text" #inputCourseNo required minlength="0" maxlength="7">
-            </div>
-        </div>
-        <div class="row pt-2">
-            <div class="col-12">thai course name
-                <input class="form-control" type="text" #inputThaName required minlength="0" maxlength="200">
-            </div>
-        </div>
-        <div class="row pt-2">
-            <div class="col-12">english course name
-                <input class="form-control" type="text" #inputEngName required minlength="0" maxlength="200">
-            </div>
-        </div>
-        <div class="row pt-2">
-            <div class="col-12">days (max length 2)
-                <input class="form-control" type="text" #inputDay required minlength="0" maxlength="2">
-            </div>
-        </div>
-        <div class="row pt-2">
-            <div class="col-12">group<input class="form-control" type="text" readonly="" value="MPL"></div>
-        </div>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-az-primary" (click)="modal.close('Save click')">Save</button>
-        <button type="button" class="btn btn-outline-dark" (click)="modal.close('Close click')">Close</button>
-    </div>
-</ng-template>
 

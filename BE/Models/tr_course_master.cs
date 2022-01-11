@@ -29,7 +29,7 @@ namespace AngularFirst.Models
         public int days { get; set; }
         [Required]        
         public string category { get; set; }
-        public Level level { get; set; }
+        public string level { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime created_at { get; set; } 
         public string created_by { get; set; }
@@ -39,21 +39,6 @@ namespace AngularFirst.Models
         [Required]
         public string updated_by { get; set; }
         public bool? status_active { get; set; }
-        /*  public ICollection<tb_band> band { get; set; }
-       [NotMapped]
-        public List<tr_course_master_band> course_master_band { get; } = new List<tr_course_master_band>(); */
-    }
-    // [JsonConverter(typeof(StringEnumConverter))]
-    public enum Level
-    {
-        // [EnumMember(Value = "None")]
-        None,
-        // [EnumMember(Value = "Basic")]
-        Basic,
-        // [EnumMember(Value = "Intermediate")]
-        Intermediate,
-        // [EnumMember(Value = "Advanced")]
-        Advanced
-        
+        public virtual ICollection<tb_band> bands { get; set; }
     }
 }

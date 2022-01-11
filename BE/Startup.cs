@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using AutoWrapper;
+using System.Text.Json.Serialization;
 
 namespace AngularFirst
 {
@@ -76,7 +77,13 @@ namespace AngularFirst
                 .AddIdentityServerJwt();
 
             services.AddControllersWithViews()
-                .AddJsonOptions(opts => opts.JsonSerializerOptions.PropertyNamingPolicy = null);
+                .AddJsonOptions(opts => opts.JsonSerializerOptions.PropertyNamingPolicy = null)
+                .AddNewtonsoftJson();
+
+            services.AddControllers().AddJsonOptions(opt =>
+            {
+                opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
 
             services.AddMvc(setupAction=> {
                 setupAction.EnableEndpointRouting = false;
