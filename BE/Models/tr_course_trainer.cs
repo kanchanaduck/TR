@@ -10,8 +10,8 @@ namespace AngularFirst.Models
     public class tr_course_trainer
     {
         public string course_no { get; set; }
-        public virtual ICollection<tr_course> courses { get; set; } 
-        public int trainer_no { get; set; }
-        public virtual ICollection<tr_trainer> trainers { get; set; } 
+        public tr_course tr_course { get; set; }
+        public string trainer_no { get; set; }
+        public tr_trainer tr_trainer { get; set; }
     }
 }

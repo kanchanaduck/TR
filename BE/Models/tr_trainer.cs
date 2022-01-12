@@ -33,6 +33,6 @@ namespace AngularFirst.Models
         public DateTime updated_at { get; set; }
         [Required]
         public string updated_by { get; set; }
-        public virtual ICollection<tr_course> courses { get; set; } 
+        public List<tr_course_trainer> tr_course_trainer { get; set; }
     }
 }

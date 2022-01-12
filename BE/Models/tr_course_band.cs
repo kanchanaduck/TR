@@ -9,12 +9,9 @@ namespace AngularFirst.Models
     [Keyless]
     public class tr_course_band
     {
-        [MaxLength(7)]
         public string course_no { get; set; }
-        /* [ForeignKey("courseFK")]
-        public virtual tr_course course { get; set; } */
-        public string band_text { get; set; }
-        /* [ForeignKey("bandFK")]
-        public virtual tb_band band { get; set; } */
+        public tr_course tr_course { get; set; }
+        public string band { get; set; }
+        public tb_band tb_band { get; set; }
     }
 }

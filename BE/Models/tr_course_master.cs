@@ -39,6 +39,6 @@ namespace AngularFirst.Models
         [Required]
         public string updated_by { get; set; }
         public bool? status_active { get; set; }
-        public virtual ICollection<tb_band> bands { get; set; }
+        public List<tr_course_master_band> tr_course_master_band { get; set; }
     }
 }

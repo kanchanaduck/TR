@@ -36,7 +36,7 @@ namespace AngularFirst.Models
         public DateTime updated_at { get; set; } 
         public string updated_by { get; set; }
         public bool? status_active { get; set; }
-        public virtual ICollection<tb_band> bands { get; set; }
-        public virtual ICollection<tr_trainer> trainers { get; set; } 
+        public List<tr_course_band> tr_course_band { get; set; }
+        public List<tr_course_trainer> tr_course_trainer { get; set; }
     }
 }
