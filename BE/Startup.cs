@@ -23,6 +23,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using AutoWrapper;
 using System.Text.Json.Serialization;
+using Oracle.ManagedDataAccess.Client;
 
 namespace AngularFirst
 {
@@ -50,7 +51,10 @@ namespace AngularFirst
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-
+            services.AddDbContext<OracleDbContext>(options =>
+                options.UseOracle(
+                    Configuration.GetConnectionString("OracleConnection")));
+        
             if (Environment.IsDevelopment())
             {
                 Console.WriteLine(Environment.EnvironmentName);
@@ -79,6 +83,9 @@ namespace AngularFirst
             services.AddControllersWithViews()
                 .AddJsonOptions(opts => opts.JsonSerializerOptions.PropertyNamingPolicy = null)
                 .AddNewtonsoftJson();
+
+            services.AddControllers().AddNewtonsoftJson(x => 
+                x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddControllers().AddJsonOptions(opt =>
             {

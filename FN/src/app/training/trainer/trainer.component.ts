@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import axios from 'axios';
+import { Subject } from 'rxjs';
 import { Trainer } from 'src/app/interfaces/trainer';
+import { AppServiceService } from '../../app-service.service';
 
 @Component({
   selector: 'app-trainer',
@@ -13,11 +15,12 @@ export class TrainerComponent implements OnInit {
   external = false;
   emp_no = '';
   internal_trainer: any = {};
+  trainers: any = [];
 
-  constructor(
-  ) { }
+  constructor(private service: AppServiceService) { }
 
   ngOnInit(): void {
+    this.get_trainers()
 
     this.dtOptions = {
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
@@ -62,13 +65,13 @@ export class TrainerComponent implements OnInit {
           },
         ],
       },
-      order: [[5, 'desc']],
+      order: [[7, 'desc']],
       rowGroup: {
-        dataSrc: [ 5 ]
+        dataSrc: [ 7 ]
       },
       columnDefs: [ 
         {
-          targets: [ 0,6,7],
+          targets: [ 0,8,9],
           orderable: false 
         } 
       ],
@@ -78,28 +81,20 @@ export class TrainerComponent implements OnInit {
     };
   }
 
-  /* async fillEmpNo(event: any) { 
-      let response;
-      if(this.emp_no.length==6){
-        const body = {
-          command: `SELECT * FROM admin.v_emp_data_all_cpt WHERE emp_no='${this.emp_no}' ORDER BY emp_no ASC, band DESC`
-        }
-        response = await axios.post('http://cptsvs531:1000/middleware/oracle/hrms', body);
-     this.internal_trainer = response;
-     console.log(response)
-     }
-  } */
-
-  fillEmpNo(event: any) { 
-    let response;
+  async fillEmpNo(event: any) { 
     if(this.emp_no.length==6){
-      const body = {
-        command: `SELECT * FROM admin.v_emp_data_all_cpt WHERE emp_no='${this.emp_no}' ORDER BY emp_no ASC, band DESC`
-      }
-      response = axios.post('http://cptsvs531:1000/middleware/oracle/hrms', body);
-   this.internal_trainer = response;
-   console.log(response)
-   }
-}
+      this.get_employees()
+    }
+  }
+   
+   async get_employees() {
+    this.internal_trainer = await this.service.axios_get(`Employees/${this.emp_no}`);
+    console.log('data: ', this.internal_trainer);
+  }
+
+  async get_trainers() {
+    this.trainers = await this.service.axios_get('Trainers');
+    console.log('data: ', this.trainers);
+  }
 
 }

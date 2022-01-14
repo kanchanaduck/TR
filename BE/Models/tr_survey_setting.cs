@@ -18,11 +18,14 @@ namespace AngularFirst.Models
         [Required]
         [DataType(DataType.Date)]
         public DateTime date_end { get; set; }
-        public DateTime created_at { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime? created_at { get; set; }
         public string created_by { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime updated_at { get { return _date; } set { _date = value; } }
         [Required]
-        public DateTime updated_at { get; set; }  
-        [Required]
-        public string updated_by { get; set; }
+        public string updated_by { get { return _username; } set { _username = value; } }
+        private DateTime _date = DateTime.Now;
+        private string _username = "014496";
     }
 }

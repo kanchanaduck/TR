@@ -12,13 +12,13 @@ namespace AngularFirst.Models
     {
         [MaxLength(4)]
         [Column("year")]
-        public tr_survey_setting year { get; set; }
+        public string year { get; set; }
         [Required]
         public string division { get; set; }
         [Required]
         public string department { get; set; }
         [Required]
-        public tb_employee emp_no { get; set; }
+        public string emp_no { get; set; }
         [Required]
         [Comment("เลขคอร์ส 6 หลัก")]
         public string course_no { get; set; }
@@ -28,10 +28,15 @@ namespace AngularFirst.Models
         public int month { get; set; }
         [Required]
         public string file_name { get; set; }
-        public DateTime created_at { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime? created_at { get; set; }
         public string created_by { get; set; }
-        public DateTime updated_at { get; set; }
-        public string updated_by { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime updated_at { get { return _date; } set { _date = value; } }
+        [Required]
+        public string updated_by { get { return _username; } set { _username = value; } }
+        private DateTime _date = DateTime.Now;
+        private string _username = "014496";
     }
 
 }

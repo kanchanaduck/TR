@@ -8,6 +8,7 @@ namespace AngularFirst.Models
     public class tr_course
     {
         [Key]
+        [MinLength(8)]
         public string course_no { get; set; }
         public string course_name_th { get; set; }
         public string course_name_en { get; set; }
@@ -19,7 +20,7 @@ namespace AngularFirst.Models
         [Column(TypeName = "date")]
         public DateTime date_start { get; set; } 
         [Required]
-         [Column(TypeName = "date")]
+        [Column(TypeName = "date")]
         public DateTime date_end { get; set; } 
         [Required]
         [Column(TypeName = "time")]
@@ -31,12 +32,16 @@ namespace AngularFirst.Models
         public string place { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? created_at { get; set; } 
-        public string created_by { get; set; }
+        public string created_by { get; set; }  
         [Column(TypeName = "datetime")]
-        public DateTime updated_at { get; set; } 
-        public string updated_by { get; set; }
+        public DateTime updated_at { get { return _date; } set { _date = value; } }
+        [Required]
+        public string updated_by { get { return _username; } set { _username = value; } }
         public bool? status_active { get; set; }
-        public List<tr_course_band> tr_course_band { get; set; }
-        public List<tr_course_trainer> tr_course_trainer { get; set; }
+        public List<tr_course_band> courses_bands { get; set; }
+        public List<tr_course_trainer> courses_trainers { get; set; }
+        public List<tr_course_registration> courses_registrations { get; set; }
+        private DateTime _date = DateTime.Now;
+        private string _username = "014496";
     }
 }

@@ -7,12 +7,9 @@ namespace AngularFirst.Models
 {
     public class tb_employee
     {
-        [Column("old_emp_no", Order = 0)]
-        public string old_emp_no { get; set; }
         [Key]
-        [Column("emp_no", Order = 1)]
-        public string emp_no { get; set; }
-        
+        public string emp_no { get; set; }   
+        public string old_emp_no { get; set; }  
         [StringLength(10)]
         public string sname_eng { get; set; }
         [StringLength(30)]
@@ -67,6 +64,7 @@ namespace AngularFirst.Models
         public DateTime? resn_date { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? prob_date { get; set; }
+        public List<tr_course_registration> courses_registrations { get; set; }
     }
 }
 

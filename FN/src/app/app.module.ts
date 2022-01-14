@@ -13,6 +13,7 @@ import { ChartsModule } from 'ng2-charts';
 import { SidebarComponent } from './shared/sidebar/sidebar.component';
 import { BreadcrumbComponent } from './shared/breadcrumb/breadcrumb.component';
 
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { BreadcrumbComponent } from './shared/breadcrumb/breadcrumb.component';
     AppRoutingModule,
     NgbModule,
     ChartsModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent],

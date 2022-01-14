@@ -25,11 +25,12 @@ namespace AngularFirst.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<tr_course_master>>> Gettr_course_master()
         {
-            return await _context.tr_course_master.ToListAsync();
+            return await _context.tr_course_master
+                .Include(e=> e.course_masters_bands).ToListAsync();
         }
 
         // GET: api/CourseMasters/5
-        [HttpGet("{course_no}")]
+        [HttpGet("{q}")]
         public async Task<ActionResult<tr_course_master>> Gettr_course_master(string q)
         { 
             if(q==null){
@@ -122,6 +123,23 @@ namespace AngularFirst.Controllers
         public async Task<ActionResult<tr_course_master>> Posttr_course_master(tr_course_master tr_course_master)
         {
             _context.tr_course_master.Add(tr_course_master);
+            // var cm = new tr_course_master
+            // {
+            //     course_no= "ICD-001",
+            //     course_name_th= "ทดสอบครั้งแรก",
+            //     dept_abb_name= "ICD",
+            //     days= 2,
+            //     course_masters_bands = new List<tr_course_master_band>
+            //     {
+            //         new tr_course_master_band { band = "E" },
+            //         new tr_course_master_band { band = "J1" },
+            //         new tr_course_master_band { band = "J2" },
+            //     }
+            // };
+
+            // _context.tr_course_master.Add(cm);
+            // _context.SaveChanges();
+
             try
             {
                 await _context.SaveChangesAsync();

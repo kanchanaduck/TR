@@ -27,18 +27,21 @@ namespace AngularFirst.Models
         public string prev_course_no { get; set; }
         [Required]
         public int days { get; set; }
-        [Required]        
         public string category { get; set; }
         public string level { get; set; }
         [Column(TypeName = "datetime")]
-        public DateTime created_at { get; set; } 
+        public DateTime? created_at { get; set; } 
         public string created_by { get; set; }
-        [Required]
         [Column(TypeName = "datetime")]
-        public DateTime updated_at { get; set; }
+        public DateTime updated_at { get { return _date; } set { _date = value; } }
         [Required]
-        public string updated_by { get; set; }
+        public string updated_by { get { return _username; } set { _username = value; } }
         public bool? status_active { get; set; }
-        public List<tr_course_master_band> tr_course_master_band { get; set; }
+        public List<tr_course_master_band> course_masters_bands { get; set; }
+        [ForeignKey("prev_course_no")]
+        public virtual tr_course_master prev_course { get; set; }
+        public virtual ICollection<tr_course_master> next_course { get; set; }
+        private DateTime _date = DateTime.Now;
+        private string _username = "014496";
     }
 }

@@ -25,13 +25,11 @@ namespace AngularFirst.Controllers
 
         // GET: api/Menus
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<tb_menus>>> GetMenu()
+        public async Task<ActionResult<IEnumerable<tb_menus>>> Gettb_menus()
         {
-            // return await _context.Menu.ToListAsync();
+            // return await _context.tb_menus.ToListAsync();
             var menu = await _context.tb_menus
                             .Include(e => e.children)
-                              .ThenInclude(c => c.children)
-                              .Where(e => e.parent_menu_code == null)
                             .ToListAsync();      
 
             if (menu.Count <= 0)
@@ -41,10 +39,9 @@ namespace AngularFirst.Controllers
 
             return menu;
         }
-
         // GET: api/Menus/children/<parent_menu_code>
         [HttpGet("children/{id}")]
-        public async Task<ActionResult<IEnumerable<tb_menus>>> GetMenuChildren(string id)
+        public async Task<ActionResult<IEnumerable<tb_menus>>> GetMenuChildren(int id)
         {
             var menu = await _context.tb_menus
                                 .Include(e => e.children)
@@ -62,29 +59,30 @@ namespace AngularFirst.Controllers
 
         // GET: api/Menus/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<tb_menus>> GetMenus(string id)
+        public async Task<ActionResult<tb_menus>> Gettb_menus(int id)
         {
-            var menus = await _context.tb_menus.FindAsync(id);
+            var tb_menus = await _context.tb_menus.Include(e => e.children)
+                        .Where(e => e.parent_menu_code == id ).FirstAsync();
 
-            if (menus == null)
+            if (tb_menus == null)
             {
                 return NotFound();
             }
 
-            return menus;
+            return tb_menus;
         }
 
         // PUT: api/Menus/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMenus(string id, tb_menus menus)
+        public async Task<IActionResult> Puttb_menus(int id, tb_menus tb_menus)
         {
-            if (id != menus.menu_code)
+            if (id != tb_menus.menu_code)
             {
                 return BadRequest();
             }
 
-            _context.Entry(menus).State = EntityState.Modified;
+            _context.Entry(tb_menus).State = EntityState.Modified;
 
             try
             {
@@ -92,7 +90,7 @@ namespace AngularFirst.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!MenusExists(id))
+                if (!tb_menusExists(id))
                 {
                     return NotFound();
                 }
@@ -108,45 +106,31 @@ namespace AngularFirst.Controllers
         // POST: api/Menus
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<tb_menus>> PostMenus(tb_menus menus)
+        public async Task<ActionResult<tb_menus>> Posttb_menus(tb_menus tb_menus)
         {
-            _context.tb_menus.Add(menus);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (MenusExists(menus.menu_code))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            _context.tb_menus.Add(tb_menus);
+            await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetMenus", new { id = menus.menu_code }, menus);
+            return CreatedAtAction("Gettb_menus", new { id = tb_menus.menu_code }, tb_menus);
         }
 
         // DELETE: api/Menus/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMenus(string id)
+        public async Task<IActionResult> Deletetb_menus(int id)
         {
-            var menus = await _context.tb_menus.FindAsync(id);
-            if (menus == null)
+            var tb_menus = await _context.tb_menus.FindAsync(id);
+            if (tb_menus == null)
             {
                 return NotFound();
             }
 
-            _context.tb_menus.Remove(menus);
+            _context.tb_menus.Remove(tb_menus);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool MenusExists(string id)
+        private bool tb_menusExists(int id)
         {
             return _context.tb_menus.Any(e => e.menu_code == id);
         }

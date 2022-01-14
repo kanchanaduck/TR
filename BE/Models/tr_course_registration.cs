@@ -11,22 +11,24 @@ namespace AngularFirst.Models
     {
         [Key]
         public int id { get; set; }
-        public tr_course course_no	{ get; set; }
+        public string course_no	{ get; set; }
+        public tr_course courses { get; set; }
         [Required]
-        public tb_employee emp_no { get; set; }	
+        public string emp_no { get; set; }
+        public tb_employee employees { get; set; }
         [Required]
         public int seq_no { get; set; }
         public string last_status { get; set; }
         public string remark { get; set; }
         [Column(TypeName = "datetime")]
-        public DateTime register_at { get; set; }
+        public DateTime? register_at { get; set; }
         public string register_by { get; set; }
         [Column(TypeName = "datetime")]
-        public DateTime manager_approved_at	 { get; set; }
+        public DateTime? manager_approved_at { get; set; }
         public string manager_approved_by { get; set; }
         public bool? manager_approved_checked { get; set; }
         [Column(TypeName = "datetime")]
-        public DateTime center_approved_at	 { get; set; }
+        public DateTime? center_approved_at	 { get; set; }
         public string center_approved_by { get; set; }
         public bool? center_approved_checked { get; set; }
 

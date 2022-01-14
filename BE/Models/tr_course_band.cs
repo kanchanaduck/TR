@@ -10,8 +10,8 @@ namespace AngularFirst.Models
     public class tr_course_band
     {
         public string course_no { get; set; }
-        public tr_course tr_course { get; set; }
+        public tr_course courses { get; set; }
         public string band { get; set; }
-        public tb_band tb_band { get; set; }
+        public tb_band bands { get; set; }
     }
 }

@@ -28,6 +28,13 @@ namespace AngularFirst.Controllers
             return await _context.tb_employee.ToListAsync();
         }
 
+        // GET: api/Employees/Update
+        [HttpGet("Update")]
+        public async Task<ActionResult<IEnumerable<tb_employee>>> UpdateFromHRMS()
+        {
+            return await _context.tb_employee.ToListAsync();
+        }
+
         // GET: api/Employees/5
         [HttpGet("{id}")]
         public async Task<ActionResult<tb_employee>> GetEmployees(string id)

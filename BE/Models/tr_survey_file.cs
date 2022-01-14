@@ -13,7 +13,7 @@ namespace AngularFirst.Models
         public int file_id { get; set;}
         [MaxLength(4)]
         [Column("year")]
-        public tr_survey_setting year { get; set; }
+        public string year { get; set; }
         [Required]
         public string file_name { get; set; }
         [Required]
@@ -24,8 +24,12 @@ namespace AngularFirst.Models
         [Required]
         [Comment("Level")]
         public string level { get; set; }
-        public DateTime created_at { get; set; }
-        public string created_by { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime created_at { get { return _date; } set { _date = value; } }
+        [Required]
+        public string created_by { get { return _username; } set { _username = value; } }
+        private DateTime _date = DateTime.Now;
+        private string _username = "014496";
     }
 
 }

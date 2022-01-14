@@ -31,37 +31,50 @@ namespace AngularFirst.Data
             
             modelBuilder.Entity<tr_course_trainer>()
                 .HasKey(t => new { t.course_no, t.trainer_no });
+            
+            modelBuilder.Entity<tr_course_registration>()
+                .HasKey(t => new { t.course_no, t.emp_no });
 
             //Relation
 
             modelBuilder.Entity<tr_course_master_band>()
-                .HasOne(mb => mb.tr_course_master)
-                .WithMany(c => c.tr_course_master_band)
+                .HasOne(mb => mb.bands)
+                .WithMany(c => c.course_masters_bands)
                 .HasForeignKey(mb => mb.band);
 
             modelBuilder.Entity<tr_course_master_band>()
-                .HasOne(mb => mb.tr_course_master)
-                .WithMany(b => b.tr_course_master_band)
+                .HasOne(mb => mb.course_masters)
+                .WithMany(b => b.course_masters_bands)
                 .HasForeignKey(mb => mb.course_no);
             
             modelBuilder.Entity<tr_course_band>()
-                .HasOne(mb => mb.tb_band)
-                .WithMany(c => c.tr_course_band)
+                .HasOne(mb => mb.bands)
+                .WithMany(c => c.courses_bands)
                 .HasForeignKey(mb => mb.band);
 
             modelBuilder.Entity<tr_course_band>()
-                .HasOne(mb => mb.tr_course)
-                .WithMany(b => b.tr_course_band)
+                .HasOne(mb => mb.courses)
+                .WithMany(b => b.courses_bands)
                 .HasForeignKey(mb => mb.course_no);
 
             modelBuilder.Entity<tr_course_trainer>()
-                .HasOne(mb => mb.tr_trainer)
-                .WithMany(c => c.tr_course_trainer)
+                .HasOne(mb => mb.trainers)
+                .WithMany(c => c.courses_trainers)
                 .HasForeignKey(mb => mb.trainer_no);
 
             modelBuilder.Entity<tr_course_trainer>()
-                .HasOne(mb => mb.tr_course)
-                .WithMany(b => b.tr_course_trainer)
+                .HasOne(mb => mb.courses)
+                .WithMany(b => b.courses_trainers)
+                .HasForeignKey(mb => mb.course_no);
+
+            modelBuilder.Entity<tr_course_registration>()
+                .HasOne(mb => mb.employees)
+                .WithMany(c => c.courses_registrations)
+                .HasForeignKey(mb => mb.emp_no);
+
+            modelBuilder.Entity<tr_course_registration>()
+                .HasOne(mb => mb.courses)
+                .WithMany(b => b.courses_registrations)
                 .HasForeignKey(mb => mb.course_no);
 
             //Seed data
@@ -78,6 +91,7 @@ namespace AngularFirst.Data
                     new tb_band { band = "M2" },
                     new tb_band { band = "JP" }
                 );
+
         }
         public DbSet<tb_band> tb_band { get; set; }
         public DbSet<tb_employee_role_claims> tb_employee_role_claims { get; set; }

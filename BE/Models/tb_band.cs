@@ -10,7 +10,7 @@ namespace AngularFirst.Models
         [Key]
         public string band { get; set; }
         public bool? status_active { get; set; }
-        public List<tr_course_master_band> tr_course_master_band { get; set; }
-        public List<tr_course_band> tr_course_band { get; set; }
+        public List<tr_course_master_band> course_masters_bands { get; set; }
+        public List<tr_course_band> courses_bands { get; set; }
     }
 }

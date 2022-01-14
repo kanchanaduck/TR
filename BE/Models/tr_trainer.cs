@@ -10,7 +10,7 @@ namespace AngularFirst.Models
     public class tr_trainer
     {
         [Key]
-        public string trainer_no { get; set; }  
+        public int trainer_no { get; set; }  
         [MaxLength(7)]    
         public string emp_no { get; set; }
         public string sname_en { get; set; }
@@ -22,17 +22,17 @@ namespace AngularFirst.Models
         [Required]
         public string trainer_type { get; set; }
         public string organization { get; set; }
-        public bool? resign { get; set; }
         public bool? status_active { get; set; }
         public string remark { get; set; }
         [Column(TypeName = "datetime")]
-        public DateTime created_at { get; set; }
+        public DateTime? created_at { get; set; }
         public string created_by { get; set; }
-        [Required]
         [Column(TypeName = "datetime")]
-        public DateTime updated_at { get; set; }
+        public DateTime updated_at { get { return _date; } set { _date = value; } }
         [Required]
-        public string updated_by { get; set; }
-        public List<tr_course_trainer> tr_course_trainer { get; set; }
+        public string updated_by { get { return _username; } set { _username = value; } }
+        public List<tr_course_trainer> courses_trainers { get; set; }
+        private DateTime _date = DateTime.Now;
+        private string _username = "014496";
     }
 }

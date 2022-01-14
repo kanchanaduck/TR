@@ -12,8 +12,8 @@ namespace AngularFirst.Models
     {
         [MaxLength(7)]
         public string course_no { get; set; }
-        public tr_course_master tr_course_master { get; set; }
+        public tr_course_master course_masters { get; set; }
         public string band { get; set; }
-        public tb_band tb_band { get; set; }
+        public tb_band bands { get; set; }
     }
 }
