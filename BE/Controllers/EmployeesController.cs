@@ -25,7 +25,11 @@ namespace AngularFirst.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<tb_employee>>> GetEmployee()
         {
-            return await _context.tb_employee.ToListAsync();
+            return await _context.tb_employee
+            // .Select(
+            //     employed_status = (emp.resn_date <= DateTime.Today || emp.resn_date is not null) ? "Employed":"Resigned",
+            // )
+            .ToListAsync();
         }
 
         // GET: api/Employees/Update

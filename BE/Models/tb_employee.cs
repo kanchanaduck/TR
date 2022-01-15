@@ -60,10 +60,16 @@ namespace AngularFirst.Models
         public string posn_ename { get; set; }
         [StringLength(100)]
         public string email { get; set; }
-        [Column(TypeName = "datetime")]
+        [Column(TypeName = "date")]
         public DateTime? resn_date { get; set; }
-        [Column(TypeName = "datetime")]
+        [Column(TypeName = "date")]
         public DateTime? prob_date { get; set; }
+        public string employed_status{
+            get
+            {
+                return resn_date==null? "Employed":(resn_date < DateTime.Today) ? "Resigned":"Employed";
+            }
+        }
         public List<tr_course_registration> courses_registrations { get; set; }
     }
 }

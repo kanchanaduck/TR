@@ -122,8 +122,8 @@ namespace AngularFirst.Migrations
                     posn_code = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: true),
                     posn_ename = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    resn_date = table.Column<DateTime>(type: "datetime", nullable: true),
-                    prob_date = table.Column<DateTime>(type: "datetime", nullable: true)
+                    resn_date = table.Column<DateTime>(type: "date", nullable: true),
+                    prob_date = table.Column<DateTime>(type: "date", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -271,12 +271,12 @@ namespace AngularFirst.Migrations
                 name: "tr_course_master",
                 columns: table => new
                 {
-                    course_no = table.Column<string>(type: "nvarchar(7)", maxLength: 7, nullable: false),
+                    course_no = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     course_name_th = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     course_name_en = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     dept_abb_name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     capacity = table.Column<int>(type: "int", nullable: false),
-                    prev_course_no = table.Column<string>(type: "nvarchar(7)", nullable: true),
+                    prev_course_no = table.Column<string>(type: "nvarchar(10)", nullable: true),
                     days = table.Column<int>(type: "int", nullable: false),
                     category = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     level = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -297,32 +297,6 @@ namespace AngularFirst.Migrations
                         onDelete: ReferentialAction.Restrict);
                 },
                 comment: "ตารางเก็บข้อมูลคอร์ส 6 หลัก เพื่อช่วยในการเปิดคอร์ส");
-
-            migrationBuilder.CreateTable(
-                name: "tr_course_registration",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    course_no = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    emp_no = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    seq_no = table.Column<int>(type: "int", nullable: false),
-                    last_status = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    remark = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    register_at = table.Column<DateTime>(type: "datetime", nullable: true),
-                    register_by = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    manager_approved_at = table.Column<DateTime>(type: "datetime", nullable: true),
-                    manager_approved_by = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    manager_approved_checked = table.Column<bool>(type: "bit", nullable: true),
-                    center_approved_at = table.Column<DateTime>(type: "datetime", nullable: true),
-                    center_approved_by = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    center_approved_checked = table.Column<bool>(type: "bit", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_tr_course_registration", x => x.id);
-                },
-                comment: "เปิ้ลอธิบายตารางนี้ให้ฟังหน่อย");
 
             migrationBuilder.CreateTable(
                 name: "tr_course_score",
@@ -440,7 +414,6 @@ namespace AngularFirst.Migrations
                     fname_th = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     trainer_type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     organization = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    resign = table.Column<bool>(type: "bit", nullable: true),
                     status_active = table.Column<bool>(type: "bit", nullable: true),
                     remark = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     created_at = table.Column<DateTime>(type: "datetime", nullable: true),
@@ -585,10 +558,47 @@ namespace AngularFirst.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "tr_course_registration",
+                columns: table => new
+                {
+                    course_no = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    emp_no = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    id = table.Column<int>(type: "int", nullable: false),
+                    seq_no = table.Column<int>(type: "int", nullable: false),
+                    last_status = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    remark = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    register_at = table.Column<DateTime>(type: "datetime", nullable: true),
+                    register_by = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    manager_approved_at = table.Column<DateTime>(type: "datetime", nullable: true),
+                    manager_approved_by = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    manager_approved_checked = table.Column<bool>(type: "bit", nullable: true),
+                    center_approved_at = table.Column<DateTime>(type: "datetime", nullable: true),
+                    center_approved_by = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    center_approved_checked = table.Column<bool>(type: "bit", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tr_course_registration", x => new { x.course_no, x.emp_no });
+                    table.ForeignKey(
+                        name: "FK_tr_course_registration_tb_employee_emp_no",
+                        column: x => x.emp_no,
+                        principalTable: "tb_employee",
+                        principalColumn: "emp_no",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_tr_course_registration_tr_course_course_no",
+                        column: x => x.course_no,
+                        principalTable: "tr_course",
+                        principalColumn: "course_no",
+                        onDelete: ReferentialAction.Cascade);
+                },
+                comment: "เปิ้ลอธิบายตารางนี้ให้ฟังหน่อย");
+
+            migrationBuilder.CreateTable(
                 name: "tr_course_master_band",
                 columns: table => new
                 {
-                    course_no = table.Column<string>(type: "nvarchar(7)", maxLength: 7, nullable: false),
+                    course_no = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     band = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
@@ -734,6 +744,11 @@ namespace AngularFirst.Migrations
                 column: "band");
 
             migrationBuilder.CreateIndex(
+                name: "IX_tr_course_registration_emp_no",
+                table: "tr_course_registration",
+                column: "emp_no");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_tr_course_trainer_trainer_no",
                 table: "tr_course_trainer",
                 column: "trainer_no");
@@ -761,9 +776,6 @@ namespace AngularFirst.Migrations
 
             migrationBuilder.DropTable(
                 name: "PersistedGrants");
-
-            migrationBuilder.DropTable(
-                name: "tb_employee");
 
             migrationBuilder.DropTable(
                 name: "tb_employee_role_claims");
@@ -818,6 +830,9 @@ namespace AngularFirst.Migrations
 
             migrationBuilder.DropTable(
                 name: "tr_course_master");
+
+            migrationBuilder.DropTable(
+                name: "tb_employee");
 
             migrationBuilder.DropTable(
                 name: "tr_course");

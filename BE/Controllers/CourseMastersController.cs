@@ -26,7 +26,10 @@ namespace AngularFirst.Controllers
         public async Task<ActionResult<IEnumerable<tr_course_master>>> Gettr_course_master()
         {
             return await _context.tr_course_master
-                .Include(e=> e.course_masters_bands).ToListAsync();
+                        .Include(e=> e.course_masters_bands)
+                        .Include(e=> e.prev_course)
+                        .Include(e=> e.next_course)
+                        .ToListAsync();
         }
 
         // GET: api/CourseMasters/5

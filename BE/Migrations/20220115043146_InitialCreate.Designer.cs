@@ -10,15 +10,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AngularFirst.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220113111336_TestViewTrainer")]
-    partial class TestViewTrainer
+    [Migration("20220115043146_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.9")
+                .HasAnnotation("ProductVersion", "5.0.11")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("AngularFirst.Models.ApplicationUser", b =>
@@ -198,10 +198,10 @@ namespace AngularFirst.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("prob_date")
-                        .HasColumnType("datetime");
+                        .HasColumnType("date");
 
                     b.Property<DateTime?>("resn_date")
-                        .HasColumnType("datetime");
+                        .HasColumnType("date");
 
                     b.Property<string>("sname_eng")
                         .HasMaxLength(10)
@@ -508,8 +508,8 @@ namespace AngularFirst.Migrations
             modelBuilder.Entity("AngularFirst.Models.tr_course_master", b =>
                 {
                     b.Property<string>("course_no")
-                        .HasMaxLength(7)
-                        .HasColumnType("nvarchar(7)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<int>("capacity")
                         .HasColumnType("int");
@@ -541,7 +541,7 @@ namespace AngularFirst.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("prev_course_no")
-                        .HasColumnType("nvarchar(7)");
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<bool?>("status_active")
                         .HasColumnType("bit");
@@ -566,8 +566,8 @@ namespace AngularFirst.Migrations
             modelBuilder.Entity("AngularFirst.Models.tr_course_master_band", b =>
                 {
                     b.Property<string>("course_no")
-                        .HasMaxLength(7)
-                        .HasColumnType("nvarchar(7)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("band")
                         .HasColumnType("nvarchar(450)");
@@ -584,10 +584,11 @@ namespace AngularFirst.Migrations
 
             modelBuilder.Entity("AngularFirst.Models.tr_course_registration", b =>
                 {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("course_no")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("emp_no")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("center_approved_at")
                         .HasColumnType("datetime");
@@ -598,12 +599,8 @@ namespace AngularFirst.Migrations
                     b.Property<bool?>("center_approved_checked")
                         .HasColumnType("bit");
 
-                    b.Property<string>("course_no")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("emp_no")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("id")
+                        .HasColumnType("int");
 
                     b.Property<string>("last_status")
                         .HasColumnType("nvarchar(max)");
@@ -629,7 +626,9 @@ namespace AngularFirst.Migrations
                     b.Property<int>("seq_no")
                         .HasColumnType("int");
 
-                    b.HasKey("id");
+                    b.HasKey("course_no", "emp_no");
+
+                    b.HasIndex("emp_no");
 
                     b.ToTable("tr_course_registration");
 
@@ -900,9 +899,6 @@ namespace AngularFirst.Migrations
 
                     b.Property<string>("remark")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("resign")
-                        .HasColumnType("bit");
 
                     b.Property<string>("sname_en")
                         .HasColumnType("nvarchar(max)");
@@ -1226,6 +1222,25 @@ namespace AngularFirst.Migrations
                     b.Navigation("course_masters");
                 });
 
+            modelBuilder.Entity("AngularFirst.Models.tr_course_registration", b =>
+                {
+                    b.HasOne("AngularFirst.Models.tr_course", "courses")
+                        .WithMany("courses_registrations")
+                        .HasForeignKey("course_no")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AngularFirst.Models.tb_employee", "employees")
+                        .WithMany("courses_registrations")
+                        .HasForeignKey("emp_no")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("courses");
+
+                    b.Navigation("employees");
+                });
+
             modelBuilder.Entity("AngularFirst.Models.tr_course_trainer", b =>
                 {
                     b.HasOne("AngularFirst.Models.tr_course", "courses")
@@ -1303,6 +1318,11 @@ namespace AngularFirst.Migrations
                     b.Navigation("courses_bands");
                 });
 
+            modelBuilder.Entity("AngularFirst.Models.tb_employee", b =>
+                {
+                    b.Navigation("courses_registrations");
+                });
+
             modelBuilder.Entity("AngularFirst.Models.tb_menus", b =>
                 {
                     b.Navigation("children");
@@ -1311,6 +1331,8 @@ namespace AngularFirst.Migrations
             modelBuilder.Entity("AngularFirst.Models.tr_course", b =>
                 {
                     b.Navigation("courses_bands");
+
+                    b.Navigation("courses_registrations");
 
                     b.Navigation("courses_trainers");
                 });

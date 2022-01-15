@@ -10,7 +10,7 @@ namespace AngularFirst.Models
     [Comment("ตารางจับคู่คอร์สมาสเตอร์และแบนด์")]
     public class tr_course_master_band
     {
-        [MaxLength(7)]
+        [MaxLength(10)]
         public string course_no { get; set; }
         public tr_course_master course_masters { get; set; }
         public string band { get; set; }

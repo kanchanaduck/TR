@@ -26,68 +26,11 @@ namespace AngularFirst.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<tr_trainer>>> Gettr_trainer()
         {
-            /* var trainers =  await _context.tr_trainer
-            .Join(
-                _context.tb_employee,
-                trainer => trainer.emp_no,
-                emp => emp.emp_no,
-                   (trainer, emp)  => new{
-                        emp_no = trainer.emp_no,
-                        sname_en = trainer.sname_en ?? emp.sname_eng,
-                        gname_en = trainer.gname_en?? emp.gname_eng,
-                        fname_en = trainer.fname_en?? emp.fname_eng,
-                        div_abb_name = emp.div_abb_name,
-                        dept_abb_name = emp.dept_abb_name,
-                        organization = trainer.organization,
-                        resign = (emp.resn_date >= DateTime.Today || emp.resn_date==null) ? " Employed":"Resigned",
-                        trainer_type = trainer.trainer_type
-                   }
-            )
-            .ToListAsync(); */
-
-            /* var trainers =  await _context.tr_trainer
-            .GroupJoin(
-                _context.tb_employee,
-                trainer => trainer.emp_no,
-                emp => emp.emp_no,
-                   (trainer, emp)  => new{
-                        trainer = trainer,
-                        emp = emp 
-                   }
-            )
-            .SelectMany(
-                temp => temp.emp.DefaultIfEmpty(), 
-                (temp, emp) => 
-                    new  
-                    {
-                        trainer = temp.trainer, 
-                        emp = emp
-                    }
-            )
-            .ToListAsync(); */
-
-            /* var trainers = await _context.tr_trainer.LeftJoin(
-                _context.tb_employee,
-                trainer => trainer.emp_no,
-                emp => emp.emp_no,
-                (trainer, emp)  => new
-                    {
-                        emp_no = trainer.emp_no,
-                        // sname_en = trainer?.sname_en ?? emp.sname_eng,
-                        // gname_en = trainer?.gname_en?? emp.gname_eng,
-                        // fname_en = trainer?.fname_en?? emp.fname_eng,
-                        div_abb_name = emp?.div_abb_name?? "ICD",
-                        dept_abb_name = emp.dept_abb_name,
-                        organization = trainer.organization,
-                        // resign = (emp?.resn_date >= DateTime.Today || emp?.resn_date==null) ? " Employed":"Resigned",
-                        trainer_type = trainer.trainer_type
-                    }
-                ).ToListAsync(); */
-
             var f = await (from trainer in _context.tr_trainer
             join data in  _context.tb_employee on trainer.emp_no equals data.emp_no into z
             from emp in z.DefaultIfEmpty()
             select new { 
+                    trainer_no = trainer.trainer_no,
                     emp_no = trainer.emp_no,
                     sname_en = trainer.sname_en?? emp.sname_eng,
                     gname_en = trainer.gname_en?? emp.gname_eng,
@@ -95,8 +38,7 @@ namespace AngularFirst.Controllers
                     div_abb_name = emp.div_abb_name,
                     dept_abb_name = emp.dept_abb_name,
                     organization = trainer.organization,
-                    // resign = trainer.trainer_type=="External")? null: ( (emp.resn_date >= DateTime.Today || emp.resn_date==null) ? false:true),
-                    // resign = trainer.trainer_type=="External"? null: (emp.resn_date >= DateTime.Today || emp.resn_date==null) ? false:true,
+                    employed_status = emp.employed_status,
                     trainer_type = trainer.trainer_type
             }).ToListAsync();
 
@@ -153,6 +95,11 @@ namespace AngularFirst.Controllers
         [HttpPost]
         public async Task<ActionResult<tr_trainer>> Posttr_trainer(tr_trainer tr_trainer)
         {
+            if (tr_trainer.trainer_type=="Internal" && trainer_internal_exists(tr_trainer.emp_no))
+            {
+                return Conflict("Data is alredy exists");
+            }
+
             _context.tr_trainer.Add(tr_trainer);
             await _context.SaveChangesAsync();
 
@@ -178,6 +125,10 @@ namespace AngularFirst.Controllers
         private bool tr_trainerExists(int id)
         {
             return _context.tr_trainer.Any(e => e.trainer_no == id);
+        }
+        private bool trainer_internal_exists(string emp_no)
+        {
+            return _context.tr_trainer.Any(e => e.emp_no == emp_no);
         }
     }
 }

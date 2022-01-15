@@ -1,68 +1,98 @@
 <div class="card card-body mb-3">
-    <!-- <h1>{{emp_no}}</h1> -->
+    <form (ngSubmit)="save_trainer()">
     <div class="row text-center">
-        <div class="offset-4 col-2">
-            <label class="rdiobox">
-                <input name="rdio" type="radio" name="type" value="internal" [checked]="!external" (change)="external = false">
-                <span>Internal</span>
-            </label>
-        </div>
-        <div class="col-2">
-            <label class="rdiobox">
-                <input name="rdio" type="radio" name="type" value="external" [checked]="external" (change)="external = true">
-                <span>External</span>
-            </label>
+        <div class="offset-4 col-4">
+            <div class="row">
+                <div class="col">
+                    <label class="rdiobox">
+                    <input name="trainer_type" type="radio" required
+                        value="Internal" 
+                        [(ngModel)]="trainer.trainer_type"
+                        (ngModelChange)="change_trainer_type($event)"
+                        [checked]="trainer.trainer_type=='Internal'"
+                        >
+                    <span>Internal</span>
+                    </label>
+                </div>
+                <div class="col">
+                    <label class="rdiobox">
+                    <input name="trainer_type" type="radio" required
+                        value="External" 
+                        [(ngModel)]="trainer.trainer_type"
+                        (ngModelChange)="change_trainer_type($event)"
+                        [checked]="trainer.trainer_type=='External'"
+                    >
+                    <span>External</span>
+                    </label>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="row">
-        <div class="form-group col mb-0">
+        <div class="form-group col mb-0 p-1">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Emp no.</label>
-            <input type="search" name="emp_no" class="form-control" required 
-                [(ngModel)]="emp_no" 
+            <input type="text" name="emp_no" class="form-control" required 
+                [(ngModel)]="trainer.emp_no" 
                 (keyup)="fillEmpNo($event)" 
-                [disabled]="external">
+                [disabled]="trainer.trainer_type=='External'? true:false">
         </div><!-- form-group -->
-        <div class="form-group col mb-0">
-            <label class="az-content-label tx-11 tx-medium tx-gray-600">Title name</label>
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Title</label>
             <input type="text" name="sname_en" class="form-control" required 
-                [(ngModel)]="internal_trainer.sname_eng" 
-                [disabled]="!external"
+                [(ngModel)]="trainer.sname_eng" 
+                [disabled]="trainer.trainer_type!='External'? true:false"
                 >
         </div><!-- form-group -->
-        <div class="form-group col mb-0">
+        <div class="form-group col mb-0 p-1">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">FIRSTNAME</label>
-            <input type="text" class="form-control" required 
-                [(ngModel)]="internal_trainer.gname_eng" 
-                [disabled]="!external">
+            <input type="text" name="fname_en" class="form-control" required 
+                [(ngModel)]="trainer.gname_eng" 
+                [disabled]="trainer.trainer_type!='External'? true:false">
         </div><!-- form-group -->
-        <div class="form-group col mb-0">
+        <div class="form-group col mb-0 p-1">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">LASTNAME</label>
-            <input type="text" class="form-control" required 
-                [(ngModel)]="internal_trainer.fname_eng" 
-                [disabled]="!external">
+            <input type="text" name="gname_en" class="form-control" required 
+                [(ngModel)]="trainer.fname_eng" 
+                [disabled]="trainer.trainer_type!='External'? true:false">
         </div><!-- form-group -->
-        <div class="form-group col mb-0">
-            <label class="az-content-label tx-11 tx-medium tx-gray-600">Org</label>
-            <input type="text" class="form-control" required 
-                [(ngModel)]="internal_trainer.div_abb_name"
-                [disabled]="!external">
+    </div>
+    <div class="row">
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">DIVISION</label>
+            <input type="text" name="div_abb_name" class="form-control" required 
+                [(ngModel)]="trainer.div_abb_name"
+                [disabled]="true">
         </div><!-- form-group -->
-        <div class="form-group col mb-0">
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">DEPARTMENT</label>
+            <input type="text" name="dept_abb_name" class="form-control" required 
+                [(ngModel)]="trainer.dept_abb_name"
+                [disabled]="true">
+        </div><!-- form-group -->
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">ORGANIZATION</label>
+            <input type="text" name="organization" class="form-control" required 
+                [(ngModel)]="trainer.organization"
+                [disabled]="trainer.trainer_type!='External'? true:false">
+        </div><!-- form-group -->
+        <div class="form-group col mb-0 p-1">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Status</label>
-            <input type="text" class="form-control" required disabled="true"
-                [(ngModel)]="internal_trainer.resn_date"
+            <input type="text" name="employed_status" class="form-control" required disabled="true"
+                [(ngModel)]="trainer.employed_status" 
             >
         </div><!-- form-group -->
-        <div class="form-group col mb-0">
+    </div>
+    <div class="row">
+        <div class="form-group col mb-0 p-1">
             <label class="az-content-label tx-11 tx-medium tx-gray-600"> </label>
             <div>
                 <button type="submit" class="btn btn-az-primary btn-sm">Save</button>
-                <button type="clear" class="btn btn-outline-dark btn-sm">Clear</button>
+                <button type="button" class="btn btn-outline-dark btn-sm" (click)="reset_form_trainer()">Clear</button>
             </div>
         </div><!-- form-group -->
-
     </div>
+    </form>
 </div>
 
 <table datatable [dtOptions]="dtOptions" class="table table-bordered table-hover" id="example">
@@ -91,15 +121,18 @@
             <td class="tx-13">{{ i.sname_en }}</td>
             <td class="tx-13">{{ i.gname_en }}</td>
             <td class="tx-13">{{ i.fname_en }}</td>
-            <td class="tx-13 text-center">{{ (i.div_abb_name==null)?  i.organization:i.div_abb_name+" - "+i.dept_abb_name }}</td>
-            <td class="tx-13 text-center">{{ i.resign }}</td>
+            <td class="tx-13">{{ (i.div_abb_name==null)?  i.organization:i.div_abb_name+" - "+i.dept_abb_name }}</td>
+            <td class="tx-13 text-center"
+                [ngClass]="{'text-danger': i.employed_status === 'Resigned'}">
+                {{ i.employed_status }}
+            </td>
             <td class="tx-13 text-center">{{ i.trainer_type }}</td>
             <td class="tx-13 text-center">
-                <a href=""><i class="far fa-eye"></i></a>
+                <a [routerLink]=""><i class="far fa-eye"></i></a>
             </td>
-            <td class="text-center tx-13 text-center">       
-                <a href=""><i class="far fa-edit"></i></a>
-                <a href=""><i class="far fa-trash-alt"></i></a>
+            <td class="text-center tx-13">       
+                <a [routerLink]="" (click)="edit_trainer($event)"><i class="far fa-edit"></i></a>
+                <a [routerLink]="" (click)="delete_trainer(i.trainer_no)"><i class="far fa-trash-alt"></i></a>
             </td>
         </tr>
     </tbody>

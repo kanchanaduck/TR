@@ -15,7 +15,7 @@ namespace AngularFirst.Models
     public class tr_course_master
     {
         [Key]
-        [MaxLength(7)]
+        [MaxLength(10)]
         public string course_no { get; set; }
         [Required]
         public string course_name_th { get; set; }
