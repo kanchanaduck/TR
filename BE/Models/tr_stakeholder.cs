@@ -14,8 +14,8 @@ namespace AngularFirst.Models
         [MaxLength(7)]
         public string emp_no { get; set; }
         public string role { get; set; }
-        public string organization { get; set; }
-        public string level { get; set; }
+        public string org_code { get; set; }
+        public string level_name { get; set; }
         public string remark { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? created_at { get; set; }
@@ -24,6 +24,8 @@ namespace AngularFirst.Models
         public DateTime updated_at { get { return _date; } set { _date = value; } }
         [Required]
         public string updated_by { get { return _username; } set { _username = value; } }
+        [ForeignKey("org_code")]
+        public virtual tb_organization organization { get; set; }
         private DateTime _date = DateTime.Now;
         private string _username = "014496";
     }

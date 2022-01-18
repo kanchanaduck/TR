@@ -4,14 +4,16 @@ using AngularFirst.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AngularFirst.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220118015101_AddOrganizationTable")]
+    partial class AddOrganizationTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -763,7 +765,7 @@ namespace AngularFirst.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("org_code")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("remark")
                         .HasColumnType("nvarchar(max)");
@@ -779,8 +781,6 @@ namespace AngularFirst.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id");
-
-                    b.HasIndex("org_code");
 
                     b.ToTable("tr_stakeholder");
 
@@ -1321,15 +1321,6 @@ namespace AngularFirst.Migrations
                     b.Navigation("trainers");
                 });
 
-            modelBuilder.Entity("AngularFirst.Models.tr_stakeholder", b =>
-                {
-                    b.HasOne("AngularFirst.Models.tb_organization", "organization")
-                        .WithMany("takeholders")
-                        .HasForeignKey("org_code");
-
-                    b.Navigation("organization");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -1401,8 +1392,6 @@ namespace AngularFirst.Migrations
             modelBuilder.Entity("AngularFirst.Models.tb_organization", b =>
                 {
                     b.Navigation("children_org");
-
-                    b.Navigation("takeholders");
                 });
 
             modelBuilder.Entity("AngularFirst.Models.tr_course", b =>

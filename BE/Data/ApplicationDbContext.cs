@@ -94,6 +94,7 @@ namespace AngularFirst.Data
 
         }
         public DbSet<tb_band> tb_band { get; set; }
+        public DbSet<tb_organization> tb_organization { get; set; }
         public DbSet<tb_employee_role_claims> tb_employee_role_claims { get; set; }
         public DbSet<tb_employee> tb_employee { get; set; }
         public DbSet<tb_menus> tb_menus { get; set; }
@@ -109,5 +110,6 @@ namespace AngularFirst.Data
         public DbSet<tr_survey_file> tr_survey_file{ get; set; }
         public DbSet<tr_survey_setting> tr_survey_setting { get; set; }
         public DbSet<tr_trainer> tr_trainer { get; set; }
+
     }
 }
