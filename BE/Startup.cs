@@ -157,7 +157,7 @@ namespace AngularFirst
                 } 
             );  */
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
             app.UseStaticFiles();
             if (!env.IsDevelopment())
             {
@@ -167,8 +167,8 @@ namespace AngularFirst
             app.UseRouting();
 
             app.UseAuthentication();
-            app.UseIdentityServer();
             app.UseAuthorization();
+            app.UseIdentityServer();
             app.UseStatusCodePages();
             app.UseEndpoints(endpoints =>
             {

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -12,6 +13,34 @@ export class CenterComponent implements OnInit {
 
   ngOnInit(): void {
     this.dtOptions = {
+      "processing": true,
+      ajax: {
+        url: environment.API_URL+"Center",
+        dataSrc: "",
+      },
+      columns:
+      [
+        { 
+          "data": "center_no",
+          "render": function ( data, type, row ) {
+            return `<input type="checkbox" value=${data}>`
+          },
+        },
+        { "data": "emp_no" },
+        { "data": "sname_en" },
+        { "data": "gname_en" },
+        { "data": "fname_en" },
+        { "data": "postion_ename" },
+        { "data": "div_abb_name" },
+        { "data": "dept_abb_name" },
+        { 
+          "data": "center_no",
+          "className": "text-center",
+          "render": function ( data, type, row ) {
+            return `<a href="javascript:;"><i class="far fa-eye"></i></a>`
+          },
+        },
+      ],
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
       "<'row'<'col-sm-12'tr>>" +
       "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
@@ -68,14 +97,14 @@ export class CenterComponent implements OnInit {
           }
         ],
       },
-      order: [[0, 'desc'], [4, 'asc']],
+      order: [ [1, 'asc']],
       /* rowGroup: {
         dataSrc: [ 1 ]
       }, */
-      /* columnDefs: [ {
-        targets: [ 5 ],
-        visible: false
-      } ], */
+      columnDefs: [ {
+        targets: [ 0, 8 ],
+        "orderable": false
+      } ],
 
       container: "#example_wrapper .col-md-6:eq(0)",
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
