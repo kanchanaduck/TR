@@ -20,7 +20,13 @@ namespace AngularFirst
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
-                });
+                    // webBuilder//.UseStartup<Startup>();            
+                    webBuilder.ConfigureKestrel(serverOptions =>
+                    {
+                        // Set properties and call methods on options
+                    })
+                    .UseIISIntegration()
+                    .UseStartup<Startup>();
+                        });
     }
 }

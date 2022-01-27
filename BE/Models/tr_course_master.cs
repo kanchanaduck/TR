@@ -18,7 +18,13 @@ namespace AngularFirst.Models
         [MaxLength(10)]
         public string course_no { get; set; }
         [Required]
+        [RegularExpression(@"^[\p{N}\p{P}\p{Sm}\p{IsThai}]+$", 
+        ErrorMessage = "Characters are not allowed.")]
         public string course_name_th { get; set; }
+        // [RegularExpression(@"^[\P{L}\p{N}\p{P}\p{Sm}]+$",
+        
+        [RegularExpression(@"^(([A-za-z]+[\s]{1}[A-za-z]+)|([A-Za-z]+))$",
+        ErrorMessage = "Characters are not allowed.")]
         public string course_name_en { get; set; }
         [Required]
         public string dept_abb_name { get; set; }

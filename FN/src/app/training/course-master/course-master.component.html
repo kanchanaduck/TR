@@ -1,64 +1,95 @@
 <div class="card card-body">
+    <form (ngSubmit)="save_course_master()">
     <div class="row">
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Course no.</label>
-            <input type="text" class="form-control" required>
+            <input type="text" name="course.course_no" class="form-control" required 
+                [(ngModel)]="course.course_no" >
         </div><!-- form-group -->
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Thai Name</label>
-            <input type="text" class="form-control" required>
+            <input type="text" name="course.course_name_th" class="form-control" required 
+                [(ngModel)]="course.course_name_th" >
         </div><!-- form-group -->
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">English Name</label>
-            <input type="text" class="form-control" required>
+            <input type="text" name="course.course_name_en" class="form-control" required 
+                [(ngModel)]="course.course_name_en" >
         </div><!-- form-group -->
     </div>
     
     <div class="row">
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Group</label>
-            <input type="text" class="form-control" required>
+            <input type="text" name="course.dept_abb_name" class="form-control" required 
+                [(ngModel)]="course.dept_abb_name" >
         </div><!-- form-group -->
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Capacity</label>
-            <input type="text" class="form-control" required>
+            <input type="number" name="course.capacity" class="form-control"
+                [(ngModel)]="course.capacity" >
         </div><!-- form-group -->
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Required course</label>
-            <input type="text" class="form-control" required>
+            <!-- <input type="text" name="course.prev_course_no" class="form-control"
+                [(ngModel)]="course.prev_course_no" > -->
         </div><!-- form-group -->
     </div>
 
     <div class="row">
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Day</label>
-            <input type="text" class="form-control" required>
+            <input type="text" name="course.day" class="form-control"
+            [(ngModel)]="course.day" >
         </div><!-- form-group -->
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Category</label>
-            <input type="text" class="form-control" required>
+            <input type="text" name="course.category" class="form-control"
+            [(ngModel)]="course.category" >
         </div><!-- form-group -->
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Level</label>
-            <input type="text" class="form-control" required>
+            <input type="text" name="course.level" class="form-control"
+            [(ngModel)]="course.level" >
         </div><!-- form-group -->
-        <div class="form-group col mb-0">
+        <div class="form-group col-5 mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Band</label>
-            <input type="text" class="form-control" required>
+            <div class="form-row">
+                <!-- <label class="ckbox" *ngFor="let band of bands">
+                    <input type="checkbox"
+                    name="selectedFruits[]"
+                    value="{{band.band}}"
+                    ng-checked="selection.indexOf(fruitName) > -1"
+                    ng-click="toggleSelection(fruitName)"><span>{{band.band}}</span>
+                </label> -->
+                <label class="ckbox" *ngFor="let band of bands">
+                    <input type="checkbox" value="{{band.band}}"><span>{{band.band}}</span>
+                </label>
+            </div>
         </div><!-- form-group -->
     </div>
+
+    <div class="row">
+        <div class="form-group col text-right">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600"> </label>
+            <div>
+                <button type="submit" class="btn btn-az-primary btn-sm">Save</button>
+                <button type="reset" class="btn btn-outline-dark btn-sm">Clear</button>
+            </div>
+        </div><!-- form-group -->
+    </div>
+</form>
 </div>
 
 
 <div class="row pt-2">
     <div class="col-12">
-        <table datatable [dtOptions]="dtOptions" class="table table-bordered table-hover" id="example">
+        <table datatable [dtOptions]="dtOptions" class="table table-bordered table-hover w-100" id="example">
             <thead>
                 <tr class="text-uppercase">
                     <th class="text-center">
                         <input type="checkbox">
                     </th>
-                    <th>no.</th>
                     <th>course no.</th>
                     <th>thai course name</th>
                     <th>english course name</th>
@@ -68,24 +99,6 @@
                     <th>Manage</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr *ngFor="let item of course_master; let i = index">
-                    <th class="text-center">
-                        <input type="checkbox">
-                    </th>
-                    <td>{{ i + 1 }}</td>
-                    <td>{{ item.course_no }}</td>
-                    <td>{{ item.course_name_th }}</td>
-                    <td>{{ item.course_name_en }}</td>
-                    <td>{{ item.category }}</td>
-                    <td>{{ item.days }}</td>
-                    <td>{{ item.dept_abb_name }}</td>
-                    <td>
-                        <i class="far fa-edit"></i>
-                        <i class="far fa-trash-alt"></i>
-                    </td>
-                </tr>
-            </tbody>
         </table>
     </div>
 </div>

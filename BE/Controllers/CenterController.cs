@@ -94,6 +94,16 @@ namespace AngularFirst.Controllers
         [HttpPost]
         public async Task<ActionResult<tr_center>> Posttr_center(tr_center tr_center)
         {
+            if (center_exists(tr_center.emp_no))
+            {
+                return Conflict("Data is alredy exists");
+            }
+
+            if(!center_is_in_employees(tr_center.emp_no))
+            {
+                return NotFound("Not found this employee");
+            }
+
             _context.tr_center.Add(tr_center);
             await _context.SaveChangesAsync();
 
@@ -120,5 +130,14 @@ namespace AngularFirst.Controllers
         {
             return _context.tr_center.Any(e => e.center_no == id);
         }
+        private bool center_exists(string emp_no)
+        {
+            return _context.tr_center.Any(e => e.emp_no == emp_no);
+        }
+        private bool center_is_in_employees(string emp_no)
+        {
+            return _context.tb_employee.Any(e => e.emp_no == emp_no);
+        }
+
     }
 }

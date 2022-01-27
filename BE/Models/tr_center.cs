@@ -11,7 +11,8 @@ namespace AngularFirst.Models
     {
         [Key]
         public int center_no { get; set; }  
-        [MaxLength(7)]    
+        [MaxLength(7)]
+        [Required]
         public string emp_no { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? created_at { get; set; }

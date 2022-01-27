@@ -47,7 +47,7 @@ namespace AngularFirst.Controllers
 
             if (employees == null)
             {
-                return NotFound();
+                return NotFound("Data is not found");
             }
 
             return employees;
@@ -125,7 +125,7 @@ namespace AngularFirst.Controllers
             return NoContent();
         }
 
-        private bool EmployeesExists(string id)
+        public bool EmployeesExists(string id)
         {
             return _context.tb_employee.Any(e => e.emp_no == id);
         }

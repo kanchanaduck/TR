@@ -7,9 +7,10 @@
   display: block;
   line-height: 1;
   margin-bottom: 0;
+  margin-right: 3px;
 
   span {
-    padding-left: 15px;
+    padding-left: 5px;
 
     &:empty { float: left; }
 

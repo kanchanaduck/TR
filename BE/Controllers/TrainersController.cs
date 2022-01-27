@@ -49,14 +49,31 @@ namespace AngularFirst.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<tr_trainer>> Gettr_trainer(int id)
         {
-            var tr_trainer = await _context.tr_trainer.FindAsync(id);
+            // var tr_trainer = await _context.tr_trainer.FindAsync(id);
+            var tr_trainer = await (from trainer in _context.tr_trainer
+            join data in  _context.tb_employee on trainer.emp_no equals data.emp_no into z
+                        from emp in z.DefaultIfEmpty()
+            select new { 
+                    trainer_no = trainer.trainer_no,
+                    emp_no = trainer.emp_no,
+                    sname_en = trainer.sname_en?? emp.sname_eng,
+                    gname_en = trainer.gname_en?? emp.gname_eng,
+                    fname_en = trainer.fname_en?? emp.fname_eng,
+                    div_abb_name = emp.div_abb_name,
+                    dept_abb_name = emp.dept_abb_name,
+                    organization = trainer.organization,
+                    employed_status = emp.employed_status,
+                    trainer_type = trainer.trainer_type
+            })
+            .Where(trainer => trainer.trainer_no == id)
+            .SingleOrDefaultAsync();
 
             if (tr_trainer == null)
             {
                 return NotFound();
             }
 
-            return tr_trainer;
+            return Ok(tr_trainer);
         }
 
         // PUT: api/Trainers/5
@@ -77,7 +94,7 @@ namespace AngularFirst.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!tr_trainerExists(id))
+                if (!trainer_exists(id))
                 {
                     return NotFound();
                 }
@@ -95,15 +112,37 @@ namespace AngularFirst.Controllers
         [HttpPost]
         public async Task<ActionResult<tr_trainer>> Posttr_trainer(tr_trainer tr_trainer)
         {
-            if (tr_trainer.trainer_type=="Internal" && trainer_internal_exists(tr_trainer.emp_no))
+            if (tr_trainer.trainer_type=="External")
             {
-                return Conflict("Data is alredy exists");
+               if(trainer_exists(tr_trainer.trainer_no))
+               {
+                    Console.WriteLine("Update trainer");
+                    _context.Entry(tr_trainer).State = EntityState.Modified;
+                    await _context.SaveChangesAsync();
+                    return NoContent();
+               }
+               else
+               {
+                    Console.WriteLine("External trainer add");
+                    _context.tr_trainer.Add(tr_trainer);
+                    await _context.SaveChangesAsync(); 
+                    return CreatedAtAction("Gettr_trainer", new { id = tr_trainer.trainer_no }, tr_trainer);
+               }
             }
-
-            _context.tr_trainer.Add(tr_trainer);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("Gettr_trainer", new { id = tr_trainer.trainer_no }, tr_trainer);
+            else
+            {
+                if(trainer_internal_exists(tr_trainer.emp_no))
+                {
+                    return Conflict("Internal trainer is prevented to create duplicate or update data.");
+                }
+                else
+                {
+                    Console.WriteLine("Internal trainer add");
+                    _context.tr_trainer.Add(tr_trainer);
+                    await _context.SaveChangesAsync(); 
+                    return CreatedAtAction("Gettr_trainer", new { id = tr_trainer.trainer_no }, tr_trainer);
+                }
+            }
         }
 
         // DELETE: api/Trainers/5
@@ -122,13 +161,17 @@ namespace AngularFirst.Controllers
             return NoContent();
         }
 
-        private bool tr_trainerExists(int id)
+        private bool trainer_exists(int id)
         {
             return _context.tr_trainer.Any(e => e.trainer_no == id);
         }
         private bool trainer_internal_exists(string emp_no)
         {
             return _context.tr_trainer.Any(e => e.emp_no == emp_no);
+        }
+        public bool employee_exists(string emp_no)
+        {
+            return _context.tb_employee.Any(e => e.emp_no == emp_no);
         }
     }
 }

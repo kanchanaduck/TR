@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import axios from 'axios';
 import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
 
@@ -8,7 +9,10 @@ import Swal from 'sweetalert2';
   styleUrls: ['./center.component.scss']
 })
 export class CenterComponent implements OnInit {
-  dtOptions: any = {};
+
+  center: any = {};
+  errors: any;
+
   constructor() { }
 
   ngOnInit(): void {
@@ -22,6 +26,7 @@ export class CenterComponent implements OnInit {
       [
         { 
           "data": "center_no",
+          "className": "text-center",
           "render": function ( data, type, row ) {
             return `<input type="checkbox" value=${data}>`
           },
@@ -33,11 +38,12 @@ export class CenterComponent implements OnInit {
         { "data": "postion_ename" },
         { "data": "div_abb_name" },
         { "data": "dept_abb_name" },
+        { "data": "employed_status" },
         { 
           "data": "center_no",
           "className": "text-center",
           "render": function ( data, type, row ) {
-            return `<a href="javascript:;"><i class="far fa-eye"></i></a>`
+            return `<a href="javascript:;"><i class="far fa-trash-alt"></i></a>`
           },
         },
       ],
@@ -66,7 +72,7 @@ export class CenterComponent implements OnInit {
           },
           "button": {
             tag: "button",
-            className: "btn btn-outline-indigo"
+            className: "btn btn-outline-indigo btn-sm"
           },
         },
         "buttons": [
@@ -81,28 +87,13 @@ export class CenterComponent implements OnInit {
                     extend: 'excel',
                     text: '<i class="far fa-file-excel"></i> Excel</button>',
                 },
-                {
-                    text: '<i class="far fa-file-excel"></i> History</button>',
-                    action: function ( e, dt, node, config ) {
-                       alert('เอาไว้ดาวน์โหลดประวัติการสอนค่าาา')
-                    }
-                },
             ]
           },
-          {
-            text: '<i class="fas fa-plus"></i> New</button>',
-            action: () => {
-              console.log()
-            }
-          }
         ],
       },
       order: [ [1, 'asc']],
-      /* rowGroup: {
-        dataSrc: [ 1 ]
-      }, */
       columnDefs: [ {
-        targets: [ 0, 8 ],
+        targets: [ 0, 9 ],
         "orderable": false
       } ],
 
@@ -112,26 +103,140 @@ export class CenterComponent implements OnInit {
 
   }
 
-  
-  fn_delete() {
-    // console.log('fn_delete', item);
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'you want to delete this record',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes',
-      cancelButtonText: 'No'
-    }).then(async (result) => {
-      if (result.value) {
-        // let datas = {
-        //   "id": dt.id,
-        //   "confirm_by": this.user
-        // }
-        // //console.log("btndelete data:", datas)
-      }
-    })
+  dtOptions: any = {};
+  barChartData = [{
+    label: '# of Votes',
+    data: [12, 39, 20, 10, 55, 18],
+  }];
 
+  barChartColors = [
+    {
+      backgroundColor: '#560bd0'
+    }
+  ];
+
+  barChartLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+
+  barChartOptions = {
+    scales: {
+      yAxes: [{
+        ticks: {
+          beginAtZero: true,
+          fontSize: 10,
+          min:0,
+          max: 80
+        }
+      }],
+      xAxes: [{
+        barPercentage: 0.6,
+        ticks: {
+          beginAtZero:true,
+          fontSize: 11
+        }
+      }]
+    },
+    legend: {
+      display: false
+    },
+    elements: {
+      point: {
+        radius: 0
+      }
+    }
+  };
+
+
+
+   async save_center() {  
+    const instance = axios.create({
+      baseURL: environment.API_URL,
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        'Content-Type': 'application/json'
+      }
+    });
+    await instance.post('Center',this.center)
+    .then(function (response) {
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: "Success",
+        showConfirmButton: false,
+        timer: 2000
+      })
+    })
+    .catch(function (error) {
+      Swal.fire({
+        icon: 'error',
+        title: error.response.status,
+        text: error.response.data
+      })
+      this.center = {};
+    });
+  }
+
+  async delete_center() { 
+    const instance = axios.create({
+      baseURL: environment.API_URL,
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        'Content-Type': 'application/json'
+      }
+    });
+    const response = await instance.delete('Center',this.center);
+  }
+
+  async reset_form_center() { 
+    this.center = {};
+  }
+
+
+  async fillEmpNo(event: any) { 
+    if(this.center.emp_no.length>=6){
+      this.get_employee()
+    }
+  }
+   
+   async get_employee() {
+    try {
+      const response = await axios.get(`${environment.API_URL}Employees/${this.center.emp_no}`);
+      console.log(response);
+      this.center = response
+    } catch (error) {
+      Swal.fire({
+            icon: 'error',
+            title: error.response.status,
+            text: error.response.data
+          })
+          this.center = {};
+      console.error(error);
+    }
+    /* axios.get(`${environment.API_URL}Employees/${this.center.emp_no}`)
+    .then(function (response) {
+        console.log(response)
+        this.center = response
+      }) 
+    .catch(function (error) {
+      console.log(error);
+    }); */
+
+      // await axios.get(`${environment.API_URL}Employees/${this.center.emp_no}`)
+      // .then(function (response) {
+      //   console.log(response)
+      //   this.center = response
+      // }) 
+      // .catch(function (error) {
+      //   console.log(error)
+      //   // this.reset_form_center()
+      //   /* Swal.fire({
+      //     icon: 'error',
+      //     title: error.response.status,
+      //     text: error.response.data
+      //   }) */
+      // }) 
   }
 
 }
+
+

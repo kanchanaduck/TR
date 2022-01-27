@@ -1,9 +1,77 @@
-<div class="card card-info card-body p-2 mb-3">
+<!-- <div class="card card-info card-body p-2 mb-3">
     <div>The Center is responsible for approving the final course registration and being able to see the learning and teaching information of students and teachers for the whole company</div>
     <div>Center มีหน้าที่เพื่อ approve การลงทะเบียนคอร์สในขั้นตอนสุดท้าย และสามารถมองเห็นข้อมูลการเรียนและสอนของผู้เรียนและผู้สอนได้ทั้งบริษัท</div>
+</div> -->
+
+<!-- <ngb-alert [type]="outline-info" [dismissible]="true">
+    The Center is responsible for approving the final course registration and being able to see the learning and teaching information of students 
+    and teachers for the whole company
+</ngb-alert> -->
+
+<div class="card card-body mb-3">
+    <form (ngSubmit)="save_center()">
+    <div class="row">
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Emp no.</label>
+            <input type="text" name="emp_no" class="form-control" required 
+                [(ngModel)]="center.emp_no" 
+                (keyup)="fillEmpNo($event)" >
+        </div><!-- form-group -->
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Title</label>
+            <select type="text" name="sname_en" class="form-control" required 
+                [(ngModel)]="center.sname_eng" 
+                [disabled]="true"
+                >
+                <option>MR.</option>
+                <option>MRS.</option>
+                <option>MISS</option>
+                </select>
+        </div><!-- form-group -->
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">FIRSTNAME</label>
+            <input type="text" name="fname_en" class="form-control" required 
+                [(ngModel)]="center.gname_eng" 
+                [disabled]="true">
+        </div><!-- form-group -->
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">LASTNAME</label>
+            <input type="text" name="gname_en" class="form-control" required 
+                [(ngModel)]="center.fname_eng" 
+                [disabled]="true">
+        </div><!-- form-group -->
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">DIVISION</label>
+            <input type="text" name="div_abb_name" class="form-control" required 
+                [(ngModel)]="center.div_abb_name"
+                [disabled]="true">
+        </div><!-- form-group -->
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">DEPARTMENT</label>
+            <input type="text" name="dept_abb_name" class="form-control" required 
+                [(ngModel)]="center.dept_abb_name"
+                [disabled]="true">
+        </div><!-- form-group -->
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Status</label>
+            <input type="text" name="employed_status" class="form-control" required disabled="true"
+                [(ngModel)]="center.employed_status" 
+            >
+        </div><!-- form-group -->
+    <!-- </div>
+    <div class="row"> -->
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600"> </label>
+            <div>
+                <button type="submit" class="btn btn-az-primary btn-sm">Save</button>
+                <button type="button" class="btn btn-outline-dark btn-sm" (click)="reset_form_center()">Clear</button>
+            </div>
+        </div><!-- form-group -->
+    </div>
+    </form>
 </div>
 
-<table datatable [dtOptions]="dtOptions" class="table table-bordered table-hover" id="example">
+<table datatable [dtOptions]="dtOptions" class="table table-bordered table-hover w-100" id="example">
     <thead>
         <tr>
             <th class="text-center"></th>
@@ -14,6 +82,7 @@
             <th class="text-center">POSITION NAME</th>
             <th class="text-center">DIVISION</th>
             <th class="text-center">DEPARTMENT</th>
+            <th class="text-center">STATUS</th>
             <th class="text-center">MANAGE</th>
         </tr>
     </thead>

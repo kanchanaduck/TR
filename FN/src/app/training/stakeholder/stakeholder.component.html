@@ -1,165 +1,85 @@
+<div class="card card-body mb-3">
+  <form (ngSubmit)="save_stakeholder()">
+  <div class="row">
+      <div class="form-group col mb-0 p-1">
+          <label class="az-content-label tx-11 tx-medium tx-gray-600">Division</label>
+          <input type="text" name="division" class="form-control" required 
+              [(ngModel)]="stakeholder.division" 
+              [disabled]="stakeholder.stakeholder_type=='External'? true:false">
+          <!-- <p class="text-danger" *ngIf="errors">{{ errors.division }}</p> -->
+      </div><!-- form-group -->
+      <div class="form-group col mb-0 p-1">
+          <label class="az-content-label tx-11 tx-medium tx-gray-600">Department</label>
+          <select type="text" name="department" class="form-control" required 
+              [(ngModel)]="stakeholder.department" 
+              [disabled]="stakeholder.stakeholder_type!='External'? true:false"
+              >
+              <option>MR.</option>
+              <option>MRS.</option>
+              <option>MISS</option>
+              </select>
+      </div><!-- form-group -->
+      <div class="form-group col mb-0 p-1">
+          <label class="az-content-label tx-11 tx-medium tx-gray-600">committee</label>
+          <input type="text" name="fname_en" class="form-control" required 
+              [(ngModel)]="stakeholder.committee" 
+              [disabled]="stakeholder.stakeholder_type!='External'? true:false">
+      </div><!-- form-group -->
+      <div class="form-group col mb-0 p-1">
+          <label class="az-content-label tx-11 tx-medium tx-gray-600">approver</label>
+          <input type="text" name="gname_en" class="form-control" required 
+              [(ngModel)]="stakeholder.approver" 
+              [disabled]="stakeholder.stakeholder_type!='External'? true:false">
+      </div><!-- form-group -->
+  </div>
+  <!-- 
+  <div class="row">
+      <div class="form-group col text-right">
+          <label class="az-content-label tx-11 tx-medium tx-gray-600"> </label>
+          <div>
+              <button type="submit" class="btn btn-az-primary btn-sm">Save</button>
+              <button type="button" class="btn btn-outline-dark btn-sm" (click)="reset_form_stakeholder()">Clear</button>
+          </div>
+      </div>
+  </div> -->
+  </form>
+</div>
 
-<table datatable [dtOptions]="dtOptions" class="table table-bordered table-hover w-100" id="example">
+
+<table datatable [dtOptions]="dtOptions" class="table table-bordered table-hover" id="example">
     <thead>
         <tr>
             <th class="text-center">ORGANIZATION NAME</th>
             <th class="text-center">LEVEL</th>
             <th class="text-center">COMMITTEE</th>
             <th class="text-center">APPROVER (MGR.)</th>
-            <th class="text-center">CC</th>
             <th class="text-center">MANAGE</th>
         </tr>
     </thead>
-    <!-- <tbody>   
-        <tr class="bg-gray-400 tx-bold">
-            <td class="tx-13">ACC</td>
-            <td class="tx-13">Division</td>
-            <td class="tx-13 text-center">COMMITTEE NAME</td>
-            <td class="tx-13 text-center">APPROVER NAME</td>
-            <td class="tx-13 text-center">CC NAME</td>
-            <td class="text-center tx-13">       
-                <a href=""><i class="far fa-edit"></i></a>
-            </td>
-        </tr>
-        <tr>
-            <td class="tx-13 pl-5">ACC - ACC</td>
-            <td class="tx-13">Department</td>
-            <td class="tx-13 text-center">COMMITTEE NAME</td>
-            <td class="tx-13 text-center">APPROVER NAME</td>
-            <td class="tx-13 text-center">CC NAME</td>
-            <td class="text-center tx-13">       
-                <a href=""><i class="far fa-edit"></i></a>
-            </td>
-        </tr>   
-        <tr class="bg-gray-400 tx-bold">
-            <td class="tx-13">CAO</td>
-            <td class="tx-13">Division</td>
-            <td class="tx-13 text-center">COMMITTEE NAME</td>
-            <td class="tx-13 text-center">APPROVER NAME</td>
-            <td class="tx-13 text-center">CC NAME</td>
-            <td class="text-center tx-13">       
-                <a href=""><i class="far fa-edit"></i></a>
-            </td>
-        </tr>
-        <tr>
-            <td class="tx-13 pl-5">CAO - CAO</td>
-            <td class="tx-13">Department</td>
-            <td class="tx-13 text-center">COMMITTEE NAME</td>
-            <td class="tx-13 text-center">APPROVER NAME</td>
-            <td class="tx-13 text-center">CC NAME</td>
-            <td class="text-center tx-13">       
-                <a href=""><i class="far fa-edit"></i></a>
-            </td>
-        </tr>   
-        <tr class="bg-gray-400 tx-bold">
-            <td class="tx-13">CPD</td>
-            <td class="tx-13">Division</td>
-            <td class="tx-13 text-center">COMMITTEE NAME</td>
-            <td class="tx-13 text-center">APPROVER NAME</td>
-            <td class="tx-13 text-center">CC NAME</td>
-            <td class="text-center tx-13">       
-                <a href=""><i class="far fa-edit"></i></a>
-            </td>
-        </tr>
-        <tr>
-            <td class="tx-13 pl-5">CPD - ICD</td>
-            <td class="tx-13">Department</td>
-            <td class="tx-13 text-center">COMMITTEE NAME</td>
-            <td class="tx-13 text-center">APPROVER NAME</td>
-            <td class="tx-13 text-center">CC NAME</td>
-            <td class="text-center tx-13">       
-                <a href=""><i class="far fa-edit"></i></a>
-            </td>
-        </tr>
-        <tr>
-            <td class="tx-13 pl-5">CPD - MPL</td>
-            <td class="tx-13">Department</td>
-            <td class="tx-13 text-center">COMMITTEE NAME</td>
-            <td class="tx-13 text-center">APPROVER NAME</td>
-            <td class="tx-13 text-center">CC NAME</td>
-            <td class="text-center tx-13">       
-                <a href=""><i class="far fa-edit"></i></a>
-            </td>
-        </tr>
-        <tr>
-            <td class="tx-13 pl-5">CPD - MTP</td>
-            <td class="tx-13">Department</td>
-            <td class="tx-13 text-center">COMMITTEE NAME</td>
-            <td class="tx-13 text-center">APPROVER NAME</td>
-            <td class="tx-13 text-center">CC NAME</td>
-            <td class="text-center tx-13">       
-                <a href=""><i class="far fa-edit"></i></a>
-            </td>
-        </tr>
-        <tr>
-            <td class="tx-13 pl-5">CPD - PIA</td>
-            <td class="tx-13">Department</td>
-            <td class="tx-13 text-center">COMMITTEE NAME</td>
-            <td class="tx-13 text-center">APPROVER NAME</td>
-            <td class="tx-13 text-center">CC NAME</td>
-            <td class="text-center tx-13">       
-                <a href=""><i class="far fa-edit"></i></a>
-            </td>
-        </tr>
-        <tr class="bg-gray-400 tx-bold">
-            <td class="tx-13">MFG1</td>
-            <td class="tx-13">Division</td>
-            <td class="tx-13 text-center">COMMITTEE NAME</td>
-            <td class="tx-13 text-center">APPROVER NAME</td>
-            <td class="tx-13 text-center">CC NAME</td>
-            <td class="text-center tx-13">       
-                <a href=""><i class="far fa-edit"></i></a>
-            </td>
-        </tr>
-        <tr>
-            <td class="tx-13 pl-5">MFG1 - AAD</td>
-            <td class="tx-13">Department</td>
-            <td class="tx-13 text-center">COMMITTEE NAME</td>
-            <td class="tx-13 text-center">APPROVER NAME</td>
-            <td class="tx-13 text-center">CC NAME</td>
-            <td class="text-center tx-13">       
-                <a href=""><i class="far fa-edit"></i></a>
-            </td>
-        </tr>
-        <tr>
-            <td class="tx-13 pl-5">MFG1 - APC</td>
-            <td class="tx-13">Department</td>
-            <td class="tx-13 text-center">COMMITTEE NAME</td>
-            <td class="tx-13 text-center">APPROVER NAME</td>
-            <td class="tx-13 text-center">CC NAME</td>
-            <td class="text-center tx-13">       
-                <a href=""><i class="far fa-edit"></i></a>
-            </td>
-        </tr>
-        <tr>
-            <td class="tx-13 pl-5">MFG1 - ASSY-1</td>
-            <td class="tx-13">Department</td>
-            <td class="tx-13 text-center">COMMITTEE NAME</td>
-            <td class="tx-13 text-center">APPROVER NAME</td>
-            <td class="tx-13 text-center">CC NAME</td>
-            <td class="text-center tx-13">       
-                <a href=""><i class="far fa-edit"></i></a>
-            </td>
-        </tr>
-        <tr>
-            <td class="tx-13 pl-5">MFG1 - ASSY-2</td>
-            <td class="tx-13">Department</td>
-            <td class="tx-13 text-center">COMMITTEE NAME</td>
-            <td class="tx-13 text-center">APPROVER NAME</td>
-            <td class="tx-13 text-center">CC NAME</td>
-            <td class="text-center tx-13">       
-                <a href=""><i class="far fa-edit"></i></a>
-            </td>
-        </tr>
-        <tr>
-            <td class="tx-13 pl-5">MFG1 - ASSY-3</td>
-            <td class="tx-13">Department</td>
-            <td class="tx-13 text-center">COMMITTEE NAME</td>
-            <td class="tx-13 text-center">APPROVER NAME</td>
-            <td class="tx-13 text-center">CC NAME</td>
-            <td class="text-center tx-13">       
-                <a href=""><i class="far fa-edit"></i></a>
-            </td>
-        </tr>
-    </tbody> -->
 </table>
+  
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Profile update</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form>
+        <div class="form-group">
+          <label for="dateOfBirth">Date of birth</label>
+          <div class="input-group">
+            <input id="dateOfBirth" class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #dp="ngbDatepicker">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary calendar" (click)="dp.toggle()" type="button"></button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
+    </div>
+  </ng-template>

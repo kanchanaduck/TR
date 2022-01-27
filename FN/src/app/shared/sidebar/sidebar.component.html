@@ -16,9 +16,9 @@
         <ul class="nav">
             <li class="nav-label mb-3">Main Menu</li>
             <a *ngFor="let menu of menus" routerLink="{{ menu.url }}" 
-                  class="nav-link" [ngClass]="{'active': menu.url == 'welfare'}">
+                  class="nav-link" [ngClass]="{'active': menu.url == active_url  }">
                   {{ menu.menu_name }}
-            <div *ngIf="(menu.url == 'welfare')" class="badge badge-danger badge-pill">Active</div>
+            <div *ngIf="(menu.url == active_url )" class="badge badge-danger badge-pill">Active</div>
       </a>
         </ul>
         <!-- nav -->

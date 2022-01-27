@@ -104,7 +104,7 @@ namespace AngularFirst.Controllers
                             created_by = "014496",
                             updated_at = DateTime.Now,
                             updated_by = "014496",
-                            status_active = true,
+                            status_active = null
                         });
                         await _context.SaveChangesAsync();
                     }

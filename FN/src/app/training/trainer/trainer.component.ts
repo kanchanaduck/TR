@@ -16,29 +16,21 @@ import { Subject } from 'rxjs';
 })
 export class TrainerComponent implements OnInit {
 
-  // @ViewChild(DataTableDirective, {static: false});
-  // dtElements: QueryList<DataTableDirective>;
+
 
   @ViewChildren(DataTableDirective)
-  dtElements: QueryList<DataTableDirective>;
+  dtElement: DataTableDirective;
 
   dtOptions: any = {};
+  // dtOptions: DataTables.Settings = {};
   trainer: any = {};
-  errors: any;
-  dtElement: DataTableDirective;
   dtInstance: Promise<DataTables.Api>;
+  dtTrigger: Subject<any> = new Subject();
 
   constructor(private service: AppServiceService) { }
 
-  // ngOnDestroy(): void {
-  //   this.dtTrigger.unsubscribe();
-  // }
-  // ngAfterViewInit(): void {
-  //   this.dtTrigger.next();
-  // }
 
   ngOnInit(): void {
-
     this.trainer.trainer_type = 'Internal';
 
     this.dtOptions = {
@@ -51,12 +43,10 @@ export class TrainerComponent implements OnInit {
           previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
         }
       },
-      "processing": true,
       ajax: {
         url: environment.API_URL+"Trainers",
         dataSrc: "",
       },
-      detroy: true,
       columns:
       [
         { 
@@ -93,9 +83,9 @@ export class TrainerComponent implements OnInit {
           "data": "trainer_no",
           "className": "text-center",
           "render": function ( data, type, row ) {
-            return `
-              <a href="javascript:;" data-trainer-no="${data}"><i class="far fa-edit"></i></a>
-              <a href="javascript:;" data-trainer-no="${data}"><i class="far fa-trash-alt"></i></a>`
+            let edit_icon = `<a href="javascript:;"><i class="far fa-edit"></i></a>`
+            let delete_icon = `<a href="javascript:;"><i class="far fa-trash-alt"></i></a>`
+            return row.trainer_type=="Internal"? `${delete_icon}`:`${edit_icon}${delete_icon}`
           },
         },
       ],
@@ -143,18 +133,23 @@ export class TrainerComponent implements OnInit {
         } 
       ],
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
-      drawCallback: () => {
-        $('.fa-edit').on('click', () => {
-          console.log($(this))
-          alert($(this).data('trainer-no'))  
-          this.edit_trainer($(this).data('trainer-no'));
+      rowCallback: (row: Node, data: any[] | Object, index: number) => {
+        const self = this;
+        $('.fa-trash-alt', row).off('click');
+        $('.fa-trash-alt', row).on('click', () => {
+          self.delete_trainer(data);
         });
-        $('.fa-trash-alt').on('click', () => {  
-          this.delete_trainer($(this).data('trainer-no'));
+        $('.fa-edit', row).off('click');
+        $('.fa-edit', row).on('click', () => {
+          self.get_trainer(data);
         });
+        return row;
       }
     };
+
+
   }
+
 
   async reset_form_trainer() { 
     this.trainer = {};
@@ -171,13 +166,32 @@ export class TrainerComponent implements OnInit {
     try {
       const response = await axios.get(`${environment.API_URL}Employees/${this.trainer.emp_no}`, { headers: { Authorization: 'Bearer ' + localStorage.getItem('token'), Pragma: 'no-cache' } });
       this.trainer = response
+      this.trainer.sname_en = this.trainer.sname_eng
+      this.trainer.gname_en = this.trainer.gname_eng
+      this.trainer.fname_en = this.trainer.fname_eng
       this.trainer.trainer_type='Internal';
       return response;
     } 
     catch (error) {
       console.error(error.stack);
-      this.errors = error
       this.reset_form_trainer()
+      Swal.fire({
+        icon: 'error',
+        title: error.response.status,
+        text: "Data not found"
+      })
+    }
+    console.log('data: ', this.trainer);
+  }
+
+  async get_trainer(data: any) {
+    this.trainer = data
+    try {
+      const response = await axios.get(`${environment.API_URL}Trainers/${this.trainer.trainer_no}`, { headers: { Authorization: 'Bearer ' + localStorage.getItem('token'), Pragma: 'no-cache' } });
+      this.trainer = response
+      return response;
+    } 
+    catch (error) {
       Swal.fire({
         icon: 'error',
         title: error.response.status,
@@ -193,32 +207,29 @@ export class TrainerComponent implements OnInit {
   }
 
   async save_trainer() {
-    this.trainer.sname_en = this.trainer.sname_eng
-    this.trainer.gname_en = this.trainer.gname_eng
-    this.trainer.fname_en = this.trainer.fname_eng
-    const instance = axios.create({
-      baseURL: environment.API_URL,
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
-        'Content-Type': 'application/json'
-      }
-    });
-    const response = await instance.post('Trainers',this.trainer);
-    this.trainer = response
-    this.trainer.trainer_type='Internal';
-    Swal.fire({
-      toast: true,
-      position: 'top-end',
-      icon: 'success',
-      title: "Success",
-      showConfirmButton: false,
-      timer: 2000
+    await axios.post(`${environment.API_URL}Trainers`,this.trainer)
+    .then(function (response) {
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: "Success",
+        showConfirmButton: false,
+        timer: 2000
+      })
+      alert("Reload")
     })
-    this.reload_datatable()
-    return response;
+    .catch(function (error) {
+      Swal.fire({
+        icon: 'error',
+        title: error.response.status,
+        text: error.response.data
+      })
+    });
+    this.reset_form_trainer()
   }
 
-  async delete_trainer(trainer_no: number) {
+  async delete_trainer(data: any) {
     Swal.fire({
       title: 'Are you sure?',
       text: 'you want to delete this record',
@@ -229,9 +240,8 @@ export class TrainerComponent implements OnInit {
     }).then(async (result) => {
       try{
       if (result.value) {
-        let response = await this.service.axios_delete(`Trainers/${trainer_no}`, 'Delete data success.');
+        let response = await this.service.axios_delete(`Trainers/${data.trainer_no}`, 'Delete data success.');
         console.log(response);
-        this.reload_datatable()
       }
     }
     catch(error){
@@ -244,16 +254,5 @@ export class TrainerComponent implements OnInit {
     })
   }
 
-  async edit_trainer(event: any) {
-    alert("Edit")
-  }
-
-
-  reload_datatable(): void {
-    alert("Reload")
-    this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-      dtInstance.ajax.reload()
-    });
-  }
 }
 

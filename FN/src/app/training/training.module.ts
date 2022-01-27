@@ -13,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { CustomFormsModule } from 'ngx-custom-validators';
 import { FormWizardModule } from 'angular2-wizard';
 import { HttpClientModule } from '@angular/common/http';
+import { ChartsModule } from 'ng2-charts';
 
 import { TrainingComponent } from './training/training.component';
 import { CourseMasterComponent } from './course-master/course-master.component';
@@ -98,7 +99,9 @@ const routes: Routes = [
     FormsModule,
     CustomFormsModule,
     FormWizardModule,
-    HttpClientModule
+    HttpClientModule,
+    ChartsModule,
+    FormsModule
   ],schemas: [
     CUSTOM_ELEMENTS_SCHEMA,
     NO_ERRORS_SCHEMA

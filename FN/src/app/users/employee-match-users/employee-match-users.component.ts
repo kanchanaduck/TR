@@ -75,7 +75,7 @@ export class EmployeeMatchUsersComponent implements OnInit {
     };
 
 
-    this.users = [
+   /*  this.users = [
       {
         "UserName": "014496"
       },
@@ -631,15 +631,15 @@ export class EmployeeMatchUsersComponent implements OnInit {
           "EMAIL": "nuttaya001@mail.canon",
           "EMAIL_ACTIVE_DATE": "20200804"
         }
-      ]
+      ] */
 
-    const mergeById = (a1, a2) =>
+    /* const mergeById = (a1, a2) =>
     a1.map(itm => ({
         ...a2.find((item) => (item.UserName === itm.EMP_NO) && item),
         ...itm
     }));
 
-    this.c = mergeById(this.employees, this.users)
+    this.c = mergeById(this.employees, this.users) */
   }
 
 

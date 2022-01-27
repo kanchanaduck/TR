@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import axios from 'axios';
 
 @Component({
@@ -10,10 +11,15 @@ import axios from 'axios';
 export class SidebarComponent implements OnInit {
 
   menus: any=[];
+  activeUrl: any=[];
 
-  constructor() { }
+  constructor(
+    private router: Router ,
+    private route: ActivatedRoute,) {
+   }
 
   ngOnInit() {
+    this.activeUrl = this.route
 
     axios.get('assets/menus.json').then(response => (
       this.menus = response.data

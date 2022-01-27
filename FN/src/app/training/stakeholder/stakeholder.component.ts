@@ -11,17 +11,16 @@ export class StakeholderComponent implements OnInit {
 
   dtOptions: any = {};
   closeResult = '';
+  stakeholder: any = {};
   
   constructor(private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.dtOptions = {
-      "processing": true,
       ajax: {
         url: environment.API_URL+"Stakeholder",
         dataSrc: "",
       },
-      detroy: true,
       columns:
       [
         { 
@@ -47,25 +46,17 @@ export class StakeholderComponent implements OnInit {
         { 
           "data": "stakeholders.role",
           "render": function ( data, type, row ) {
-              if (row.stakeholders.role == 'committee'){
+              /* if (row.stakeholders.role == 'committee'){
                 return `<div class="tx-bold">${row.stakeholders.emp_no}</div>`
-              }
+              } */
           },
         },
         { 
           "data": "stakeholders.role",
           "render": function ( data, type, row ) {
-            if (row.stakeholders.role == 'approver'){
+            /* if (row.stakeholders.role == 'approver'){
               return `<div class="tx-bold">${row.stakeholders.emp_no}</div>`
-            }
-          },
-        },
-        { 
-          "data": "stakeholders.role",
-          "render": function ( data, type, row ) {
-            if (row.stakeholders.role == 'cc'){
-              return `<div class="tx-bold">${row.stakeholders.emp_no}</div>`
-            }
+            } */
           },
         },
         { 
@@ -85,14 +76,6 @@ export class StakeholderComponent implements OnInit {
           previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
         }
       },
-      filter:{
-        "dom":{
-          "container": {
-            tag: "div",
-            className: "dt-buttons btn-group flex-wrap float-left"
-          },
-        }
-       }, 
       buttons: {
         "dom":{
           "container": {
@@ -128,31 +111,31 @@ export class StakeholderComponent implements OnInit {
       },
       order: [ [0, 'asc'],[1, 'desc']],
       columnDefs: [ {
-        targets: [ 5 ],
+        targets: [ 4 ],
           orderable: false 
       } ],  
       container: "#example_wrapper .col-md-6:eq(0)",
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
-      drawCallback: () => {
-        $('.fa-edit').on('click', () => {
-          alert("Open modal")
-          open()
+      rowCallback: (row: Node, data: any[] | Object, index: number) => {
+        const self = this;
+        $('.fa-edit', row).off('click');
+        $('.fa-edit', row).on('click', () => {
+          self.get_stakeholder(data);
         });
+        return row;
       }
     };
   }
 
-  open() {
-    this.modalService.open('', {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
-      this.closeResult = `Closed with: ${result}`;
-    }, (reason) => {
-
-    });
+  get_stakeholder(data: Object | any[]) {
+    throw new Error('Method not implemented.');
   }
 
-  async edit_stakeholder(event: any) { 
-    
-  }
-   
+save_stakeholder(){
+  
+}
 
-  }
+
+
+}
+
