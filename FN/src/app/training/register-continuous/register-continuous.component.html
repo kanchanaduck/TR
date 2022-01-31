@@ -1,230 +1,175 @@
 <div [formGroup]="form">
-    <div class="row text-capitalize">
-        <div class="col-4">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">
-                        course no.
-                    </div>
-                </div>
+    <div class="row">
+        <div class="col-3">
+            <div class="form-group">
+                <label class="az-content-label tx-11 tx-medium tx-gray-600">course no.</label>
                 <input type="text" class="form-control" placeholder="Enter key..." (keyup)="onKeyCourse($event)" formControlName="frm_course" [ngClass]="{ 'is-invalid': submitted && f.frm_course.errors }" #txtcourse_no>
                 <div *ngIf="submitted && f.frm_course.errors" class="invalid-feedback">
-                    <div *ngIf="f.frm_course.errors.required">course is required</div>
-                    <div *ngIf="f.frm_course.errors.minlength">
-                        min 11 characters
-                    </div>
-                    <div *ngIf="f.frm_course.errors.maxlength">
-                        max 20 characters
-                    </div>
+                    <div *ngIf="f.frm_course.errors.required">Course is required</div>
+                    <div *ngIf="f.frm_course.errors.minlength">Min 11 characters</div>
+                    <div *ngIf="f.frm_course.errors.maxlength">Max 20 characters</div>
                 </div>
             </div>
         </div>
-        <div class="col-4">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">
-                        thai name
-                    </div>
-                </div>
-                <input type="text" class="form-control" readonly #txtcourse_name_th>
-            </div>
-        </div>
-        <div class="col-4">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">
-                        english name
-                    </div>
-                </div>
+        <div class="col-5">
+            <div class="form-group">
+                <label class="az-content-label tx-11 tx-medium tx-gray-600">course</label>
                 <input type="text" class="form-control" readonly #txtcourse_name_en>
             </div>
         </div>
-    </div>
-    <div class="row text-capitalize text-muted pt-2">
-        <div class="col-3">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">
-                        from&nbsp;&nbsp;&nbsp;<i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
-                    </div>
-                </div>
-                <input class="form-control" readonly #txtdate_from>
-            </div>
-        </div>
-        <div class="col-3">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">
-                        to&nbsp;&nbsp;&nbsp;<i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
-                    </div>
-                </div>
-                <input class="form-control" readonly #txtdate_to>
-            </div>
-        </div>
-        <div class="col-3">
-            <div class="row">
-                <div class="col-7">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">
-                                time in
-                            </div>
-                        </div>
-                        <input class="form-control" readonly #txttime_in_hh>
-                    </div>
-                </div>
-                <div class="col-5" style="margin-left: -20px;">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">
-                                :
-                            </div>
-                        </div>
-                        <input class="form-control" readonly #txttime_in_mm>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-3">
-            <div class="row">
-                <div class="col-7">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">
-                                time out
-                            </div>
-                        </div>
-                        <input class="form-control" readonly #txttime_out_hh>
-                    </div>
-                </div>
-                <div class="col-5" style="margin-left: -20px;">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">
-                                :
-                            </div>
-                        </div>
-                        <input class="form-control" readonly #txttime_out_mm>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row text-capitalize text-muted pt-2">
-        <div class="col-3">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">
-                        qty receive
-                    </div>
-                </div>
-                <input type="text" class="form-control" readonly #txtqty>
-            </div>
-        </div>
-        <div class="col-3">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">
-                        group
-                    </div>
-                </div>
+        <div class="col-2">
+            <div class="form-group">
+                <label class="az-content-label tx-11 tx-medium tx-gray-600">group</label>
                 <input type="text" class="form-control" readonly #txtgroup>
             </div>
         </div>
-        <div class="col-6">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">
-                        place
+        <div class="col-2">
+            <div class="form-group">
+                <label class="az-content-label tx-11 tx-medium tx-gray-600">Capacity</label>
+                <input type="text" class="form-control" readonly #txtqty>
+            </div>
+        </div>
+    </div>
+    <div class="row pt-1">
+        <div class="col-3">
+            <div class="form-group">
+                <label class="az-content-label tx-11 tx-medium tx-gray-600">from</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">
+                            <i class="typcn typcn-calendar-outline tx-20 lh--9 op-6"></i>
+                        </div>
                     </div>
+                    <input class="form-control" readonly #txtdate_from>
                 </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="form-group">
+                <label class="az-content-label tx-11 tx-medium tx-gray-600">to</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">
+                            <i class="typcn typcn-calendar-outline tx-20 lh--9 op-6"></i>
+                        </div>
+                    </div>
+                    <input class="form-control" readonly #txtdate_to>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label class="az-content-label tx-11 tx-medium tx-gray-600">band</label>
+                <br/>
+                <input type="checkbox" [checked]="ck_e" disabled>&nbsp;<span>E</span>&nbsp;&nbsp;
+                <input type="checkbox" [checked]="ck_j1" disabled>&nbsp;<span>J1</span>&nbsp;&nbsp;
+                <input type="checkbox" [checked]="ck_j2" disabled>&nbsp;<span>J2</span>&nbsp;&nbsp;
+                <input type="checkbox" [checked]="ck_j3" disabled>&nbsp;<span>J3</span>&nbsp;&nbsp;
+                <input type="checkbox" [checked]="ck_j4" disabled>&nbsp;<span>J4</span>&nbsp;&nbsp;
+                <input type="checkbox" [checked]="ck_m1" disabled>&nbsp;<span>M1</span>&nbsp;&nbsp;
+                <input type="checkbox" [checked]="ck_m2" disabled>&nbsp;<span>M2</span>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group">
+                <label class="az-content-label tx-11 tx-medium tx-gray-600">place</label>
                 <input class="form-control" readonly #txtplace>
             </div>
         </div>
     </div>
     <hr>
-    <div class="row text-capitalize text-muted">
-        <div class="col-1 pt-4">emp no.
-            <div style="position: absolute; top:20px; right: -5px;">
-                <i class="typcn typcn-info-large tx-24 lh--9 op-6 pointer" (click)="open(content)"></i>
-            </div>
-        </div>
+    <div class="row">
+        <div class="col-1 pt-4">emp no.</div>
         <div class="col-2">
-            from
-            <input type="text" class="form-control" formControlName="frm_emp_no_from" [ngClass]="{ 'is-invalid': submitted && f.frm_emp_no_from.errors }" #txtemp_no_from>
-            <div *ngIf="submitted && f.frm_emp_no_from.errors" class="invalid-feedback">
-                <div *ngIf="f.frm_emp_no_from.errors.required">required</div>
-                <div *ngIf="f.frm_emp_no_from.errors.minlength">
-                    min 1 characters
-                </div>
-                <div *ngIf="f.frm_emp_no_from.errors.maxlength">
-                    max 4 characters
+            <div class="form-group">
+                <label class="az-content-label tx-11 tx-medium tx-gray-600">from</label>
+                <input type="text" class="form-control" minlength="0" maxlength="7" formControlName="frm_emp_no_from" [ngClass]="{ 'is-invalid': submitted && f.frm_emp_no_from.errors }" (keyup)="onKeyEmpNoFrom($event)" #txtemp_no_from>
+                <div *ngIf="f.frm_emp_no_from.errors" class="invalid-feedback">
+                    <div *ngIf="f.frm_emp_no_from.errors.required">Required</div>
+                    <div *ngIf="f.frm_emp_no_from.errors.minlength">Min 1 characters</div>
+                    <div *ngIf="f.frm_emp_no_from.errors.maxlength">Max 7 characters</div>
+                    <div *ngIf="f.frm_emp_no_from.errors.someErrorFrom">Please fill correct data</div>
                 </div>
             </div>
         </div>
         <div class="col-2">
-            to
-            <input type="text" class="form-control" formControlName="frm_emp_no_to" [ngClass]="{ 'is-invalid': submitted && f.frm_emp_no_to.errors }" #txtemp_no_to>
-            <div *ngIf="submitted && f.frm_emp_no_to.errors" class="invalid-feedback">
-                <div *ngIf="f.frm_emp_no_to.errors.required">required</div>
-                <div *ngIf="f.frm_emp_no_to.errors.minlength">
-                    min 1 characters
-                </div>
-                <div *ngIf="f.frm_emp_no_to.errors.maxlength">
-                    max 4 characters
+            <div class="form-group">
+                <label class="az-content-label tx-11 tx-medium tx-gray-600">to</label>
+                <input type="text" class="form-control" minlength="0" maxlength="7" formControlName="frm_emp_no_to" [ngClass]="{ 'is-invalid': submitted && f.frm_emp_no_to.errors }" (keyup)="onKeyEmpNoTo($event)" #txtemp_no_to>
+                <div *ngIf="f.frm_emp_no_to.errors" class="invalid-feedback">
+                    <div *ngIf="f.frm_emp_no_to.errors.required">Required</div>
+                    <div *ngIf="f.frm_emp_no_to.errors.minlength">Min 1 characters</div>
+                    <div *ngIf="f.frm_emp_no_to.errors.maxlength">Max 7 characters</div>
+                    <div *ngIf="f.frm_emp_no_to.errors.someErrorTo">Please fill correct data</div>
                 </div>
             </div>
         </div>
         <div class="col-2">
             <div class="row">
-                <div class="col-7">
-                    pre-test
-                    <input type="text" class="form-control" formControlName="frm_pre_test_score" [ngClass]="{ 'is-invalid': submitted && f.frm_pre_test_score.errors }" (keyup)="onKey_pre_test_score($event)" #txtpre_test_score>
-                    <div *ngIf="submitted && f.frm_pre_test_score.errors" class="invalid-feedback">
-                        <div *ngIf="f.frm_pre_test_score.errors.required">required</div>
-                        <div *ngIf="f.frm_pre_test_score.errors.minlength">
-                            min 1 characters
-                        </div>
-                        <div *ngIf="f.frm_pre_test_score.errors.maxlength">
-                            max 3 characters
+                <div class="col-6" style="padding: 0 10px 0 10px;">
+                    <div class="form-group">
+                        <label class="az-content-label tx-11 tx-medium tx-gray-600">pre-test</label>
+                        <input type="text" class="form-control" minlength="0" maxlength="3" formControlName="frm_pre_test_score" [ngClass]="{ 'is-invalid': submitted && f.frm_pre_test_score.errors }" (keyup)="onKeyPreTestScore($event)" #txtpre_test_score>
+                        <div *ngIf="submitted && f.frm_pre_test_score.errors" class="invalid-feedback">
+                            <div *ngIf="f.frm_pre_test_score.errors.required">Required</div>
+                            <div *ngIf="f.frm_pre_test_score.errors.minlength">Min 1 characters</div>
+                            <div *ngIf="f.frm_pre_test_score.errors.maxlength">Max 3 characters</div>
                         </div>
                     </div>
                 </div>
-                <div class="col-5"><span class="invisible">pre_test_grade</span> <input type="text" class="form-control" readonly="" #txtpre_test_grade></div>
+                <div class="col-6" style="margin-left: -22px;">
+                    <div class="form-group">
+                        <label class="az-content-label tx-11 tx-medium tx-gray-600 invisible">pre_test_grade</label>
+                        <input type="text" class="form-control" readonly="" #txtpre_test_grade>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-2">
             <div class="row">
-                <div class="col-7">
-                    post-test
-                    <input type="text" class="form-control" formControlName="frm_post_test_score" [ngClass]="{ 'is-invalid': submitted && f.frm_post_test_score.errors }" (keyup)="onKey_post_test_score($event)" #txtpost_test_score>
-                    <div *ngIf="submitted && f.frm_post_test_score.errors" class="invalid-feedback">
-                        <div *ngIf="f.frm_post_test_score.errors.required">required</div>
-                        <div *ngIf="f.frm_post_test_score.errors.minlength">
-                            min 1 characters
-                        </div>
-                        <div *ngIf="f.frm_post_test_score.errors.maxlength">
-                            max 3 characters
+                <div class="col-6" style="padding: 0 10px 0 10px;">
+                    <div class="form-group">
+                        <label class="az-content-label tx-11 tx-medium tx-gray-600">post-test</label>
+                        <input type="text" class="form-control" minlength="0" maxlength="3" formControlName="frm_post_test_score" [ngClass]="{ 'is-invalid': submitted && f.frm_post_test_score.errors }" (keyup)="onKeyPostTestScore($event)" #txtpost_test_score>
+                        <div *ngIf="submitted && f.frm_post_test_score.errors" class="invalid-feedback">
+                            <div *ngIf="f.frm_post_test_score.errors.required">Required</div>
+                            <div *ngIf="f.frm_post_test_score.errors.minlength">Min 1 characters</div>
+                            <div *ngIf="f.frm_post_test_score.errors.maxlength">Max 3 characters</div>
                         </div>
                     </div>
                 </div>
-                <div class="col-5">
-                    <span class="invisible">post_test_grade</span> <input type="text" class="form-control" readonly="" #txtpost_test_grade>
+                <div class="col-6" style="margin-left: -22px;">
+                    <div class="form-group">
+                        <label class="az-content-label tx-11 tx-medium tx-gray-600 invisible">post_test_grade</label>
+                        <input type="text" class="form-control" readonly="" #txtpost_test_grade>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-1">
-            total
-            <input type="text" class="form-control" readonly="" #txttotal>
+        <div class="col-1" style="padding: 0 0 0 10px;">
+            <div class="form-group">
+                <label class="az-content-label tx-11 tx-medium tx-gray-600">total</label>
+                <input type="text" class="form-control" readonly="" #txttotal>
+            </div>
         </div>
-        <div class="col-2 text-right pt-3">
-            <button type="button" class="btn btn-az-primary btn-sm" (click)="fn_save()">Save</button>
-            <button type="button" class="btn btn-outline-dark btn-sm" (click)="fn_clear()">Clear</button>
+        <div class="col-2 text-right pt-4">
+            <button type="button" class="btn btn-az-primary btn-sm" (click)="fnSave()">Save</button>
+            <button type="button" class="btn btn-dark btn-sm" (click)="fnClear()">Clear</button>
+        </div>
+        <div class="col-12">
+            <div style="position: absolute; top:-10px; left: 30px; width: 35%;">
+                <a href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
+                    <i class="typcn typcn-info-large tx-24 lh--9 op-6 pointer text-muted"></i>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="padding: 5px;">
+                    <img src="assets/images/standard_point.PNG" class="img-fluid">
+                </div>
+            </div>
         </div>
     </div>
 </div>
 <hr>
-<table datatable [dtOptions]="dtOptions" class="table table-bordered table-hover table-sm">
+<table datatable [dtOptions]="dt_options" class="table table-bordered table-hover table-sm">
     <thead>
         <tr class="text-uppercase">
             <th>no.</th>
@@ -233,7 +178,7 @@
             <th>band</th>
             <th>department</th>
             <th>ENTRA DATE</th>
-            <th>RESIGN DATE</th>
+            <!-- // entra date = วันเข้างาน, prob_date = วันผ่านโปร ต้องเพิ่ม view cpt all column entra date-->
             <th>PRE-RESULT</th>
             <th>POST-RESULT</th>
             <th>manage</th>
@@ -243,47 +188,15 @@
         <tr *ngFor="let item of data_grid; let i = index">
             <td>{{ i + 1 }}</td>
             <td>{{ item.emp_no }}</td>
-            <td>{{ item.sname_eng }}&nbsp;{{ item.gname_eng }}&nbsp;{{ item.fname_eng }}</td>
-            <td>{{ item.band }}</td>
-            <td>{{item.dept_code}}:{{ item.dept_abb_name }}</td>
-            <td>{{ item.prob_date }}</td>
-            <td>{{ item.resn_date }}</td>
-            <td>{{ item.pre_test_grade }}</td>
-            <td>{{ item.post_test_grade }}</td>
+            <td>{{ item.employees.sname_eng }}&nbsp;{{ item.employees.gname_eng }}&nbsp;{{ item.employees.fname_eng }}</td>
+            <td>{{ item.employees.band }}</td>
+            <td>{{ item.employees.dept_code}}:{{ item.employees.dept_abb_name }}</td>
+            <td>{{ item.employees.prob_date | date:'dd-MMM-yy'}}</td>
+            <td>{{ item.pre_test_score }} : {{ item.pre_test_grade }}</td>
+            <td>{{ item.post_test_score }} : {{ item.post_test_grade }}</td>
             <td>
-                <i class="far fa-trash-alt pointer" (click)="fn_delete(item)"></i>
+                <i class="far fa-trash-alt pointer" (click)="fnDelete(item)"></i>
             </td>
         </tr>
     </tbody>
 </table>
-
-<ng-template #content let-modal>
-    <div class="modal-body text-capitalize">
-        <div class="row">
-            <div class="col-11">
-                <h4 class="tx-indigo" id="modal-basic-title">Standard Point</h4>
-            </div>
-            <div class="col-1">
-                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        </div>
-        <div class="row tx-indigo">
-            <div class="col-12 p-2">
-                <div class="row">
-                    <div class="col-6">80 – 100 : A </div>
-                    <div class="col-6">50 – 59 : D => Fail Paper Test </div>
-                </div>
-                <div class="row">
-                    <div class="col-6">70 – 79 : B => Pass </div>
-                    <div class="col-6">1 – 49 : E </div>
-                </div>
-                <div class="row">
-                    <div class="col-6">60 – 69 : C </div>
-                    <div class="col-6">0 : F => Fail Attendance </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</ng-template>

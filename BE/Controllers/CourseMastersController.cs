@@ -41,6 +41,9 @@ namespace AngularFirst.Controllers
             }
 
             var tr_course_master = await _context.tr_course_master
+                                        .Include(e=> e.course_masters_bands)
+                                        .Include(e=> e.prev_course)
+                                        .Include(e=> e.next_course)
                                         .Where(e=>e.course_no == q)
                                         .FirstOrDefaultAsync();
 
@@ -51,43 +54,6 @@ namespace AngularFirst.Controllers
 
             return tr_course_master;
         }
-
-        // GET: api/CourseMasters/Search/{course_no}
-        [HttpGet("Search")]
-         public async Task<ActionResult<tr_course_master>> Search(string course_no)
-        {
-            Console.WriteLine("Search: "+course_no);
-            var tr_course_master = await _context.tr_course_master
-                                        .Where(
-                                        e=> e.course_no == course_no
-                                        ).FirstOrDefaultAsync();
-
-            if (tr_course_master == null)
-            {
-                return NotFound();
-            }
-
-            return tr_course_master;
-        }
-
-        // GET: api/CourseMasters/SearchCourse/{course_no}
-        [HttpPost("SearchCourse")]
-         public async Task<ActionResult<tr_course_master>> SearchCourse(string course_no)
-        {
-            Console.WriteLine("Search: "+course_no);
-            var tr_course_master = await _context.tr_course_master
-                                        .Where(
-                                        e=> e.course_no == course_no
-                                        ).FirstOrDefaultAsync();
-
-            if (tr_course_master == null)
-            {
-                return NotFound();
-            }
-
-            return tr_course_master;
-        }
-
 
         // PUT: api/CourseMasters/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -125,41 +91,23 @@ namespace AngularFirst.Controllers
         [HttpPost]
         public async Task<ActionResult<tr_course_master>> Posttr_course_master(tr_course_master tr_course_master)
         {
-            _context.tr_course_master.Add(tr_course_master);
-            // var cm = new tr_course_master
-            // {
-            //     course_no= "ICD-001",
-            //     course_name_th= "ทดสอบครั้งแรก",
-            //     dept_abb_name= "ICD",
-            //     days= 2,
-            //     course_masters_bands = new List<tr_course_master_band>
-            //     {
-            //         new tr_course_master_band { band = "E" },
-            //         new tr_course_master_band { band = "J1" },
-            //         new tr_course_master_band { band = "J2" },
-            //     }
-            // };
-
-            // _context.tr_course_master.Add(cm);
-            // _context.SaveChanges();
-
-            try
+            var course_master = await _context.tr_course_master
+                                .AsNoTracking()
+                                .Where(c => c.course_no == tr_course_master.course_no)
+                                .FirstOrDefaultAsync();
+            
+            if (course_master == null)
             {
+                _context.tr_course_master.Add(tr_course_master);
                 await _context.SaveChangesAsync();
+                return CreatedAtAction("Gettr_course_master", new { id = tr_course_master.course_no }, tr_course_master);
             }
-            catch (DbUpdateException)
+            else
             {
-                if (tr_course_masterExists(tr_course_master.course_no))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
+                _context.Entry(tr_course_master).State = EntityState.Modified;
+                 await _context.SaveChangesAsync();
+                 return NoContent();
             }
-
-            return CreatedAtAction("Gettr_course_master", new { id = tr_course_master.course_no }, tr_course_master);
         }
 
         // DELETE: api/CourseMasters/5

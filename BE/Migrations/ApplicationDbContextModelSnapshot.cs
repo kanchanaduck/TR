@@ -462,6 +462,7 @@ namespace AngularFirst.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("emp_no")
+                        .IsRequired()
                         .HasMaxLength(7)
                         .HasColumnType("nvarchar(7)");
 
@@ -756,8 +757,7 @@ namespace AngularFirst.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("emp_no")
-                        .HasMaxLength(7)
-                        .HasColumnType("nvarchar(7)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("level_name")
                         .HasColumnType("nvarchar(max)");
@@ -779,6 +779,8 @@ namespace AngularFirst.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id");
+
+                    b.HasIndex("emp_no");
 
                     b.HasIndex("org_code");
 
@@ -1323,9 +1325,15 @@ namespace AngularFirst.Migrations
 
             modelBuilder.Entity("AngularFirst.Models.tr_stakeholder", b =>
                 {
+                    b.HasOne("AngularFirst.Models.tb_employee", "employee")
+                        .WithMany("stakeholders")
+                        .HasForeignKey("emp_no");
+
                     b.HasOne("AngularFirst.Models.tb_organization", "organization")
-                        .WithMany("takeholders")
+                        .WithMany("stakeholders")
                         .HasForeignKey("org_code");
+
+                    b.Navigation("employee");
 
                     b.Navigation("organization");
                 });
@@ -1391,6 +1399,8 @@ namespace AngularFirst.Migrations
             modelBuilder.Entity("AngularFirst.Models.tb_employee", b =>
                 {
                     b.Navigation("courses_registrations");
+
+                    b.Navigation("stakeholders");
                 });
 
             modelBuilder.Entity("AngularFirst.Models.tb_menus", b =>
@@ -1402,7 +1412,7 @@ namespace AngularFirst.Migrations
                 {
                     b.Navigation("children_org");
 
-                    b.Navigation("takeholders");
+                    b.Navigation("stakeholders");
                 });
 
             modelBuilder.Entity("AngularFirst.Models.tr_course", b =>

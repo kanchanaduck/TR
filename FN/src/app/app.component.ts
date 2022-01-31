@@ -16,10 +16,14 @@ export class AppComponent implements OnInit {
 
 
   constructor(private router: Router) {
+    // console.log(this.router.config);
     // Removing Sidebar, Navbar, Footer for Documentation, Error and Auth pages
     router.events.forEach((event) => { 
+      // console.log('event: ', event);      
       if(event instanceof NavigationStart) {
-        if((event['url'] == '/general-pages/signin') || (event['url'] == '/general-pages/signup') || (event['url'] == '/general-pages/page-404') ) {
+        if( (event['url'] == '/authentication/signup') 
+        || (event['url'] == '/authentication/signin') 
+        || (event['url'] == '/authentication/page-404') ) {
           this.showHeader = false;
           this.showFooter = false;
         } else {

@@ -16,19 +16,21 @@ namespace AngularFirst.Models
     {
         [Key]
         [MaxLength(10)]
+        [Required]
+        [Display(Name = "COURSE NO.")]
         public string course_no { get; set; }
         [Required]
-        [RegularExpression(@"^[\p{N}\p{P}\p{Sm}\p{IsThai}]+$", 
-        ErrorMessage = "Characters are not allowed.")]
+        [Display(Name = "THAI NAME")]
+        [RegularExpression(@"^[\p{N}\p{P}\p{Sm}\p{IsThai}]+$", ErrorMessage = "Characters are not allowed.")]
         public string course_name_th { get; set; }
-        // [RegularExpression(@"^[\P{L}\p{N}\p{P}\p{Sm}]+$",
-        
-        [RegularExpression(@"^(([A-za-z]+[\s]{1}[A-za-z]+)|([A-Za-z]+))$",
-        ErrorMessage = "Characters are not allowed.")]
+        [Display(Name = "ENGLISH NAME")]
+        [RegularExpression(@"^[\p{L}\p{N}\p{P}\p{Sm}]+$", ErrorMessage = "Characters are not allowed.")]
         public string course_name_en { get; set; }
         [Required]
+        [Display(Name = "GROUP")]
         public string dept_abb_name { get; set; }
         [Required]
+        [Display(Name = "CAPACITY")]
         public int capacity { get; set; }
         public string prev_course_no { get; set; }
         [Required]

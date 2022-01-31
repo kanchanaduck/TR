@@ -71,6 +71,7 @@ namespace AngularFirst.Models
             }
         }
         public List<tr_course_registration> courses_registrations { get; set; }
+        public virtual ICollection<tr_stakeholder> stakeholders { get; set; }
     }
 }
 

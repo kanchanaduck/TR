@@ -5,6 +5,21 @@
 export const environment = {
   production: false,
   API_URL: 'https://localhost:5001/api/',
+  img_garoon: 'http://cptsvs522/cbgrn/grn/image/customimg/emp_pic/',
+  status: {
+    wait: "Wait",
+    approved: "Approved",
+    center_app: "Center Approved"
+  },
+  call: "8005",
+  text: {
+    success: "Update data success.",
+    delete: "Delete data success.",
+    wait: "Wait",
+    duplication: "Duplication Data.",
+    not_found: "Data not found.",
+    all : "All"
+  }
 };
 
 /*
@@ -19,3 +34,6 @@ export const environment = {
 // ng build --baseHref=/HRGIS_TEST/
 // ng build --prod --base-href=/HRGIS_TEST/
 // npm uninstall
+
+// API_URL: 'https://localhost:5001/api/',
+// API_URL: 'http://cptsvs531:5000/api-hrgis/api/',

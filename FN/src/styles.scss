@@ -255,7 +255,7 @@
 }
 
 //////////////////////////// dataTables_wrapper
-.form-control,
+.form-control:not(.az-card-signin .form-control),
 .select2-example .select2-container .select2-selection--single,
 .select2-example .select2-container .select2-selection--multiple,
 .dataTables_wrapper .dataTables_length label select {
@@ -372,3 +372,7 @@ table.dataTable thead td {
     margin-left: 0px;
     margin-right: 0px;
 }
+
+.invisible {
+    visibility: hidden;
+  }

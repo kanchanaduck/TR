@@ -33,16 +33,15 @@ namespace AngularFirst.Controllers
                             .ToListAsync();
         }
 
-        // GET: api/Organization/center
-        // GET: api/Organization/division
-        // GET: api/Organization/department
+        // GET: api/Organization/Level/Division
+        // GET: api/Organization/Level/Department
         [HttpGet("Level/{level}")]
         public async Task<ActionResult<IEnumerable<tb_organization>>> GetFromLevel(string level)
         {
             return await _context.tb_organization
                             .Include(e => e.children_org)
                             .Include(e => e.parent_org)
-                            .Where(c => c.level_name.Contains(level))
+                            .Where(c => c.level_name.ToUpper().Contains(level.ToUpper()))
                             .ToListAsync();
         }
 

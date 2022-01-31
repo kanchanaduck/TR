@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { SelectionModel } from '@angular/cdk/collections';
-import axios from 'axios';
 import Swal from 'sweetalert2';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, NgForm, RequiredValidator, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AppServiceService } from '../../app-service.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-course-open',
@@ -11,94 +11,52 @@ import { AbstractControl, FormBuilder, FormControl, FormGroup, NgForm, RequiredV
   styleUrls: ['./course-open.component.scss']
 })
 export class CourseOpenComponent implements OnInit {
-  switch1 = false;
-
+  today: any = Date.now();
   data_grid: any = [];
-  dtOptions: any = {};
-
+  dt_options: any = {};
+  ddl_hh: any = [];
+  ddl_mm: any = [];
+  _getjwt: any;
+  _dept: any;
+  _dept_send: any;
   @ViewChild("txtgroup") txtgroup;
   @ViewChild("txtdate_from") txtdate_from;
   @ViewChild("txtdate_to") txtdate_to;
-  ck_allow: boolean = false;
-  ck_e: boolean = false;
-  ck_j1: boolean = false;
-  ck_j2: boolean = false;
-  ck_j3: boolean = false;
-  ck_j4: boolean = false;
-  ck_m1: boolean = false;
-  ck_m2: boolean = false;
-  ddl_hh: any = [];
-  ddl_mm: any = [];
-
   form: FormGroup;
   submitted = false;
+  isreadonly = false;
+  visableSave = true;
+  visableUpdate = false;
+  open_regis: boolean = false;
+  chk_disable: boolean = false;
+  isdisabled: boolean = true;
+  value_trainer: any;
+  selected_trainer_multiple: string[];
 
-  variableTrainer: any = variableTrainer;
-  selectedPersonId = '';
-  selectedTrainerMultiple: string[];
-
-  today: any = Date.now();
-
-  constructor(private modalService: NgbModal, config: NgbModalConfig, private formBuilder: FormBuilder) {
+  constructor(private modalService: NgbModal, config: NgbModalConfig, private formBuilder: FormBuilder, private service: AppServiceService) {
+    // popup
     config.backdrop = 'static';
     config.keyboard = false;
   }
 
+  // unamePattern = "^[a-z0-9_-]{8,15}$";
+  // pwdPattern = "^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).{6,12}$";
+  // mobnumPattern = "^((\\+91-?)|0)?[0-9]{10}$"; 
+  // emailPattern = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$";
+
+  // 0123456789`~!@#$%^&*()-_=+[]{}\|;:'"<>,./?
+  // abcdefghijklmnopqrstuvwxyz
+  // ABCDEFGHIJKLMNOPQRSTUVWXYZ
+
+  th_pattern = "^[ก-๛0-9\\s`~/!@#$%^&*()-_=+{}\|;:\'\"<>,./?]+$";
+  en_pattern = new RegExp('^[a-zA-Z0-9\\s`~/!@#$%^&*()-_=+{}\|;:\'\"<>,./?]+$');
+
   ngOnInit() {
-    this.data_grid = ELEMENT_DATA;
-
-    this.dtOptions = {
-      dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
-        "<'row'<'col-sm-12'tr>>" +
-        "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
-      language: {
-        paginate: {
-          next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
-          previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
-        }
-      },
-      filter: {
-        "dom": {
-          "container": {
-            tag: "div",
-            className: "dt-buttons btn-group flex-wrap float-left"
-          },
-        }
-      },
-      buttons: {
-        "dom": {
-          "container": {
-            tag: "div",
-            className: "dt-buttons btn-group flex-wrap float-right"
-          },
-          "button": {
-            tag: "button",
-            className: "btn btn-outline-indigo"
-          },
-        },
-        "buttons": [
-          {
-            extend: 'pageLength',
-          },
-          {
-            extend: 'copy',
-            text: '<i class="fas fa-copy"></i> Copy</button>',
-          },
-          {
-            extend: 'print',
-            text: '<i class="fas fa-print"></i> Print</button>',
-          },
-        ],
-      },
-      container: "#example_wrapper .col-md-6:eq(0)",
-      lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
-    };
-
     this.form = this.formBuilder.group(
       {
-        frm_course: ['', [Validators.required, Validators.minLength(7), Validators.maxLength(20)]],
-        frm_course_th: ['', [Validators.required]],
-        frm_course_en: ['', [Validators.required]],
+        frm_course: ['', [Validators.required, Validators.minLength(11), Validators.maxLength(20)]],
+        frm_course_th: ['', [Validators.required, Validators.pattern(this.th_pattern)]],
+        frm_course_en: ['', [Validators.required, Validators.pattern(this.en_pattern)]],
         frm_day: ['', [Validators.required]],
         frm_qty: ['', [Validators.required]],
         frm_time_in_hh: ['', [Validators.required]],
@@ -106,7 +64,7 @@ export class CourseOpenComponent implements OnInit {
         frm_time_out_hh: ['', [Validators.required]],
         frm_time_out_mm: ['', [Validators.required]],
         frm_place: ['', [Validators.required]],
-        frm_trainer: ['', [Validators.required]],
+        frm_trainer: ['', [Validators.required]]
       },
     );
 
@@ -123,41 +81,133 @@ export class CourseOpenComponent implements OnInit {
       this.ddl_mm.push(theOption);
       i = i + 4;
     }
+
+    this._getjwt = this.service.service_jwt();
+    this._dept = this._getjwt.user.dept_abb_name;
+    this.chk_disable = this._dept == "MTP" ? true : false;
+    this._dept_send = this._getjwt.user.dept_abb_name;
+    this.fnGet(this._dept_send);
+    this.fnGetTrainer();
+    this.fnGetband();
+    this.dt_options = {
+      dom: "<'row'<'col-sm-11 col-md-3 offset-1'f><'col-sm-12 col-md-8'B>>" +
+        "<'row'<'col-sm-12'tr>>" +
+        "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
+      language: {
+        paginate: {
+          next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
+          previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
+        }
+      },
+      buttons: {
+        "dom": {
+          "container": {
+            tag: "div",
+            className: "dt-buttons btn-group flex-wrap float-right"
+          },
+          "button": {
+            tag: "button",
+            className: "btn btn-outline-indigo btn-sm"
+          },
+        },
+        "buttons": [
+          {
+            extend: 'pageLength',
+          },
+          {
+            extend: 'copy',
+            text: '<i class="fas fa-copy"></i> Copy</button>',
+          },
+          {
+            extend: 'print',
+            text: '<i class="fas fa-print"></i> Print</button>',
+          },
+          {
+            extend: 'collection',
+            text: '<i class="fas fa-cloud-download-alt"></i> Download</button>',
+            buttons: [
+              {
+                extend: 'excel',
+                text: '<i class="far fa-file-excel"></i> Excel</button>',
+              },
+              {
+                extend: 'csv',
+                text: '<i class="far fa-file-excel"></i> Csv</button>',
+              },
+              {
+                extend: 'pdf',
+                text: '<i class="far fa-file-pdf"></i> Pdf</button>',
+              },
+            ]
+          }
+        ],
+      },
+      container: "#example_wrapper .col-md-6:eq(0)",
+      lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
+      order: [[0, 'asc']],
+      columnDefs: [
+        {
+          targets: [9],
+          orderable: false
+        }
+      ],
+      // deferRender: true,
+      // scrollX: true,
+      // scrollCollapse: true,
+      // scroller: true,
+      // "responsive": true,
+    };
   }
   get f(): { [key: string]: AbstractControl } {
     return this.form.controls;
   }
 
   ngAfterViewInit() {
-    this.txtgroup.nativeElement.value = "ICD";
+    this.txtgroup.nativeElement.value = this._dept;
     this.txtdate_to.nativeElement.value = formatDate(this.today).toString();
     this.txtdate_from.nativeElement.value = formatDate(this.today).toString();
   }
 
-  fn_save() {
+  async fnSave() {
     this.submitted = true;
 
     if (this.form.invalid) {
       return;
     }
-    console.log(JSON.stringify(this.form.value, null, 2));
+    // console.log(JSON.stringify(this.form.value, null, 2));
+    // console.log(this.form.value);
 
-    Swal.fire({
-      toast: true,
-      position: 'top-end',
-      icon: 'success',
-      title: 'Update data success.',
-      showConfirmButton: false,
-      timer: 2000
-    })
+    let frm = this.form.value;
+    if (frm.frm_course.length >= 11) {
+      const send_data = {
+        course_no: frm.frm_course,
+        course_name_th: frm.frm_course_th,
+        course_name_en: frm.frm_course_en,
+        dept_abb_name: this.txtgroup.nativeElement.value,
+        days: frm.frm_day,
+        capacity: frm.frm_qty,
+        open_register: this.open_regis,
+        band: this.checkedIDs,  // ["E", "J1"]
+        date_start: this.txtdate_from.nativeElement.value,
+        date_end: this.txtdate_to.nativeElement.value,
+        time_in: ("0" + (frm.frm_time_in_hh)).slice(-2).toString() + ":" + ("0" + (frm.frm_time_in_mm)).slice(-2).toString(),
+        time_out: ("0" + (frm.frm_time_out_hh)).slice(-2).toString() + ":" + ("0" + (frm.frm_time_out_mm)).slice(-2).toString(),
+        place: frm.frm_place,
+        trainer: frm.frm_trainer, // [1,2,3,6]
+      }
+      console.log('send data: ', send_data);
+
+      await this.service.axios_post('/CourseOpen/Posttr_course', send_data, 'Update data success.');
+      this.fnGet(this._dept_send);
+    }
   }
-  fn_clear() {
+  fnClear() {
     this.form.controls['frm_course'].setValue("");
     this.form.controls['frm_course_th'].setValue("");
     this.form.controls['frm_course_en'].setValue("");
     this.form.controls['frm_day'].setValue("");
     this.form.controls['frm_qty'].setValue("");
-    this.txtgroup.nativeElement.value = "";
+    this.txtgroup.nativeElement.value = "ICD";
     this.txtdate_to.nativeElement.value = formatDate(this.today).toString();
     this.txtdate_from.nativeElement.value = formatDate(this.today).toString();
     this.form.controls['frm_time_in_hh'].setValue("");
@@ -166,149 +216,224 @@ export class CourseOpenComponent implements OnInit {
     this.form.controls['frm_time_out_mm'].setValue("");
     this.form.controls['frm_place'].setValue("");
     this.form.controls['frm_trainer'].setValue("");
-    this.ck_allow = false;
-    this.ck_e = false;
-    this.ck_j1 = false;
-    this.ck_j2 = false;
-    this.ck_j3 = false;
-    this.ck_j4 = false;
+    this.open_regis = false;
+    this.checkboxesDataList.forEach((value, index) => {
+      value.isChecked = false;
+    });
+    this.checkedIDs = [];
+    this.selected_trainer_multiple = [];
+
+    this.isreadonly = false;
+    this.visableSave = true;
+    this.visableUpdate = false;
   }
+  fnEdit(item) {
+    this.isreadonly = true;
+    this.visableSave = false;
+    this.visableUpdate = true;
 
-  fn_edit(item) {
-    console.log('fn_edit', item);
     this.form.controls['frm_course'].setValue(item.course_no);
-    this.form.controls['frm_course_th'].setValue(item.course_name_tha);
+    this.form.controls['frm_course_th'].setValue(item.course_name_th);
     this.form.controls['frm_course_en'].setValue(item.course_name_en);
-    this.form.controls['frm_day'].setValue(item.qty);
-    this.form.controls['frm_qty'].setValue(item.day);
+    this.form.controls['frm_day'].setValue(item.capacity);
+    this.form.controls['frm_qty'].setValue(item.days);
     this.txtgroup.nativeElement.value = item.dept_abb_name;
-    this.txtdate_from.nativeElement.value = item.start_date;
-    this.txtdate_to.nativeElement.value = item.end_date;
+    this.txtdate_from.nativeElement.value = formatDate(item.date_start).toString();
+    this.txtdate_to.nativeElement.value = formatDate(item.date_end).toString();
     this.form.controls['frm_place'].setValue(item.place);
+    this.open_regis = item.open_register;// console.log(item.open_register);
 
-    this.ck_allow = item.allow_register;
-    this.ck_e = true;
-    this.ck_j1 = true;
-    this.ck_j2 = true;
-    this.ck_j3 = true;
-    this.ck_j4 = true;
+    for (const iterator of item.band) {
+      this.array_chk.find(v => v.band === iterator).isChecked = true;
+    }
+    this.checkboxesDataList = this.array_chk;
 
-    // console.log('fn_edit', item.time_in.substr(0, 2));
-    // console.log('fn_edit', item.time_in.substr(item.time_in.length - 2));
-    // console.log('fn_edit', item.time_out.substr(0, 2));
-    // console.log('fn_edit', item.time_out.substr(item.time_out.length - 2));
+    this.fetchCheckedIDs();
     this.form.controls['frm_time_in_hh'].setValue(parseInt(item.time_in.substr(0, 2)).toString());
     this.form.controls['frm_time_in_mm'].setValue(parseInt(item.time_in.substr(item.time_in.length - 2)).toString());
     this.form.controls['frm_time_out_hh'].setValue(parseInt(item.time_out.substr(0, 2)).toString());
     this.form.controls['frm_time_out_mm'].setValue(parseInt(item.time_out.substr(item.time_out.length - 2)).toString());
-    
-    let array = [];
+
+    let array = []; this.selected_trainer_multiple = [];
     for (const iterator of item.trainer) {
-      // console.log('iterator: ', iterator);
-      var newArray = variableTrainer.filter(function (el) {
-        return el.name == iterator;
+      var newArray = this.value_trainer.filter(function (el) {
+        return el.fulls == iterator;
       });
-      array.push(newArray[0].emp_no);
-    }
-    // console.log('array: ',array);
-    this.selectedTrainerMultiple = array;
-    // this.selectedTrainerMultiple = ["014748","013380"];
+      array.push(newArray[0].trainer_no);
+    } // console.log('array: ', array);
+    this.selected_trainer_multiple = array; // this.selected_trainer_multiple = ["014748","013380"];
   }
-  fn_delete(item) {
-    console.log('fn_edit', item);
+  async fnUpdate() {
+    this.submitted = true;
+
+    if (this.form.invalid) {
+      return;
+    }
+    // console.log(JSON.stringify(this.form.value, null, 2));
+    // console.log(this.form.value);
+
+    let frm = this.form.value;
+    const send_data = {
+      course_no: frm.frm_course,
+      course_name_th: frm.frm_course_th,
+      course_name_en: frm.frm_course_en,
+      dept_abb_name: this.txtgroup.nativeElement.value,
+      days: frm.frm_day,
+      capacity: frm.frm_qty,
+      open_register: this.open_regis,
+      band: this.checkedIDs,  // ["E", "J1"]
+      date_start: this.txtdate_from.nativeElement.value,
+      date_end: this.txtdate_to.nativeElement.value,
+      time_in: ("0" + (frm.frm_time_in_hh)).slice(-2).toString() + ":" + ("0" + (frm.frm_time_in_mm)).slice(-2).toString(),
+      time_out: ("0" + (frm.frm_time_out_hh)).slice(-2).toString() + ":" + ("0" + (frm.frm_time_out_mm)).slice(-2).toString(),
+      place: frm.frm_place,
+      trainer: frm.frm_trainer, // [1,2,3,6]
+    }
+    console.log('send data: ', send_data);
+
+    await this.service.axios_put('/CourseOpen/' + frm.frm_course, send_data, 'Update data success.');
+    this.fnGet(this._dept_send);
+  }
+  async fnDelete(item) {
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'you want to delete this record',
       icon: 'warning',
+      title: 'Do you sure to delete this record?',
+      text: 'Please confirm by enter Course No: ' + item.course_no + '. and press confirm Course no.',
+      input: 'text',
+      inputAttributes: {
+        autocapitalize: 'off'
+      },
       showCancelButton: true,
-      confirmButtonText: 'Yes',
-      cancelButtonText: 'No'
+      confirmButtonText: 'Confirm',
+      cancelButtonText: 'Cancel',
+      showLoaderOnConfirm: true,
+      preConfirm: (result) => {
+        // console.log(result);
+        if (result == "" || result == null || result == undefined) {
+          Swal.showValidationMessage(
+            `Request failed!`
+          )
+        }
+      },
+      allowOutsideClick: () => !Swal.isLoading()
     }).then(async (result) => {
-      if (result.value) {
-        // let datas = {
-        //   "id": dt.id,
-        //   "confirm_by": this.user
-        // }
-        // //console.log("btndelete data:", datas)
+      if (result.isConfirmed) {
+        await this.service.axios_delete('CourseOpen/' + result.value, 'Delete data success.');
+        this.fnGet(this._dept_send);
+        this.fnClear();
       }
     })
-
-  }
-  startsWithSearchFn(item, term) {
-    return item.startsWith(term);
   }
 
+  // Open popup trainer
   open(content) {
     this.modalService.open(content, {
-      size: 'mb' //sm, mb, lg
+      size: 'xl' //sm, mb, lg, xl
     });
-  }
+  } // End Open popup trainer
 
-  onKeyCourse(event: any) { // console.log(event.target.value);
-    if (event.target.value.length >= 7) {
-      this.form.controls['frm_course_th'].setValue("ความรู้พื้นฐานในกา…");
-      this.form.controls['frm_course_en'].setValue("QC BASIC");
-      this.form.controls['frm_day'].setValue("2");
-      this.form.controls['frm_qty'].setValue("10");
-      this.txtgroup.nativeElement.value = "MTP";
-      this.txtdate_from.nativeElement.value = "2021-12-03";
-      this.txtdate_to.nativeElement.value = "2021-12-03";
-    } else if (event.target.value.length == 0) {
+  // Check box All
+  onNgModelChange(e) {
+    // console.log(e);
+    if (e) {
+      this._dept_send = environment.text.all;
+    }
+    else {
+      this._dept_send = this._dept;
+    }
+    this.fnGet(this._dept_send);
+  } // EndCheck box All
+
+  response: any = [];
+  async onKeyCourse(event: any) {  // console.log(event.target.value.length);
+    if (event.target.value.length >= 7 && event.target.value.length < 8) {
+      this.response = await this.service.axios_get('CourseMasters/SearchCourse?course_no=' + event.target.value);
+      console.log('onKeyCourse: ', this.response);
+      if (this.response != undefined) {
+        this.form.controls['frm_course_th'].setValue(this.response.course_name_th);
+        this.form.controls['frm_course_en'].setValue(this.response.course_name_en);
+        this.form.controls['frm_day'].setValue(this.response.days);
+        this.form.controls['frm_qty'].setValue(this.response.capacity);
+        this.txtgroup.nativeElement.value = this.response.dept_abb_name;
+
+        var nameArr = this.response.course_masters_bands; // console.log(nameArr);
+        for (const iterator of nameArr) {
+          this.array_chk.find(v => v.band === iterator.band).isChecked = true;
+        } // console.log(this.array_chk);
+        this.checkboxesDataList = this.array_chk;
+
+        this.isdisabled = false;
+      }
+    } else if (event.target.value.length < 7) {
       this.form.controls['frm_course_th'].setValue("");
       this.form.controls['frm_course_en'].setValue("");
       this.form.controls['frm_day'].setValue("");
       this.form.controls['frm_qty'].setValue("");
       this.txtgroup.nativeElement.value = "";
-      this.txtdate_from.nativeElement.value = "";
-      this.txtdate_to.nativeElement.value = "";
+      this.checkboxesDataList.forEach((value, index) => {
+        value.isChecked = false;
+      });
+      this.isdisabled = true;
     }
   }
+
+  // date
   onDateSelectTo(event) {
     console.log('onDateSelectTo: ', event);
   }
   onDateSelectFrom(event) {
     console.log('onDateSelectFrom: ', event);
+  } // End date
+
+  // Multiple Checkbox
+  selectedItemsList = [];
+  checkedIDs = [];
+  checkboxesDataList: any[];
+  // checkboxesDataList = [
+  //   { label: "E", isChecked: false },
+  //   { label: "J1", isChecked: false },
+  //   { label: "J2", isChecked: false },
+  //   { label: "J3", isChecked: false },
+  //   { label: "J4", isChecked: false },
+  //   { label: "M1", isChecked: false },
+  //   { label: "M2", isChecked: false }
+  // ]
+  changeSelection() {
+    this.fetchSelectedItems();
+    this.fetchCheckedIDs();
+  }
+  fetchSelectedItems() {
+    this.selectedItemsList = this.checkboxesDataList.filter((value, index) => {
+      return value.isChecked;
+    });
+  }
+  fetchCheckedIDs() {
+    this.checkedIDs = []
+    this.checkboxesDataList.forEach((value, index) => {
+      if (value.isChecked) {
+        this.checkedIDs.push(value.band);
+      }
+    });
+    console.log(this.checkedIDs);
+  }
+  // End Multiple Checkbox
+
+  async fnGet(dept: any) {
+    this.data_grid = await this.service.axios_get('CourseOpen/GetGridView/' + dept); // console.log('fnGet: : ', this.data_grid);
   }
 
-  // Start Check box
-  selection = new SelectionModel<PeriodicElement>(true, []);
-  /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.data_grid.length;
-    return numSelected === numRows;
+  async fnGetTrainer() {
+    this.value_trainer = await this.service.axios_get('Trainers/FullTrainers'); // console.log('fnGetTrainer: ', this.value_trainer);
   }
 
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
-    if (this.isAllSelected()) {
-      this.selection.clear();
-      return;
-    }
-
+  array_chk: any;
+  async fnGetband() {
+    this.array_chk = await this.service.axios_get('CourseMasters/GetBand'); //console.log(this.array_chk);
+    this.array_chk.forEach(object => {
+      object.isChecked = false;
+    }); //console.log(this.array_chk);
+    this.checkboxesDataList = this.array_chk; //console.log(this.checkboxesDataList);
   }
-
-  /** The label for the checkbox on the passed row */
-  checkboxLabel(row?: PeriodicElement): string {
-    if (!row) {
-      return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
-    }
-    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.course_no + 1}`;
-  }
-
-  checkCheckBoxvalue(data, event) {
-    console.log('check box: ', data);
-    if (event.checked == true || event.checked2 == true) {
-      // this.checkedIDs.push(data.id);
-      // this.part_dupp.push(data.dupp_part);
-    }
-    else {
-      // this.checkedIDs.splice(this.checkedIDs.indexOf(data.id), 1)
-      // this.part_dupp.splice(this.part_dupp.indexOf(data.dupp_part), 1)
-    }
-  }
-  // End Check box
-
 }
 
 function formatDate(date) {
@@ -340,13 +465,12 @@ export interface PeriodicElement {
   time_out: string;
   place: string;
   trainer: string[];
-  previous_course: string;
 }
 
 const ELEMENT_DATA: PeriodicElement[] = [
   {
     course_no: 'CPT-001-001',
-    course_name_tha: 'ความรู้พื้นฐานในกา…',
+    course_name_tha: 'ความรู้พื้นฐานในการทำงาน',
     course_name_en: 'QC BASIC',
     dept_abb_name: 'MTP',
     qty: 10,
@@ -358,11 +482,40 @@ const ELEMENT_DATA: PeriodicElement[] = [
     time_in: '09:00',
     time_out: '16:55',
     place: 'VIP RM.',
-    trainer: ["NUCHCHANAT S.", "KANCHANA S."],
-    previous_course: '',
+    trainer: ["NUCHCHANAT S.(ICD)", "KANCHANA S.(ICD)"],
   }, {
     course_no: 'CPT-001-002',
-    course_name_tha: 'ความรู้พื้นฐานในกา…',
+    course_name_tha: 'ความรู้พื้นฐานในการทำงาน',
+    course_name_en: 'QC BASIC',
+    dept_abb_name: 'MTP',
+    qty: 15,
+    day: 2,
+    allow_register: false,
+    band: ["J1", "J2"],
+    start_date: '2021-11-05',
+    end_date: '2021-11-05',
+    time_in: '09:00',
+    time_out: '16:50',
+    place: 'VIP RM.',
+    trainer: ["APICHAI K."],
+  }, {
+    course_no: 'CPT-001-001',
+    course_name_tha: 'ความรู้พื้นฐานในการทำงาน',
+    course_name_en: 'QC BASIC',
+    dept_abb_name: 'MTP',
+    qty: 10,
+    day: 2,
+    allow_register: true,
+    band: ["E", "J1", "J2", "J3", "J4"],
+    start_date: '2021-11-01',
+    end_date: '2021-11-01',
+    time_in: '09:00',
+    time_out: '16:55',
+    place: 'VIP RM.',
+    trainer: ["NUCHCHANAT S.(ICD)", "KANCHANA S.(ICD)"],
+  }, {
+    course_no: 'CPT-001-002',
+    course_name_tha: 'ความรู้พื้นฐานในการทำงาน',
     course_name_en: 'QC BASIC',
     dept_abb_name: 'MTP',
     qty: 15,
@@ -374,35 +527,188 @@ const ELEMENT_DATA: PeriodicElement[] = [
     time_in: '09:00',
     time_out: '16:50',
     place: 'VIP RM.',
-    trainer: ["CHINTANA C."],
-    previous_course: '',
+    trainer: ["APICHAI K."],
+  }, {
+    course_no: 'CPT-001-001',
+    course_name_tha: 'ความรู้พื้นฐานในการทำงาน',
+    course_name_en: 'QC BASIC',
+    dept_abb_name: 'MTP',
+    qty: 10,
+    day: 2,
+    allow_register: true,
+    band: ["E", "J1", "J2", "J3", "J4"],
+    start_date: '2021-11-01',
+    end_date: '2021-11-01',
+    time_in: '09:00',
+    time_out: '16:55',
+    place: 'VIP RM.',
+    trainer: ["NUCHCHANAT S.(ICD)", "KANCHANA S.(ICD)"],
+  }, {
+    course_no: 'CPT-001-002',
+    course_name_tha: 'ความรู้พื้นฐานในการทำงาน',
+    course_name_en: 'QC BASIC',
+    dept_abb_name: 'MTP',
+    qty: 15,
+    day: 2,
+    allow_register: false,
+    band: ["E", "J1", "J2", "J3", "J4"],
+    start_date: '2021-11-05',
+    end_date: '2021-11-05',
+    time_in: '09:00',
+    time_out: '16:50',
+    place: 'VIP RM.',
+    trainer: ["APICHAI K."],
+  }, {
+    course_no: 'CPT-001-001',
+    course_name_tha: 'ความรู้พื้นฐานในการทำงาน',
+    course_name_en: 'QC BASIC',
+    dept_abb_name: 'MTP',
+    qty: 10,
+    day: 2,
+    allow_register: true,
+    band: ["E", "J1", "J2", "J3", "J4"],
+    start_date: '2021-11-01',
+    end_date: '2021-11-01',
+    time_in: '09:00',
+    time_out: '16:55',
+    place: 'VIP RM.',
+    trainer: ["NUCHCHANAT S.(ICD)", "KANCHANA S.(ICD)"],
+  }, {
+    course_no: 'CPT-001-002',
+    course_name_tha: 'ความรู้พื้นฐานในการทำงาน',
+    course_name_en: 'QC BASIC',
+    dept_abb_name: 'MTP',
+    qty: 15,
+    day: 2,
+    allow_register: false,
+    band: ["E", "J1", "J2", "J3", "J4"],
+    start_date: '2021-11-05',
+    end_date: '2021-11-05',
+    time_in: '09:00',
+    time_out: '16:50',
+    place: 'VIP RM.',
+    trainer: ["APICHAI K."],
+  }, {
+    course_no: 'CPT-001-001',
+    course_name_tha: 'ความรู้พื้นฐานในการทำงาน',
+    course_name_en: 'QC BASIC',
+    dept_abb_name: 'MTP',
+    qty: 10,
+    day: 2,
+    allow_register: true,
+    band: ["E", "J1", "J2", "J3", "J4"],
+    start_date: '2021-11-01',
+    end_date: '2021-11-01',
+    time_in: '09:00',
+    time_out: '16:55',
+    place: 'VIP RM.',
+    trainer: ["NUCHCHANAT S.(ICD)", "KANCHANA S.(ICD)"],
+  }, {
+    course_no: 'CPT-001-002',
+    course_name_tha: 'ความรู้พื้นฐานในการทำงาน',
+    course_name_en: 'QC BASIC',
+    dept_abb_name: 'MTP',
+    qty: 15,
+    day: 2,
+    allow_register: false,
+    band: ["E", "J1", "J2", "J3", "J4"],
+    start_date: '2021-11-05',
+    end_date: '2021-11-05',
+    time_in: '09:00',
+    time_out: '16:50',
+    place: 'VIP RM.',
+    trainer: ["APICHAI K."],
+  }, {
+    course_no: 'CPT-001-001',
+    course_name_tha: 'ความรู้พื้นฐานในการทำงาน',
+    course_name_en: 'QC BASIC',
+    dept_abb_name: 'MTP',
+    qty: 10,
+    day: 2,
+    allow_register: true,
+    band: ["E", "J1", "J2", "J3", "J4"],
+    start_date: '2021-11-01',
+    end_date: '2021-11-01',
+    time_in: '09:00',
+    time_out: '16:55',
+    place: 'VIP RM.',
+    trainer: ["NUCHCHANAT S.(ICD)", "KANCHANA S.(ICD)"],
+  }, {
+    course_no: 'CPT-001-002',
+    course_name_tha: 'ความรู้พื้นฐานในการทำงาน',
+    course_name_en: 'QC BASIC',
+    dept_abb_name: 'MTP',
+    qty: 15,
+    day: 2,
+    allow_register: false,
+    band: ["E", "J1", "J2", "J3", "J4"],
+    start_date: '2021-11-05',
+    end_date: '2021-11-05',
+    time_in: '09:00',
+    time_out: '16:50',
+    place: 'VIP RM.',
+    trainer: ["APICHAI K."],
+  }, {
+    course_no: 'CPT-001-001',
+    course_name_tha: 'ความรู้พื้นฐานในการทำงาน',
+    course_name_en: 'QC BASIC',
+    dept_abb_name: 'MTP',
+    qty: 10,
+    day: 2,
+    allow_register: true,
+    band: ["E", "J1", "J2", "J3", "J4"],
+    start_date: '2021-11-01',
+    end_date: '2021-11-01',
+    time_in: '09:00',
+    time_out: '16:55',
+    place: 'VIP RM.',
+    trainer: ["NUCHCHANAT S.(ICD)", "KANCHANA S.(ICD)"],
+  }, {
+    course_no: 'CPT-001-002',
+    course_name_tha: 'ความรู้พื้นฐานในการทำงาน',
+    course_name_en: 'QC BASIC',
+    dept_abb_name: 'MTP',
+    qty: 15,
+    day: 2,
+    allow_register: false,
+    band: ["E", "J1", "J2", "J3", "J4"],
+    start_date: '2021-11-05',
+    end_date: '2021-11-05',
+    time_in: '09:00',
+    time_out: '16:50',
+    place: 'VIP RM.',
+    trainer: ["APICHAI K."],
   }
 ];
 
-const variableTrainer = [
+const Trainer = [
   {
     id: 1,
     'emp_no': '013364',
-    'name': 'NUCHCHANAT S.'
+    'name': 'NUCHCHANAT S.(ICD)'
   }, {
     id: 2,
     'emp_no': '014748',
-    'name': 'NUTTAYA K.'
+    'name': 'NUTTAYA K.(ICD)'
   }, {
     id: 3,
     'emp_no': '014749',
-    'name': 'NATIRUT D.'
+    'name': 'NATIRUT D.(ICD)'
   }, {
     id: 4,
     'emp_no': '014205',
-    'name': 'KHETCHANA K.'
+    'name': 'KHETCHANA K.(ICD)'
   }, {
     id: 5,
     'emp_no': '013380',
-    'name': 'CHINTANA C.'
+    'name': 'CHINTANA C.(ICD)'
   }, {
     id: 6,
     'emp_no': '014496',
-    'name': 'KANCHANA S.'
+    'name': 'KANCHANA S.(ICD)'
+  }, {
+    id: 7,
+    'emp_no': 'APICHAI K.',
+    'name': 'APICHAI K.'
   }
 ]

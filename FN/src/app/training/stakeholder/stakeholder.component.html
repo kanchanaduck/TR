@@ -1,55 +1,67 @@
 <div class="card card-body mb-3">
-  <form (ngSubmit)="save_stakeholder()">
+  <form (ngSubmit)="save_stakeholders()">
   <div class="row">
       <div class="form-group col mb-0 p-1">
-          <label class="az-content-label tx-11 tx-medium tx-gray-600">Division</label>
-          <input type="text" name="division" class="form-control" required 
-              [(ngModel)]="stakeholder.division" 
-              [disabled]="stakeholder.stakeholder_type=='External'? true:false">
-          <!-- <p class="text-danger" *ngIf="errors">{{ errors.division }}</p> -->
-      </div><!-- form-group -->
-      <div class="form-group col mb-0 p-1">
           <label class="az-content-label tx-11 tx-medium tx-gray-600">Department</label>
-          <select type="text" name="department" class="form-control" required 
-              [(ngModel)]="stakeholder.department" 
-              [disabled]="stakeholder.stakeholder_type!='External'? true:false"
-              >
-              <option>MR.</option>
-              <option>MRS.</option>
-              <option>MISS</option>
-              </select>
+          <ng-select [items]="departments" 
+                      groupBy="parent_org.parent_org_code" 
+                      bindLabel="org_abb" 
+                      bindValue="org_abb"
+                      [(ngModel)]="stakeholder.org_code" 
+                      [ngModelOptions]="{standalone: true}"
+                      allow-clear="true">
+            <ng-template ng-optgroup-tmp let-item="item">
+                <b>{{item.org_abb || "f"}}</b>
+            </ng-template>
+        </ng-select>
       </div><!-- form-group -->
       <div class="form-group col mb-0 p-1">
-          <label class="az-content-label tx-11 tx-medium tx-gray-600">committee</label>
-          <input type="text" name="fname_en" class="form-control" required 
-              [(ngModel)]="stakeholder.committee" 
-              [disabled]="stakeholder.stakeholder_type!='External'? true:false">
+          <label class="az-content-label tx-11 tx-medium tx-gray-600">committee</label>.
+          <input type="text" name="emp_no" class="form-control" required >
+          <!-- <input type="text" name="fname_en" class="form-control" required 
+            [(ngModel)]="stakeholder.stakeholders.emp_no" 
+              > -->
+              <!-- <ng-select
+    [multiple]="true"
+    [items]="employees"
+    [(ngModel)]="stakeholder.committee"
+    placeholder="Select employee"
+    [ngModelOptions]="{standalone: true}"
+    bindLabel="emp_no"
+    bindValue="emp_no"> -->
+    <!-- <ng-template ng-header-tmp>
+        <button (click)="selectAll()" class="btn btn-sm btn-secondary">Select all</button>
+        <button (click)="unselectAll()" class="btn btn-sm btn-secondary">Unselect all</button>
+    </ng-template>
+    <ng-template ng-footer-tmp>
+        Selected count: {{selectedPeople.length}}
+    </ng-template> -->
+<!-- </ng-select> -->
       </div><!-- form-group -->
       <div class="form-group col mb-0 p-1">
           <label class="az-content-label tx-11 tx-medium tx-gray-600">approver</label>
-          <input type="text" name="gname_en" class="form-control" required 
-              [(ngModel)]="stakeholder.approver" 
-              [disabled]="stakeholder.stakeholder_type!='External'? true:false">
+          <input type="text" name="emp_no" class="form-control" required >
+          <!-- <input type="text" name="fname_en" class="form-control" required 
+            [(ngModel)]="stakeholder.stakeholders.emp_no" 
+              > -->
       </div><!-- form-group -->
+      <div class="form-group col pt-1">
+        <label class="az-content-label tx-11 tx-medium tx-gray-600 invisible">222</label>
+        <div>
+            <button type="submit" class="btn btn-az-primary btn-sm">Save</button>
+            <button type="button" class="btn btn-dark btn-sm">Clear</button>
+        </div>
+    </div>
   </div>
-  <!-- 
-  <div class="row">
-      <div class="form-group col text-right">
-          <label class="az-content-label tx-11 tx-medium tx-gray-600"> </label>
-          <div>
-              <button type="submit" class="btn btn-az-primary btn-sm">Save</button>
-              <button type="button" class="btn btn-outline-dark btn-sm" (click)="reset_form_stakeholder()">Clear</button>
-          </div>
-      </div>
-  </div> -->
   </form>
 </div>
 
 
-<table datatable [dtOptions]="dtOptions" class="table table-bordered table-hover" id="example">
+<table datatable [dtOptions]="dtOptions" class="table table-bordered table-hover w-100" id="example">
     <thead>
         <tr>
-            <th class="text-center">ORGANIZATION NAME</th>
+            <th class="text-center">DIVISION</th>
+            <th class="text-center">DEPARTMENT</th>
             <th class="text-center">LEVEL</th>
             <th class="text-center">COMMITTEE</th>
             <th class="text-center">APPROVER (MGR.)</th>

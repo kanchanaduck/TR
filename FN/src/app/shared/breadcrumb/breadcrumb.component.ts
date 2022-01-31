@@ -20,7 +20,7 @@ export class BreadcrumbComponent implements OnInit {
   ngOnInit() {
     let breadcrumb: Breadcrumb = {
       label: 'Home',
-      url: '',
+      url: '/training',
       active: false
     };
 

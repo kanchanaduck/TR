@@ -37,12 +37,6 @@ export class TrainerComponent implements OnInit {
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
       "<'row'<'col-sm-12'tr>>" +
       "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
-      language: {
-        paginate: {
-          next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
-          previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
-        }
-      },
       ajax: {
         url: environment.API_URL+"Trainers",
         dataSrc: "",
@@ -164,7 +158,7 @@ export class TrainerComponent implements OnInit {
    
    async get_employee() {
     try {
-      const response = await axios.get(`${environment.API_URL}Employees/${this.trainer.emp_no}`, { headers: { Authorization: 'Bearer ' + localStorage.getItem('token'), Pragma: 'no-cache' } });
+      const response = await axios.get(`${environment.API_URL}Employees/${this.trainer.emp_no}`, { headers: { Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'), Pragma: 'no-cache' } });
       this.trainer = response
       this.trainer.sname_en = this.trainer.sname_eng
       this.trainer.gname_en = this.trainer.gname_eng
@@ -187,7 +181,7 @@ export class TrainerComponent implements OnInit {
   async get_trainer(data: any) {
     this.trainer = data
     try {
-      const response = await axios.get(`${environment.API_URL}Trainers/${this.trainer.trainer_no}`, { headers: { Authorization: 'Bearer ' + localStorage.getItem('token'), Pragma: 'no-cache' } });
+      const response = await axios.get(`${environment.API_URL}Trainers/${this.trainer.trainer_no}`, { headers: { Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'), Pragma: 'no-cache' } });
       this.trainer = response
       return response;
     } 

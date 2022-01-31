@@ -36,6 +36,7 @@ import { EmployeeCourseHistoryComponent } from './employee-course-history/employ
 import { CourseHistoryComponent } from './course-history/course-history.component';
 import { StakeholderComponent } from './stakeholder/stakeholder.component';
 import { CenterComponent } from './center/center.component';
+import { EvaluationFormComponent } from './evaluation-form/evaluation-form.component';
 
 const routes: Routes = [
   { path: '', component: TrainingComponent },
@@ -85,6 +86,7 @@ const routes: Routes = [
     CourseHistoryComponent,
     StakeholderComponent,
     CenterComponent,
+    EvaluationFormComponent,
   ],
   imports: [
     CommonModule,

@@ -20,7 +20,7 @@ export class TrainingComponent implements OnInit {
 
   async get_menu_training() {
     this.training_menu = await this.service.axios_get('Menus/Children/3');
-      console.log('data: ', this.training_menu);
+    console.log('data: ', this.training_menu);
   }
 }
 

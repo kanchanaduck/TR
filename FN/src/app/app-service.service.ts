@@ -3,21 +3,22 @@ import { HttpClient } from '@angular/common/http';
 import axios from 'axios';
 import { environment } from '../environments/environment';
 import Swal from 'sweetalert2';
+import jwt_decode from "jwt-decode";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppServiceService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   gethttp(url: any) {
-    return this.http.get(environment.API_URL + url, { headers: { Authorization: 'Bearer ' + localStorage.getItem('token'), Pragma: 'no-cache' } });
+    return this.http.get(environment.API_URL + url, { headers: { Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'), Pragma: 'no-cache' } });
   }
 
   async axios_get(url: any) {
     try {
-      const response = await axios.get(environment.API_URL + url, { headers: { Authorization: 'Bearer ' + localStorage.getItem('token'), Pragma: 'no-cache' } });
+      const response = await axios.get(environment.API_URL + url, { headers: { Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'), Pragma: 'no-cache' } });
 
       return response;
     } catch (error) {
@@ -30,7 +31,7 @@ export class AppServiceService {
       const instance = axios.create({
         baseURL: environment.API_URL,
         headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('token'),
+          Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
           'Content-Type': 'application/json'
         }
       });
@@ -60,7 +61,7 @@ export class AppServiceService {
       const instance = axios.create({
         baseURL: environment.API_URL,
         headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('token'),
+          Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
           'Content-Type': 'application/json',
           "Access-Control-Allow-Origin": "*"
         }
@@ -91,7 +92,7 @@ export class AppServiceService {
       const instance = axios.create({
         baseURL: environment.API_URL,
         headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('token'),
+          Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
           'Content-Type': 'application/json'
         }
       });
@@ -121,7 +122,7 @@ export class AppServiceService {
       const instance = axios.create({
         baseURL: environment.API_URL,
         headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('token'),
+          Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
           'Content-Type': 'application/json'
         }
       });
@@ -151,7 +152,7 @@ export class AppServiceService {
       const instance = axios.create({
         baseURL: environment.API_URL,
         headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('token'),
+          Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
           'Content-Type': 'multipart/form-data',
           accept: '*/*'
         }
@@ -182,7 +183,7 @@ export class AppServiceService {
       const instance = axios.create({
         baseURL: environment.API_URL,
         headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('token'),
+          Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
           'Content-Type': 'multipart/form-data',
           accept: '*/*'
         }
@@ -208,7 +209,7 @@ export class AppServiceService {
     }
   }
 
-  /* async exportExcel(params: any, namefile: string = "", url: any) {
+  async exportExcel(params: any, namefile: string = "", url: any) {
     try {
       const instance = axios.create({
         baseURL: environment.API_URL,
@@ -247,6 +248,14 @@ export class AppServiceService {
     } catch (error) {
       console.log('RES ERROR: ', error.response);
     }
-  } */
+  }
+
+  service_jwt() {
+    var token = localStorage.getItem('token_hrgis');
+    var decoded = jwt_decode(token);
+
+    // console.log('decoded: ',decoded);
+    return decoded;
+  }
 
 }

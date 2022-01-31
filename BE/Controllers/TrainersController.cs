@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using AngularFirst.Data;
 using AngularFirst.Models;
 using Microsoft.EntityFrameworkCore.Internal;
+using System.Security.Cryptography;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace AngularFirst.Controllers
 {

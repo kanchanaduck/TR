@@ -1,291 +1,195 @@
-<!-- <div [formGroup]="form">
-    <div class="row text-capitalize">
-        <div class="col-3">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">
-                        course no.
-                    </div>
-                </div>
-                <input type="text" class="form-control" placeholder="Enter key..." (keyup)="onKeyCourse($event)" formControlName="frm_course" [ngClass]="{ 'is-invalid': submitted && f.frm_course.errors }" #txtcourse_no>
-                <div *ngIf="submitted && f.frm_course.errors" class="invalid-feedback">
-                    <div *ngIf="f.frm_course.errors.required">course no is required</div>
-                    <div *ngIf="f.frm_course.errors.minlength">
-                        min 7 characters
-                    </div>
-                    <div *ngIf="f.frm_course.errors.maxlength">
-                        max 20 characters
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-3">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">
-                        thai name
-                    </div>
-                </div>
-                <input type="text" class="form-control" formControlName="frm_course_th" [ngClass]="{ 'is-invalid': submitted && f.frm_course_th.errors }" #txtcourse_name_tha>
-                <div *ngIf="submitted && f.frm_course_th.errors" class="invalid-feedback">
-                    <div *ngIf="f.frm_course_th.errors.required">thai name is required</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-4">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">
-                        english name
-                    </div>
-                </div>
-                <input type="text" class="form-control" formControlName="frm_course_en" [ngClass]="{ 'is-invalid': submitted && f.frm_course_en.errors }" #txtcourse_name_en>
-                <div *ngIf="submitted && f.frm_course_en.errors" class="invalid-feedback">
-                    <div *ngIf="f.frm_course_en.errors.required">english name is required</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">
-                        group
-                    </div>
-                </div>
-                <input type="text" class="form-control" readonly="" #txtgroup>
-            </div>
-        </div>
-    </div>
-    <div class="row text-capitalize text-muted pt-2">
-        <div class="col-2">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">
-                        day
-                    </div>
-                </div>
-                <input type="text" class="form-control" formControlName="frm_day" [ngClass]="{ 'is-invalid': submitted && f.frm_day.errors }" #txtday>
-                <div *ngIf="submitted && f.frm_day.errors" class="invalid-feedback">
-                    <div *ngIf="f.frm_day.errors.required">day is required</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">
-                        qty receive
-                    </div>
-                </div>
-                <input type="text" class="form-control" formControlName="frm_qty" [ngClass]="{ 'is-invalid': submitted && f.frm_qty.errors }" #txtqty>
-                <div *ngIf="submitted && f.frm_qty.errors" class="invalid-feedback">
-                    <div *ngIf="f.frm_qty.errors.required">qty receive is required</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="input-group align-items-center pt-1">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">
-                        band
-                    </div>
-                </div>
-                <input type="checkbox" [checked]="ck_e">&nbsp;<span>E</span>&nbsp;&nbsp;
-                <input type="checkbox" [checked]="ck_j1">&nbsp;<span>J1</span>&nbsp;&nbsp;
-                <input type="checkbox" [checked]="ck_j2">&nbsp;<span>J2</span>&nbsp;&nbsp;
-                <input type="checkbox" [checked]="ck_j3">&nbsp;<span>J3</span>&nbsp;&nbsp;
-                <input type="checkbox" [checked]="ck_j4">&nbsp;<span>J4</span>&nbsp;&nbsp;
-                <input type="checkbox" [checked]="ck_m1">&nbsp;<span>M1</span>&nbsp;&nbsp;
-                <input type="checkbox" [checked]="ck_m2">&nbsp;<span>M2</span>
-            </div>
-        </div>
-        <div class="col-2 align-items-center  pt-1">
-            <label>open course</label>&nbsp;&nbsp;
-            <input type="checkbox" [checked]="ck_allow">
-        </div>
-    </div>
-    <div class="row text-capitalize pt-2">
-        <div class="col-3">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">
-                        from&nbsp;&nbsp;&nbsp;<i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
-                    </div>
-                </div>
-                <input class="form-control" placeholder="yyyy-mm-dd" name="txtdate_from" #txtdate_from readonly ngbDatepicker #date_from="ngbDatepicker" (click)="date_from.toggle()" (dateSelect)="onDateSelectFrom($event)">
-            </div>
-        </div>
-        <div class="col-2">
-            <ng-select [items]="ddl_hh" bindLabel="name" bindValue="value" placeholder="Select ..." formControlName="frm_time_in_hh" [ngClass]="{ 'is-invalid': submitted && f.frm_time_in_hh.errors }">
-            </ng-select>
-            <div *ngIf="submitted && f.frm_time_in_hh.errors" class="invalid-feedback">
-                <div *ngIf="f.frm_time_in_hh.errors.required">time in(HH) is required</div>
-            </div>
-        </div>
-        <div class="col-2">
-            <ng-select [items]="ddl_mm" bindLabel="name" bindValue="value" placeholder="Select ..." formControlName="frm_time_in_mm" [ngClass]="{ 'is-invalid': submitted && f.frm_time_in_mm.errors }">
-            </ng-select>
-            <div *ngIf="submitted && f.frm_time_in_mm.errors" class="invalid-feedback">
-                <div *ngIf="f.frm_time_in_mm.errors.required">time in(mm) is required</div>
-            </div>
-        </div>
-    </div>
-    <div class="row text-capitalize pt-2">
-        <div class="col-3">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">
-                        to&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
-                    </div>
-                </div>
-                <input class="form-control" placeholder="yyyy-mm-dd" name="txtdate_to" #txtdate_to readonly ngbDatepicker #date_to="ngbDatepicker" (click)="date_to.toggle()" (dateSelect)="onDateSelectTo($event)">
-            </div>
-        </div>
-        <div class="col-2">
-            <ng-select [items]="ddl_hh" bindLabel="name" bindValue="value" placeholder="Select ..." formControlName="frm_time_out_hh" [ngClass]="{ 'is-invalid': submitted && f.frm_time_out_hh.errors }">
-            </ng-select>
-            <div *ngIf="submitted && f.frm_time_out_hh.errors" class="invalid-feedback">
-                <div *ngIf="f.frm_time_out_hh.errors.required">time out(HH) is required</div>
-            </div>
-        </div>
-        <div class="col-2">
-            <ng-select [items]="ddl_mm" bindLabel="name" bindValue="value" placeholder="Select ..." formControlName="frm_time_out_mm" [ngClass]="{ 'is-invalid': submitted && f.frm_time_out_mm.errors }">
-            </ng-select>
-            <div *ngIf="submitted && f.frm_time_out_mm.errors" class="invalid-feedback">
-                <div *ngIf="f.frm_time_out_mm.errors.required">time out(mm) is required</div>
-            </div>
-        </div>
-    </div>
-    <div class="row text-capitalize text-muted pt-2">
-        <div class="col-4">
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">
-                        place
-                    </div>
-                </div>
-                <input class="form-control" formControlName="frm_place" [ngClass]="{ 'is-invalid': submitted && f.frm_place.errors }" #txtplace>
-                <div *ngIf="submitted && f.frm_place.errors" class="invalid-feedback">
-                    <div *ngIf="f.frm_place.errors.required">trainer is required</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-1">
-            <!-- //auto complete -->
-           <!--  trainer&nbsp;&nbsp;&nbsp;
-            <i class="typcn typcn-document-add tx-24 lh--9 op-6 pointer" (click)="open(content)"></i>
-        </div>
-        <div class="col-5">
-            <ng-select [items]="variableTrainer" bindLabel="name" bindValue="emp_no" [multiple]="true" [(ngModel)]="selectedTrainerMultiple" autofocus placeholder="Select ..." formControlName="frm_trainer" [ngClass]="{ 'is-invalid': submitted && f.frm_trainer.errors }">
-            </ng-select>
-            <div *ngIf="submitted && f.frm_trainer.errors" class="invalid-feedback">
-                <div *ngIf="f.frm_trainer.errors.required">trainer is required</div>
-            </div>
- -->
-            <!-- <ng-select [multiple]="true" [items]="variableTrainer" [(ngModel)]="mySelectModel" name="licenseAuthorityId" bindValue="emp_no" bindLabel="name" placeholder="Select ..." required [disabled]="isFormDisabled" formControlName="frm_trainer">
-            </ng-select> -->
-
-        <!-- </div>
-        <div class="col text-right">
-            <button type="button" class="btn btn-az-primary btn-sm" (click)="fn_save()">Save</button>
-            <button type="button" class="btn btn-outline-dark btn-sm" (click)="fn_clear()">Clear</button>
-        </div>
-    </div>
-</div> --> 
-
-<!-- <div class="card">
-    <div class="card-header tx-medium bd-0">
-        Open course
-    </div>
-    <div class="card-body"> -->
+<div class="card card-body mb-3">
+    <div [formGroup]="form">
         <div class="row">
-            <div class="form-group col mb-0">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">Course no.</label>
-                <input type="text" class="form-control" required>
-            </div><!-- form-group -->
-            <div class="form-group col mb-0">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">Thai Name</label>
-                <input type="text" class="form-control" required>
-            </div><!-- form-group -->
-            <div class="form-group col mb-0">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">English Name</label>
-                <input type="text" class="form-control" required>
-            </div><!-- form-group -->
-            <div class="form-group col mb-0">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">GROUP</label>
-                <input type="text" class="form-control" required>
-            </div><!-- form-group -->
+            <div class="col-3">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">course no.</label>
+                    <input type="text" class="form-control" [readonly]="isreadonly" placeholder="Enter key..." autofocus (keyup)="onKeyCourse($event)" formControlName="frm_course" [ngClass]="{ 'is-invalid': submitted && f.frm_course.errors }" #txtcourse_no>
+                    <div *ngIf="submitted && f.frm_course.errors" class="invalid-feedback">
+                        <div *ngIf="f.frm_course.errors.required">Course no is required</div>
+                        <div *ngIf="f.frm_course.errors.minlength">Min 11 characters</div>
+                        <div *ngIf="f.frm_course.errors.maxlength">Max 20 characters</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">thai name</label>
+                    <input type="text" class="form-control" [readonly]="isdisabled" formControlName="frm_course_th" [ngClass]="{ 'is-invalid': submitted && f.frm_course_th.errors }" #txtcourse_name_tha>
+                    <div *ngIf="submitted && f.frm_course_th.errors" class="invalid-feedback">
+                        <div *ngIf="f.frm_course_th.errors.required">Thai name is required</div>
+                        <div *ngIf="f.frm_course_th.errors.pattern">Thai name is pattern</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">english name</label>
+                    <input type="text" class="form-control" [readonly]="isdisabled" formControlName="frm_course_en" [ngClass]="{ 'is-invalid': submitted && f.frm_course_en.errors }" #txtcourse_name_en>
+                    <div *ngIf="submitted && f.frm_course_en.errors" class="invalid-feedback">
+                        <div *ngIf="f.frm_course_en.errors.required">English name is required</div>
+                        <div *ngIf="f.frm_course_en.errors.pattern">English name is pattern</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">group</label>
+                    <input type="text" class="form-control" readonly #txtgroup>
+                </div>
+            </div>
         </div>
-        
-        <div class="row">
-            <div class="form-group col mb-0">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">DAY</label>
-                <input type="text" class="form-control" required>
-            </div><!-- form-group -->
-            <div class="form-group col mb-0">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">Capacity</label>
-                <input type="text" class="form-control" required>
-            </div><!-- form-group -->
-            <div class="form-group col mb-0">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">Band</label>
-                <input type="text" class="form-control" required>
-            </div><!-- form-group -->
+        <div class="row pt-1">
+            <div class="col-3">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">day</label>
+                    <input type="number" class="form-control" [readonly]="isdisabled" formControlName="frm_day" [ngClass]="{ 'is-invalid': submitted && f.frm_day.errors }" #txtday>
+                    <div *ngIf="submitted && f.frm_day.errors" class="invalid-feedback">
+                        <div *ngIf="f.frm_day.errors.required">Day is required</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">capacity</label>
+                    <input type="number" min="0" class="form-control" [readonly]="isdisabled" formControlName="frm_qty" [ngClass]="{ 'is-invalid': submitted && f.frm_qty.errors }" #txtqty>
+                    <div *ngIf="submitted && f.frm_qty.errors" class="invalid-feedback">
+                        <div *ngIf="f.frm_qty.errors.required">Capacity is required</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">band</label>
+                    <br>
+                    <div *ngFor="let item of checkboxesDataList" style="display: inline-block;">
+                        &nbsp;&nbsp;<input type="checkbox" [disabled]="isdisabled" [(ngModel)]="item.isChecked" [ngModelOptions]="{standalone: true}" (change)="changeSelection()">&nbsp;{{item.band}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-2 align-items-center  pt-1">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">open register</label>
+                    <div class="az-toggle" (click)="open_regis=!open_regis" [ngClass]="open_regis ? 'on' : null "><span></span></div>
+                </div>
+            </div>
         </div>
-
-        <div class="row">
-            <div class="form-group col mb-0">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">From</label>
-                <input type="text" class="form-control" required>
-            </div><!-- form-group -->
-            <div class="form-group col mb-0">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">To</label>
-                <input type="text" class="form-control" required>
-            </div><!-- form-group -->
-            <div class="form-group col mb-0">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">Start</label>
-                <input type="text" class="form-control" required>
-            </div><!-- form-group -->
-            <div class="form-group col mb-0">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">End</label>
-                <input type="text" class="form-control" required>
-            </div><!-- form-group -->
+        <div class="row pt-1">
+            <div class="col-3">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">from</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <i class="typcn typcn-calendar-outline tx-20 lh--9 op-6"></i>
+                            </div>
+                        </div>
+                        <input class="form-control" placeholder="yyyy-mm-dd" name="txtdate_from" #txtdate_from readonly ngbDatepicker #date_from="ngbDatepicker" (click)="date_from.toggle()" (dateSelect)="onDateSelectFrom($event)">
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">to</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <i class="typcn typcn-calendar-outline tx-20 lh--9 op-6"></i>
+                            </div>
+                        </div>
+                        <input class="form-control" placeholder="yyyy-mm-dd" name="txtdate_to" #txtdate_to readonly ngbDatepicker #date_to="ngbDatepicker" (click)="date_to.toggle()" (dateSelect)="onDateSelectTo($event)">
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label class="az-content-label tx-11 tx-medium tx-gray-600">time in</label>
+                            <ng-select [items]="ddl_hh" bindLabel="name" bindValue="value" placeholder="HH" formControlName="frm_time_in_hh" [ngClass]="{ 'is-invalid': submitted && f.frm_time_in_hh.errors }">
+                            </ng-select>
+                            <div *ngIf="submitted && f.frm_time_in_hh.errors" class="invalid-feedback">
+                                <div *ngIf="f.frm_time_in_hh.errors.required">Required</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6" style="margin-left: -30px;">
+                        <div class="form-group">
+                            <label class="az-content-label tx-11 tx-medium tx-gray-600 invisible">mm</label>
+                            <ng-select [items]="ddl_mm" bindLabel="name" bindValue="value" placeholder="mm" formControlName="frm_time_in_mm" [ngClass]="{ 'is-invalid': submitted && f.frm_time_in_mm.errors }">
+                            </ng-select>
+                            <div *ngIf="submitted && f.frm_time_in_mm.errors" class="invalid-feedback">
+                                <div *ngIf="f.frm_time_in_mm.errors.required">Required</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label class="az-content-label tx-11 tx-medium tx-gray-600">time out</label>
+                            <ng-select [items]="ddl_hh" bindLabel="name" bindValue="value" placeholder="HH" formControlName="frm_time_out_hh" [ngClass]="{ 'is-invalid': submitted && f.frm_time_out_hh.errors }">
+                            </ng-select>
+                            <div *ngIf="submitted && f.frm_time_out_hh.errors" class="invalid-feedback">
+                                <div *ngIf="f.frm_time_out_hh.errors.required">Required</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6" style="margin-left: -30px;">
+                        <div class="form-group">
+                            <label class="az-content-label tx-11 tx-medium tx-gray-600 invisible">mm</label>
+                            <ng-select [items]="ddl_mm" bindLabel="name" bindValue="value" placeholder="mm" formControlName="frm_time_out_mm" [ngClass]="{ 'is-invalid': submitted && f.frm_time_out_mm.errors }">
+                            </ng-select>
+                            <div *ngIf="submitted && f.frm_time_out_mm.errors" class="invalid-feedback">
+                                <div *ngIf="f.frm_time_out_mm.errors.required">Required</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div class="row">
-            <div class="form-group col">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">Place</label>
-                <input type="text" class="form-control" required>
-            </div><!-- form-group -->
-            <div class="form-group col">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">Trainer <a href=""></a></label>
-                <!-- <input type="text" class="form-control" required> -->
-                <ng-select [multiple]="true" [items]="variableTrainer" 
-                        name="licenseAuthorityId" bindValue="emp_no" 
-                        bindLabel="name" placeholder="Select ..." required 
-                        formControlName="frm_trainer">
-                </ng-select>
-                </div><!-- form-group -->
-            <div class="form-group col">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">Open resister</label>
-                <div class="az-toggle" (click)="switch1=!switch1" [ngClass]="switch1 ? 'on' : null"><span></span></div>
-            </div><!-- form-group -->
+        <div class="row pt-1">
+            <div class="col-3">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">place</label>
+                    <input class="form-control" formControlName="frm_place" [ngClass]="{ 'is-invalid': submitted && f.frm_place.errors }" #txtplace>
+                    <div *ngIf="submitted && f.frm_place.errors" class="invalid-feedback">
+                        <div *ngIf="f.frm_place.errors.required">Place is required</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-7">
+                <!-- //auto complete -->
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">trainer&nbsp;&nbsp;&nbsp;
+                    <i class="typcn typcn-document-add tx-20 lh--9 op-6 pointer" (click)="open(content)"></i>
+                </label>
+                    <ng-select [items]="value_trainer" bindLabel="fulls" bindValue="trainer_no" [multiple]="true" [(ngModel)]="selected_trainer_multiple" placeholder="Select ..." formControlName="frm_trainer" [ngClass]="{ 'is-invalid': submitted && f.frm_trainer.errors }">
+                    </ng-select>
+                    <div *ngIf="submitted && f.frm_trainer.errors" class="invalid-feedback">
+                        <div *ngIf="f.frm_trainer.errors.required">Trainer is required</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col text-right pt-4">
+                <button type="button" *ngIf="visableSave" class="btn btn-az-primary btn-sm" (click)="fnSave()">Save</button>
+                <button type="button" *ngIf="visableUpdate" class="btn btn-az-primary btn-sm" (click)="fnUpdate()">Save</button>
+                <button type="button" class="btn btn-dark btn-sm" (click)="fnClear()">Clear</button>
+            </div>
         </div>
-<!-- 
-    </div>   
-</div> -->
-
+    </div>
+</div>
 <hr>
 <div class="row">
     <div class="col-12">
-        <table datatable [dtOptions]="dtOptions" class="table table-bordered table-hover table-sm">
+        <div style="position: absolute; top: 2px;" *ngIf="chk_disable"><input type="checkbox" ngModel (ngModelChange)="onNgModelChange($event)" /> All</div>
+        <table datatable [dtOptions]="dt_options" class="table table-bordered table-hover table-sm">
             <thead>
                 <tr class="text-uppercase">
-                    <th class="text-center">
-                        <input type="checkbox" (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()" [attr.aria-label]="checkboxLabel()">
-                    </th>
                     <th>no.</th>
                     <th>course no.</th>
-                    <!-- <th>course</th> -->
                     <th>start date</th>
                     <th>end date</th>
                     <th>time in</th>
@@ -298,29 +202,25 @@
             </thead>
             <tbody>
                 <tr *ngFor="let item of data_grid; let i = index">
-                    <th class="text-center">
-                        <input type="checkbox" (click)="$event.stopPropagation()" (change)="checkCheckBoxvalue(item,$event)" [checked]="selection.isSelected(item)" [attr.aria-label]="checkboxLabel(item)">
-                    </th>
                     <td>{{ i + 1 }}</td>
                     <td>{{ item.course_no }}</td>
-                    <!-- <td>{{ item.course_name_en }}</td> -->
-                    <td>{{ item.start_date }}</td>
-                    <td>{{ item.end_date }}</td>
-                    <td>{{ item.time_in }}</td>
-                    <td>{{ item.time_out }}</td>
+                    <td>{{ item.date_start | date:'dd-MMM-yy'}}</td>
+                    <td>{{ item.date_end | date:'dd-MMM-yy'}}</td>
+                    <td>{{ item.time_in.substring(0, 5) }}</td>
+                    <td>{{ item.time_out.substring(0, 5) }}</td>
                     <td>{{ item.place }}</td>
                     <td>{{ item.trainer }}</td>
                     <td>{{ item.dept_abb_name }}</td>
                     <td>
-                        <i class="far fa-edit pointer" (click)="fn_edit(item)"></i>
-                        <i class="far fa-trash-alt pointer" (click)="fn_delete(item)"></i>
+                        <div *ngIf="item.dept_abb_name != _dept; else elseBlock"><span></span></div>
+                        <ng-template #elseBlock><i class="far fa-edit pointer" (click)="fnEdit(item)"></i>
+                            <i class="far fa-trash-alt pointer" (click)="fnDelete(item)"></i></ng-template>
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
 </div>
-
 
 <ng-template #content let-modal>
     <div class="modal-header">
@@ -330,10 +230,30 @@
       </button>
     </div>
     <div class="modal-body text-capitalize">
-        .....
+        <!-- <img src="assets/report/trainer.png" class="img-fluid" alt="Responsive image"> -->
+        <app-trainer></app-trainer>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-az-primary btn-sm" (click)="modal.close('Save click')">Save</button>
         <button type="button" class="btn btn-outline-dark btn-sm" (click)="modal.close('Close click')">Close</button>
     </div>
 </ng-template>
+
+
+
+
+<!-- <div class="col-md-4">
+    <h4>No of Selected Hobbies: {{selectedItemsList.length}} </h4>
+    <ul>
+        <li *ngFor="let item of selectedItemsList">{{item.label}}</li>
+    </ul>
+</div>
+
+<div class="col-md-4">
+    <h4>Object</h4>
+    <code>
+    {{selectedItemsList | json}}
+    </code>
+
+    <h4>Array of IDs</h4>
+    <code>{{checkedIDs}}</code>
+</div> -->

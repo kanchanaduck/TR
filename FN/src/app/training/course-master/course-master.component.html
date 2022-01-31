@@ -5,65 +5,95 @@
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Course no.</label>
             <input type="text" name="course.course_no" class="form-control" required 
                 [(ngModel)]="course.course_no" >
+            <p class="text-danger tx-12" *ngIf="errors"> 
+                <span *ngFor="let text of errors.course_no">{{ text }}</span>
+            </p>
         </div><!-- form-group -->
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Thai Name</label>
             <input type="text" name="course.course_name_th" class="form-control" required 
                 [(ngModel)]="course.course_name_th" >
+            <p class="text-danger tx-12" *ngIf="errors"> 
+                <span *ngFor="let text of errors.course_name_th">{{ text }}</span>
+            </p>
         </div><!-- form-group -->
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">English Name</label>
             <input type="text" name="course.course_name_en" class="form-control" required 
                 [(ngModel)]="course.course_name_en" >
+            <p class="text-danger tx-12" *ngIf="errors"> 
+                <span *ngFor="let text of errors.course_name_en">{{ text }}</span>
+            </p>
         </div><!-- form-group -->
     </div>
     
     <div class="row">
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Group</label>
-            <input type="text" name="course.dept_abb_name" class="form-control" required 
+            <input type="text" name="course.dept_abb_name" class="form-control" required
                 [(ngModel)]="course.dept_abb_name" >
+                <p class="text-danger tx-12" *ngIf="errors"> 
+                    <span *ngFor="let text of errors.dept_abb_name">{{ text }}</span>
+                </p>
         </div><!-- form-group -->
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Capacity</label>
             <input type="number" name="course.capacity" class="form-control"
                 [(ngModel)]="course.capacity" >
+            <p class="text-danger tx-12" *ngIf="errors"> 
+                <span *ngFor="let text of errors.capacity">{{ text }}</span>
+            </p>
         </div><!-- form-group -->
         <div class="form-group col mb-0">
-            <label class="az-content-label tx-11 tx-medium tx-gray-600">Required course</label>
-            <!-- <input type="text" name="course.prev_course_no" class="form-control"
-                [(ngModel)]="course.prev_course_no" > -->
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Required course</label>     
+            <ng-select 
+                [(ngModel)]="course.prev_course_no"
+                [items]="courses"
+                [ngModelOptions]="{standalone: true}"
+                bindLabel="course_no" 
+                bindValue="course_no" 
+                allow-clear="true">	
+                <ng-template ng-option-tmp ng-label-tmp let-item="item">
+                    {{item.course_no}}: {{item.course_name_th}}
+                </ng-template>	
+            </ng-select>
         </div><!-- form-group -->
     </div>
 
     <div class="row">
         <div class="form-group col mb-0">
-            <label class="az-content-label tx-11 tx-medium tx-gray-600">Day</label>
-            <input type="text" name="course.day" class="form-control"
-            [(ngModel)]="course.day" >
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Days</label>
+            <input type="text" name="course.days" class="form-control"
+            [(ngModel)]="course.days" >
+                        <p class="text-danger tx-12" *ngIf="errors"> 
+                <span *ngFor="let text of errors.days">{{ text }}</span>
+            </p>
         </div><!-- form-group -->
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Category</label>
             <input type="text" name="course.category" class="form-control"
             [(ngModel)]="course.category" >
+            <p class="text-danger tx-12" *ngIf="errors"> 
+                <span *ngFor="let text of errors.category">{{ text }}</span>
+            </p>
         </div><!-- form-group -->
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Level</label>
             <input type="text" name="course.level" class="form-control"
             [(ngModel)]="course.level" >
+            <p class="text-danger tx-12" *ngIf="errors"> 
+                <span *ngFor="let text of errors.level">{{ text }}</span>
+            </p>
         </div><!-- form-group -->
         <div class="form-group col-5 mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Band</label>
             <div class="form-row">
-                <!-- <label class="ckbox" *ngFor="let band of bands">
-                    <input type="checkbox"
-                    name="selectedFruits[]"
-                    value="{{band.band}}"
-                    ng-checked="selection.indexOf(fruitName) > -1"
-                    ng-click="toggleSelection(fruitName)"><span>{{band.band}}</span>
-                </label> -->
-                <label class="ckbox" *ngFor="let band of bands">
-                    <input type="checkbox" value="{{band.band}}"><span>{{band.band}}</span>
+                <label class="ckbox" *ngFor="let band of bands; let i=index;trackBy:trackByIdx">
+                    <input type="checkbox" [(ngModel)]="course_masters_bands[i]" 
+                        [ngModelOptions]="{standalone: true}"
+                        [checked]="isInCourseMaster(band.band)"
+                        [ngValue]="band.band">
+                    <span>{{band.band}} {{isInCourseMaster(band.band)}}</span>
                 </label>
             </div>
         </div><!-- form-group -->
@@ -90,13 +120,16 @@
                     <th class="text-center">
                         <input type="checkbox">
                     </th>
-                    <th>course no.</th>
-                    <th>thai course name</th>
-                    <th>english course name</th>
-                    <th>Category</th>
-                    <th>days</th>
-                    <th>Group</th>
-                    <th>Manage</th>
+                    <th class="text-center">course no.</th>
+                    <th class="text-center">thai name</th>
+                    <th class="text-center">english name</th>
+                    <th class="text-center">Group</th>
+                    <th class="text-center">Capacity</th>
+                    <th class="text-center">Required course</th>
+                    <th class="text-center">days</th>
+                    <th class="text-center">Category</th>
+                    <th class="text-center">Level</th>
+                    <th class="text-center">Manage</th>
                 </tr>
             </thead>
         </table>

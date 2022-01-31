@@ -151,7 +151,7 @@ export class CenterComponent implements OnInit {
     const instance = axios.create({
       baseURL: environment.API_URL,
       headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
         'Content-Type': 'application/json'
       }
     });
@@ -180,7 +180,7 @@ export class CenterComponent implements OnInit {
     const instance = axios.create({
       baseURL: environment.API_URL,
       headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
+        Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
         'Content-Type': 'application/json'
       }
     });

@@ -27,19 +27,22 @@ namespace AngularFirst.Controllers
         {
             // return await _context.tr_stakeholder.ToListAsync();
             return await _context.tb_organization
-                            .Include(e => e.children_org)
-                            // .Include(e => e.parent_org)
+                            .Include(e => e.parent_org)
                             .Include(e => e.stakeholders)
-                            .Where(e => e.level_name=="department"
-                            || e.level_name=="division")
+                            .ThenInclude(p => p.employee)
+                            .Where(e => e.level_name=="department" || e.level_name=="division")
                             .ToListAsync();
         }
 
-        // GET: api/Stakeholder/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<tr_stakeholder>> Gettr_stakeholder(int id)
+        // GET: api/Stakeholder/ICD
+        [HttpGet("{department}")]
+        public async Task<ActionResult<IEnumerable<tb_organization>>> Gettr_stakeholder(string department)
         {
-            var tr_stakeholder = await _context.tr_stakeholder.FindAsync(id);
+            var tr_stakeholder = await _context.tb_organization
+                                    .Include(e => e.stakeholders)
+                                    .ThenInclude(p => p.employee)
+                                    .Where(e => e.org_abb==department)
+                                    .ToListAsync();
 
             if (tr_stakeholder == null)
             {

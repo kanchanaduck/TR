@@ -11,7 +11,6 @@ namespace AngularFirst.Models
     {
         [Key]
         public int id { get; set; }  
-        [MaxLength(7)]
         public string emp_no { get; set; }
         public string role { get; set; }
         public string org_code { get; set; }
@@ -26,6 +25,8 @@ namespace AngularFirst.Models
         public string updated_by { get { return _username; } set { _username = value; } }
         [ForeignKey("org_code")]
         public virtual tb_organization organization { get; set; }
+        [ForeignKey("emp_no")]
+        public virtual tb_employee employee { get; set; }
         private DateTime _date = DateTime.Now;
         private string _username = "014496";
     }
