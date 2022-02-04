@@ -9,7 +9,7 @@ namespace api_hrgis.Models
     [Comment("เปิ้ลอธิบายตารางนี้ให้ฟังหน่อย")]
     public class tr_course_registration
     {
-        public string course_no	{ get; set; }
+         public string course_no	{ get; set; }
         public tr_course courses { get; set; }
         [Required]
         public string emp_no { get; set; }
@@ -31,11 +31,10 @@ namespace api_hrgis.Models
         public bool? center_approved_checked { get; set; }
         [Range(0, 100)]
         public int? pre_test_score { get; set; }
-        public char? pre_test_grade { get; set; }
+        public string pre_test_grade { get; set; }
         [Range(0, 100)]
         public int? post_test_score { get; set; }
-        public char? post_test_grade { get; set; }
-        
+        public string post_test_grade { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? scored_at { get; set; }
         public string scored_by { get; set; }

@@ -1,8 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { HttpClient } from '@angular/common/http';
 import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 import axios from 'axios';
+import { Subject } from 'rxjs';
+import { DataTableDirective } from 'angular-datatables';
+import { AppServiceService } from '../../app-service.service'
 
 @Component({
   selector: 'app-stakeholder',
@@ -13,18 +17,33 @@ export class StakeholderComponent implements OnInit {
 
   dtOptions: any = {};
   closeResult = '';
+  stakeholders: any = [];
   stakeholder: any = {};
   
   departments: any;
   employees: any = [];
   errors: any;
-  formData: any;
+  formData: any = [];
 
-  constructor(private modalService: NgbModal) { }
+  dtTrigger: Subject<any> = new Subject();
+  @ViewChild(DataTableDirective)
+  dtElement: DataTableDirective;
+  isDtInitialized: boolean = false;
+  headers: any = {
+    headers: {
+    Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
+      'Content-Type': 'application/json'
+    }
+  }
+
+  constructor(
+    private service: AppServiceService, 
+    private httpClient: HttpClient
+  ) { }
 
   ngOnInit(): void {
     this.dtOptions = {
-      ajax: {
+      /* ajax: {
         url: environment.API_URL+"Stakeholder",
         dataSrc: "",
       },
@@ -86,7 +105,7 @@ export class StakeholderComponent implements OnInit {
             return  '<a href="javascript:;"><i class="far fa-edit"></i></a>'
           },
         },
-      ],
+      ], */
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
       "<'row'<'col-sm-12'tr>>" +
       "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
@@ -132,24 +151,43 @@ export class StakeholderComponent implements OnInit {
       ],  
       container: "#example_wrapper .col-md-6:eq(0)",
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
-      rowCallback: (row: Node, data: any[] | Object, index: number) => {
-        const self = this;
-        $('.fa-edit', row).off('click');
-        $('.fa-edit', row).on('click', () => {
-          self.get_stakeholder(data);
-        });
-        return row;
-      }
     };
   
+    this.get_stakeholders();
     this.get_departments();
-    this.get_employees();
+    // this.get_employees();
   
+  }
+
+  ngOnDestroy(): void {
+    this.dtTrigger.unsubscribe();
+  }
+
+
+  async get_stakeholders(){
+    let self = this
+    await this.httpClient.get(`${environment.API_URL}Stakeholder`, this.headers)
+    .subscribe((response: any) => {
+      self.stakeholders = response;
+      if (this.isDtInitialized) {
+        this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+          dtInstance.destroy();
+          this.dtTrigger.next();
+        });
+      } 
+      else {
+        this.isDtInitialized = true
+        this.dtTrigger.next();
+      }
+    },
+    (error: any) => {
+      console.log(error);
+    });
   }
 
   async get_employees() {
     try {
-      const response = await axios.get(`${environment.API_URL}Employees`, { headers: { Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'), Pragma: 'no-cache' } });
+      const response = await axios.get(`${environment.API_URL}Employees`, this.headers);
       this.employees = response
       return response;
     } 
@@ -160,12 +198,11 @@ export class StakeholderComponent implements OnInit {
         text: "Data not found"
       })
     }
-    // console.log('data: ', this.stakeholder);
   }
 
   async get_departments() {
     try {
-      const response = await axios.get(`${environment.API_URL}Organization/Level/Department`, { headers: { Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'), Pragma: 'no-cache' } });
+      const response = await axios.get(`${environment.API_URL}Organization/Level/Department`, this.headers);
       this.departments = response
       return response;
     } 
@@ -176,29 +213,38 @@ export class StakeholderComponent implements OnInit {
         text: "Data not found"
       })
     }
-    // console.log('data: ', this.stakeholder);
   }
 
-  async get_stakeholder(data: Object | any[]) {
+  async get_stakeholder(org_code: string) {
     const self = this;
-    this.stakeholder = data
+    // this.stakeholder = data
     try {
-      const response = await axios.get(`${environment.API_URL}Stakeholder/${this.stakeholder.org_abb}`, { headers: { Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'), Pragma: 'no-cache' } });
+      const response = await axios.get(`${environment.API_URL}Stakeholder/${org_code}`, this.headers);
       this.stakeholder = response
       console.log(this.stakeholder)
+      console.log(self.stakeholder.stakeholders)
 
-      const committee = self.stakeholder.find(function(el){
-        return el.role === "Committee"
-      } )
+      const committee = self.stakeholder.stakeholders.find(function(el){
+        return el.role === "COMMITTEE"
+      })
 
-      const approver = self.stakeholder.find(function(el){
-        return el.role === "Approver"
-      } )
-      
+      const approver = self.stakeholder.stakeholders.find(function(el){
+        return el.role === "APPROVER"
+      })
 
-      self.stakeholder.push(committee, approver)
+      console.log(approver);
+      console.log(committee)
 
-      return response;
+      approver.forEach(element => {
+        self.stakeholder.committees.push(element.emp_no)
+      });
+
+      committee.forEach(element => {
+        self.stakeholder.approvers.push(element.emp_no)
+      });
+
+
+      // self.stakeholder.push(committee, approver) 
     } 
     catch (error) {
       Swal.fire({
@@ -211,21 +257,30 @@ export class StakeholderComponent implements OnInit {
   }
 
   async save_stakeholders(){
-    console.log(this.stakeholder)
-    this.formData = [
-    {
-      org_code: this.stakeholder.org_code,
-      emp_no: this.stakeholder.committee,
-      role: "Committee"
-    },
-    { 
-      org_code: this.stakeholder.org_code,
-      emp_no: this.stakeholder.approver,
-      role: "Approver"
-    }]
+    this.formData = [];
+
+    this.stakeholder.committees.forEach(element => {
+      let c = {
+        emp_no: element,
+        org_code: this.stakeholder.org_code,
+        role: 'COMMITTEE'
+      }
+      this.formData.push(c)
+    });
+
+    this.stakeholder.approvers.forEach(element => {
+      let a = {
+        emp_no: element,
+        org_code: this.stakeholder.org_code,
+        role: 'APPROVER'
+      }
+      this.formData.push(a)
+    });
+    
     console.log(this.formData)
 
-    await axios.post(`${environment.API_URL}Stakeholder`,this.formData)
+
+    await axios.post(`${environment.API_URL}Stakeholder`,this.formData, this.headers)
     .then(function (response) {
       Swal.fire({
         toast: true,

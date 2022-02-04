@@ -1,10 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { SelectionModel } from '@angular/cdk/collections';
 import axios from 'axios';
 import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
 import { AppServiceService } from '../../app-service.service';
+import { Subject } from 'rxjs';
+import { DataTableDirective } from 'angular-datatables';
 @Component({
   selector: 'app-course-master',
   templateUrl: './course-master.component.html',
@@ -18,71 +21,26 @@ export class CourseMasterComponent implements OnInit {
   bands: any = [];
   errors: any;
   course_masters_bands: any = [];
-
-
-  constructor(private service: AppServiceService) {
+  dtTrigger: Subject<any> = new Subject();
+  @ViewChild(DataTableDirective)
+  dtElement: DataTableDirective;
+  isDtInitialized: boolean = false;
+  headers: any = {
+    headers: {
+    Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
+      'Content-Type': 'application/json'
+    }
   }
+
+
+  constructor(
+    private service: AppServiceService, 
+    private httpClient: HttpClient
+  ) {}
 
   ngOnInit() {
 
-    this.course.dept_abb_name = 'MTP'
-
     this.dtOptions = {
-      ajax: {
-        url: `${environment.API_URL}CourseMasters`,
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('token_hrgis')
-        },
-        dataSrc: "",
-      },
-      columns:
-      [
-        { 
-          "data": "course_no",
-          "className": "text-center",
-          "render": function ( data, type, row ) {
-            return `<input type="checkbox" value=${data}>`
-          },
-        },
-        { 
-          "data": "course_no" 
-        },
-        { 
-          "data": "course_name_th" 
-        },
-        { 
-          "data": "course_name_en" 
-        },
-        { 
-          "data": "dept_abb_name",
-          "className": "text-center"
-        },
-        { 
-          "data": "capacity",
-          "className": "text-right"
-        },
-        { 
-          "data": "prev_course_no"
-        },
-        { 
-          "data": "days",
-          "className": "text-right"
-        },
-        { 
-          "data": "category" 
-        },
-        { 
-          "data": "level" 
-        },
-        { 
-          "data": "course_no",
-          "className": "text-center",
-          "render": function ( data, type, row ) {
-            return `<a href="javascript:;"><i class="far fa-edit">
-            </i></a><a href="javascript:;"><i class="far fa-trash-alt"></i></a>`
-          },
-        },
-      ],
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
       "<'row'<'col-sm-12'tr>>" +
       "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
@@ -113,26 +71,14 @@ export class CourseMasterComponent implements OnInit {
           },
         ],
       },
-      order: [ [1, 'asc']],
+      order: [ [0, 'asc']],
       columnDefs: [ {
-        targets: [ 0, 10 ],
+        targets: [ 0,8 ],
         "orderable": false
       } ],
 
       container: "#example_wrapper .col-md-6:eq(0)",
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
-      rowCallback: (row: Node, data: any[] | Object, index: number) => {
-        const self = this;
-        $('.fa-trash-alt', row).off('click');
-        $('.fa-trash-alt', row).on('click', () => {
-          self.delete_course(data);
-        });
-        $('.fa-edit', row).off('click');
-        $('.fa-edit', row).on('click', () => {
-          self.get_course(data);
-        });
-        return row;
-      }
     };
 
 
@@ -148,30 +94,31 @@ export class CourseMasterComponent implements OnInit {
       }); 
   }
 
-  
-  async get_courses() {
+  async get_courses(){
     let self = this
-    self.errors = null;
-    try {
-      const response = await axios.get(`${environment.API_URL}CourseMasters/`, { headers: { Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'), Pragma: 'no-cache' } });
-      this.courses = response
-      return response;
-    } 
-    catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: error.response.status,
-        text: "Data not found"
-      })
-    }
-    console.log('data: ', this.course);
+    await this.httpClient.get(`${environment.API_URL}CourseMasters`, this.headers)
+    .subscribe((response: any) => {
+      self.courses = response;
+      if (this.isDtInitialized) {
+        this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+          dtInstance.destroy();
+          this.dtTrigger.next();
+        });
+      } 
+      else {
+        this.isDtInitialized = true
+        this.dtTrigger.next();
+      }
+    },
+    (error: any) => {
+      console.log(error);
+    });
   }
 
-  async get_course(data: any) {
-    let self = this
-    self.errors = null;
+
+  async get_course(course_no: number) {
     try {
-      const response = await axios.get(`${environment.API_URL}CourseMasters/${data.course_no}`, { headers: { Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'), Pragma: 'no-cache' } });
+      const response = await axios.get(`${environment.API_URL}CourseMasters/${course_no}`, this.headers);
       this.course = response
       return response;
     } 
@@ -182,7 +129,6 @@ export class CourseMasterComponent implements OnInit {
         text: "Data not found"
       })
     }
-    console.log('data: ', this.course);
   }
 
   delete_course(data: any) {

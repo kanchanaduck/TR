@@ -9,9 +9,11 @@ using api_hrgis.Data;
 using api_hrgis.Models;
 using System.IO;
 using OfficeOpenXml;
+using Microsoft.AspNetCore.Authorization;
 
 namespace api_hrgis.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class EmployeesController : ControllerBase
@@ -27,11 +29,7 @@ namespace api_hrgis.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<tb_employee>>> GetEmployee()
         {
-            return await _context.tb_employee
-            // .Select(
-            //     employed_status = (emp.resn_date <= DateTime.Today || emp.resn_date is not null) ? "Employed":"Resigned",
-            // )
-            .ToListAsync();
+            return await _context.tb_employee.ToListAsync();
         }
 
         // GET: api/Employees/Update
@@ -49,7 +47,7 @@ namespace api_hrgis.Controllers
 
             if (employees == null)
             {
-                return NotFound();
+                return NotFound("Data not found");
             }
 
             return employees;
@@ -118,7 +116,7 @@ namespace api_hrgis.Controllers
             var employees = await _context.tb_employee.FindAsync(id);
             if (employees == null)
             {
-                return NotFound();
+                return NotFound("Data not found");
             }
 
             _context.tb_employee.Remove(employees);
@@ -131,9 +129,14 @@ namespace api_hrgis.Controllers
         {
             return _context.tb_employee.Any(e => e.emp_no == id);
         }
+        [AllowAnonymous]
         [HttpGet("Mock")]
         public async Task<ActionResult<IEnumerable<tb_employee>>> Mock()
         {
+            var itemsToDelete = _context.Set<tb_employee>();
+            _context.tb_employee.RemoveRange(itemsToDelete);
+            _context.SaveChanges();
+
             string filePath = Path.Combine("./wwwroot/", $"Mockdata.xlsx");
 
             if(System.IO.File.Exists(filePath)){

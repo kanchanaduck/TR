@@ -25,7 +25,7 @@ namespace api_hrgis.Controllers
     public class AuthenticateController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly IConfiguration _config; // using Microsoft.Extensions.Configuration;
+        private readonly IConfiguration _config;
         private readonly IRepository _repository;
 
 

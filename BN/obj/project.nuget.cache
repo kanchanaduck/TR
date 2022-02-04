@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "k7h2UDrthBhUJumEQopE4iLWVXPD302fwT2g4d7X9nm2jushZUvNSy37CReIMIiZxWLEco0pKpTcK8Q5ZHDjAQ==",
+  "dgSpecHash": "sCxI4RD+n/NAwdN2IR8YWVPfn2JqZOfWwh9jGC7Br33X6mTOLMqAz/3kzZAzo4fAkOLqiXYJ+3STTSJ4FEX5kw==",
   "success": true,
   "projectFilePath": "D:\\HRGIS\\BN\\api-hrgis.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\014496\\.nuget\\packages\\epplus\\5.8.5\\epplus.5.8.5.nupkg.sha512",
+    "C:\\Users\\014496\\.nuget\\packages\\foolproof.core\\1.1.10\\foolproof.core.1.1.10.nupkg.sha512",
     "C:\\Users\\014496\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\014496\\.nuget\\packages\\microsoft.aspnetcore.authentication\\2.2.0\\microsoft.aspnetcore.authentication.2.2.0.nupkg.sha512",
     "C:\\Users\\014496\\.nuget\\packages\\microsoft.aspnetcore.authentication.abstractions\\2.2.0\\microsoft.aspnetcore.authentication.abstractions.2.2.0.nupkg.sha512",

@@ -9,7 +9,7 @@ export const environment = {
   status: {
     wait: "Wait",
     approved: "Approved",
-    center_app: "Center Approved"
+    center_app: "Center approved"
   },
   call: "8005",
   text: {
@@ -18,7 +18,9 @@ export const environment = {
     wait: "Wait",
     duplication: "Duplication Data.",
     not_found: "Data not found.",
-    all : "All"
+    all : "All",
+    invalid_department : "Invalid department.",
+    unequal_band : "Unequal band."
   }
 };
 

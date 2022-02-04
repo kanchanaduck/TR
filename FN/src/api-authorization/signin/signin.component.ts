@@ -23,6 +23,10 @@ export class SigninComponent implements OnInit {
     }
 
   ngOnInit() {
+    console.log("Token: ", localStorage.getItem('token_hrgis'))
+    if(localStorage.getItem('token_hrgis')!==null){
+      this.router.navigate(['/training']);
+    }
   }
 
   response :any;
@@ -44,7 +48,7 @@ export class SigninComponent implements OnInit {
       console.log("response: ", this.response);
       localStorage.setItem('token_hrgis', this.response.data.token);
 
-      this.router.navigate(['/']);
+      this.router.navigate(['/training']);
 
       return this.response
     } catch (error) {

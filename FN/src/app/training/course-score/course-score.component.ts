@@ -1,9 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { SelectionModel } from '@angular/cdk/collections';
-import axios from 'axios';
 import Swal from 'sweetalert2';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, RequiredValidator, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { DataTableDirective } from 'angular-datatables';
+import { environment } from '../../../environments/environment';
+import { AppServiceService } from '../../app-service.service';
 
 @Component({
   selector: 'app-course-score',
@@ -12,31 +13,51 @@ import { AbstractControl, FormBuilder, FormControl, FormGroup, RequiredValidator
 })
 export class CourseScoreComponent implements OnInit {
   data_grid: any = [];
+  // datatable
   dtOptions: any = {};
+  dtTrigger: Subject<any> = new Subject();
+  @ViewChild(DataTableDirective)
+  dtElement: DataTableDirective;
+  isDtInitialized: boolean = false
+  // end datatable
 
-  @ViewChild("txtcourse_no") txtcourse_no;
-  @ViewChild("txtcourse_name_en") txtcourse_name_en;
+  checkboxesDataList: any[];
   @ViewChild("txtgroup") txtgroup;
+  @ViewChild("txtqty") txtqty;
   @ViewChild("txtdate_from") txtdate_from;
   @ViewChild("txtdate_to") txtdate_to;
-
+  @ViewChild("txtplace") txtplace;
+  @ViewChild("txttotal") txttotal;
   @ViewChild("txtfull_name") txtfull_name;
   @ViewChild("txtdept") txtdept;
   @ViewChild("txtposition") txtposition;
   @ViewChild("txtband") txtband;
   @ViewChild("txtpre_test_grade") txtpre_test_grade;
   @ViewChild("txtpost_test_grade") txtpost_test_grade;
-
+  _getjwt: any;
+  dept_abb_name = '';
   form: FormGroup;
   submitted = false;
 
-  constructor(private modalService: NgbModal, private formBuilder: FormBuilder) {
-    
+  constructor(private formBuilder: FormBuilder, private service: AppServiceService) {
+
   }
 
   ngOnInit() {
-    this.data_grid = ELEMENT_DATA;
+    this.form = this.formBuilder.group(
+      {
+        frm_course: ['', [Validators.required, Validators.minLength(11), Validators.maxLength(20)]],
+        frm_course_name: ['', [Validators.required]],
+        frm_emp_no: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(7)]],
+        frm_emp_name: ['', [Validators.required]],
+        frm_pre_test_score: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(3)]],
+        frm_post_test_score: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(3)]],
+      },
+    );
+    this._getjwt = this.service.service_jwt();
+    this.dept_abb_name = this._getjwt.user.dept_abb_name;
 
+    // this.data_grid = [];
     this.dtOptions = {
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
         "<'row'<'col-sm-12'tr>>" +
@@ -45,13 +66,6 @@ export class CourseScoreComponent implements OnInit {
         paginate: {
           next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
           previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
-        }
-      }, filter: {
-        "dom": {
-          "container": {
-            tag: "div",
-            className: "dt-buttons btn-group flex-wrap float-left"
-          },
         }
       },
       buttons: {
@@ -80,28 +94,35 @@ export class CourseScoreComponent implements OnInit {
           {
             extend: 'collection',
             text: '<i class="fas fa-cloud-download-alt"></i> Download</button>',
-            split: ['csv', 'pdf', 'excel'],
+            buttons: [
+              {
+                extend: 'excel',
+                text: '<i class="far fa-file-excel"></i> Excel</button>',
+              },
+              {
+                extend: 'csv',
+                text: '<i class="far fa-file-excel"></i> Csv</button>',
+              },
+              {
+                extend: 'pdf',
+                text: '<i class="far fa-file-pdf"></i> Pdf</button>',
+              },
+            ]
           }
         ],
       },
       container: "#example_wrapper .col-md-6:eq(0)",
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
+      pageLength: 10,
     };
 
-    this.form = this.formBuilder.group(
-      {
-        frm_course: ['', [Validators.required, Validators.minLength(11), Validators.maxLength(20)]],
-        frm_emp_no: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(7)]],
-        frm_pre_test_score: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(3)]],
-        frm_post_test_score: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(3)]],
-      },
-    );
+    this.fnGetband();
   }
   get f(): { [key: string]: AbstractControl } {
     return this.form.controls;
   }
 
-  fn_save() {
+  async fnSave() {
     this.submitted = true;
 
     if (this.form.invalid) {
@@ -109,16 +130,38 @@ export class CourseScoreComponent implements OnInit {
     }
     console.log(JSON.stringify(this.form.value, null, 2));
 
-    Swal.fire({
-      toast: true,
-      position: 'top-end',
-      icon: 'success',
-      title: 'Update data success.',
-      showConfirmButton: false,
-      timer: 2000
-    })
+    if (this._dept != this.dept_abb_name) {
+      Swal.fire({
+        icon: 'error',
+        title: "",
+        text: environment.text.invalid_department
+        // ไม่สามารถเพิ่มข้อมูลได้ เนื่องจากพนักงานไม่ได้อยู่ใน DEPARTMENT ของคุณ.
+      })
+
+      return;
+     }
+
+    if (!this.arr_band.some(x => x.band == this.txtband.nativeElement.value)) {
+      Swal.fire({
+        icon: 'error',
+        title: "",
+        text: environment.text.unequal_band
+        // ไม่สามารถเพิ่มข้อมูลได้ เนื่องจากพนักงานไม่อยู่ใน band ที่กำหนด.
+      })
+
+      return;
+    }
+    
+    const send_data = {
+      course_no: this.form.controls['frm_course'].value,
+      emp_no: this.form.controls['frm_emp_no'].value,
+      last_status : (this.data_grid.length + 1) > this.txtqty.nativeElement.value ? environment.text.wait : null
+    }
+    // console.log(send_data);
+    // await this.service.axios_post('Registration', send_data, environment.text.success);
+    // await this.fnGet(this.form.controls['frm_course'].value);
   }
-  fn_clear() {
+  fnClear() {
     this.form.controls['frm_emp_no'].setValue("");
     this.txtfull_name.nativeElement.value = "";
     this.txtdept.nativeElement.value = "";
@@ -129,10 +172,7 @@ export class CourseScoreComponent implements OnInit {
     this.form.controls['frm_post_test_score'].setValue("");
     this.txtpost_test_grade.nativeElement.value = "";
   }
-  fn_edit(item) {
-    console.log('fn_edit', item);
-  }
-  fn_delete(item) {
+  fnDelete(item) {
     console.log('fn_edit', item);
     Swal.fire({
       title: 'Are you sure?',
@@ -143,86 +183,181 @@ export class CourseScoreComponent implements OnInit {
       cancelButtonText: 'No'
     }).then(async (result) => {
       if (result.value) {
-        // let datas = {
-        //   "id": dt.id,
-        //   "confirm_by": this.user
+        // if (result.value) {
+        //   await this.service.axios_delete('Registration/' + item.course_no + '/' + item.emp_no + '/' + this.txtqty.nativeElement.value, environment.text.delete);
+        //   this.fnGet(item.course_no, this.dept_abb_name);
         // }
-        // //console.log("btndelete data:", datas)
       }
     })
 
   }
 
-  onKeyCourse(event: any) { // console.log(event.target.value);
-    if (event.target.value.length >= 11) {
-      this.txtcourse_name_en.nativeElement.value = "QC BASIC";
-      this.txtgroup.nativeElement.value = "MTP";
-      this.txtdate_from.nativeElement.value = "2021-12-03";
-      this.txtdate_to.nativeElement.value = "2021-12-03";
-    } else if (event.target.value.length == 0) {
-      this.txtcourse_name_en.nativeElement.value = "";
+  res_course: any = [];
+  arr_band: any;
+  async onKeyCourse(event: any) { // console.log(event.target.value);
+    if (event.target.value.length >= 11 && event.target.value.length < 12) {
+      this.res_course = await this.service.axios_get('CourseOpen/' + event.target.value);
+      if (this.res_course != undefined) {
+        this.form.controls['frm_course_name'].setValue(this.res_course.course_name_en);
+        this.txtgroup.nativeElement.value = this.res_course.dept_abb_name;
+        this.txtqty.nativeElement.value = this.res_course.capacity;
+        this.txtdate_from.nativeElement.value = formatDate(this.res_course.date_start).toString() + ' ' + this.res_course.time_in;
+        this.txtdate_to.nativeElement.value = formatDate(this.res_course.date_end).toString() + ' ' + this.res_course.time_out;
+        this.txtplace.nativeElement.value = this.res_course.place;
+
+        this.arr_band = this.res_course.courses_bands; // console.log(this.arr_band);
+
+        this.array_chk.forEach(object => {
+          object.isChecked = false; // reset isChecked => false
+        }); //console.log(this.array_chk);
+        var nameArr = this.res_course.courses_bands; // console.log(nameArr);
+        for (const iterator of nameArr) {
+          this.array_chk.find(v => v.band === iterator.band).isChecked = true;
+        } // console.log(this.array_chk);
+        this.checkboxesDataList = this.array_chk;
+
+        await this.fnGet(event.target.value);
+      }
+    } else if (event.target.value.length < 11) {
+      this.form.controls['frm_course_name'].setValue("");
       this.txtgroup.nativeElement.value = "";
+      this.txtqty.nativeElement.value = "";
       this.txtdate_from.nativeElement.value = "";
       this.txtdate_to.nativeElement.value = "";
+      this.txtplace.nativeElement.value = "";
+      this.checkboxesDataList.forEach((value, index) => {
+        value.isChecked = false;
+      });
+      this.fnClear();
     }
   }
   onKeyEmpno(event: any) {
     if (event.target.value.length >= 6 && event.target.value.length <= 7) {
-      this.searchHR(event.target.value);
+      this.searchEmp(event.target.value);
+    } else if (event.target.value.length == 0) {
+      this.fnClear();
     }
   }
-  async searchHR(empno: any) {
-    try {
-      const instance = axios.create({
-        headers: {
-          'Content-Type': 'application/json'
+  res_emp: any = [];
+  _dept: any = '';
+  async searchEmp(empno: any) {
+    this.res_emp = await this.service.axios_get('Employees/' + empno); // console.log('searchEmp: ', this.res_emp);
+    if (this.res_emp != null || this.res_emp != undefined) {
+      this.form.controls['frm_emp_name'].setValue(this.res_emp.sname_eng + " " + this.res_emp.gname_eng + " " + this.res_emp.fname_eng);
+      this._dept = this.res_emp.dept_abb_name;
+      this.txtdept.nativeElement.value = this.res_emp.dept_code + ":" + this.res_emp.dept_abb_name;
+      this.txtposition.nativeElement.value = this.res_emp.posn_ename;
+      this.txtband.nativeElement.value = this.res_emp.band;
+    } else {
+      this.form.controls['frm_emp_name'].setValue("");
+      this.txtdept.nativeElement.value = "";
+      this.txtposition.nativeElement.value = "";
+      this.txtband.nativeElement.value = "";
+    }
+  }
+
+  onKeyPreTestScore(event) {
+    // console.log(event.target.value);
+    this.txtpre_test_grade.nativeElement.value = fnGrade(event.target.value);
+  }
+  onKeyPostTestScore(event) {
+    this.txtpost_test_grade.nativeElement.value = fnGrade(event.target.value);
+  }
+
+  /** File Upload, Download */
+  dowloadFormat() {
+    const link = document.createElement('a');
+    link.setAttribute('target', '_blank');
+    link.setAttribute('href', 'assets/format/format input training.xlsx');
+    link.setAttribute('download', `format input training.xlsx`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }
+  nameFile: string = 'Choose file';
+  file: any;
+  fileName: any;
+  chooseFile(e: any) {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      this.file = e.target.files[0];
+      this.fileName = e.target.files[0].name;
+      console.log(this.file);
+      console.log(this.fileName);
+      this.nameFile = this.fileName;
+    }
+  }
+  upload() {
+    let formData = new FormData();
+    if (this.file !== undefined && this.file !== "" && this.file !== null) {
+      formData.append('file_form', this.file)
+      formData.append('file_name', this.fileName)
+    }
+
+    // await this.service.s_form_data('/Newpart/upload_newpart', formData);
+    this.nameFile = 'Choose file';
+  }
+  /** End File Upload, Download */
+
+  async fnGet(course_no) {
+    await this.service.gethttp('RegisterScore/' + course_no)
+      .subscribe((response: any) => {
+        this.data_grid = response;
+
+        // Calling the DT trigger to manually render the table
+        if (this.isDtInitialized) {
+          this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+            dtInstance.destroy();
+            this.dtTrigger.next();
+          });
+        } else {
+          this.isDtInitialized = true
+          this.dtTrigger.next();
         }
       });
-      const body = {
-        command: "SELECT band, emp_no, sname_eng, gname_eng, fname_eng, posn_ename, dept_code, dept_abb_name " +
-          "FROM admin.v_emp_data_all_cpt WHERE emp_no = '" + empno + "'" +
-          "ORDER BY emp_no ASC, band DESC"
-      }
-      const response = await instance.post('http://cptsvs531:1000/middleware/oracle/hrms', body);
-      // console.log('1. oracle response: ', response); //1
-      const customer = response['data']['data'][0];
-
-      let values = response['data']['data'][0];
-      console.log('1. oracle response: ', values); //1
-      if (response['data']['data'].length > 0) {
-        this.txtfull_name.nativeElement.value = values.SNAME_ENG + " " + values.GNAME_ENG + " " + values.FNAME_ENG;
-        this.txtdept.nativeElement.value = values.DEPT_CODE + ":" + values.DEPT_ABB_NAME;
-        this.txtposition.nativeElement.value = values.POSN_ENAME;
-        this.txtband.nativeElement.value = values.BAND;
-      } else {
-        this.txtfull_name.nativeElement.value = "";
-        this.txtdept.nativeElement.value = "";
-        this.txtposition.nativeElement.value = "";
-        this.txtband.nativeElement.value = "";
-      }
-
-      return response.data;
-    } catch (error) {
-      console.log('RES ERROR: ', error.response);
-      Swal.fire({
-        icon: 'error',
-        title: error.response.status,
-        text: error.response.data
-      })
-    }
-  }
-  onKey_pre_test_score(event) {
-
-  }
-  onKey_post_test_score(event) {
-
   }
 
-  open(content){
-    this.modalService.open(content, {
-      size: 'mb' //sm, mb, lg
-    });
+  array_chk: any;
+  async fnGetband() {
+    this.array_chk = await this.service.axios_get('Bands'); //console.log(this.array_chk);
+    this.array_chk.forEach(object => {
+      object.isChecked = false;
+    }); //console.log(this.array_chk);
+    this.checkboxesDataList = this.array_chk; //console.log(this.checkboxesDataList);
   }
+
+  ngOnDestroy(): void {
+    this.dtTrigger.unsubscribe();
+  }
+}
+
+function fnGrade(score) {
+  let grade = "Fail";
+
+  if (score == "") { grade = ""; }
+  else if (score >= 80 && score <= 100) { grade = "A"; }
+  else if (score >= 70 && score <= 79) { grade = "B"; }
+  else if (score >= 60 && score <= 69) { grade = "C"; }
+  else if (score >= 50 && score <= 59) { grade = "D"; }
+  else if (score >= 1 && score <= 49) { grade = "E"; }
+  else if (score == 0) { grade = "F"; }
+
+  return grade;
+}
+function formatDate(date) {
+  var d = new Date(date),
+    month = '' + (d.getMonth() + 1),
+    day = '' + d.getDate(),
+    year = d.getFullYear();
+
+  if (month.length < 2)
+    month = '0' + month;
+  if (day.length < 2)
+    day = '0' + day;
+
+  return [year, month, day].join('-');
 }
 
 export interface PeriodicElement {
@@ -244,6 +379,90 @@ export interface PeriodicElement {
 
 const ELEMENT_DATA: PeriodicElement[] = [
   {
+    emp_no: '014748',
+    sname_eng: 'MISS',
+    gname_eng: 'NUTTAYA',
+    fname_eng: 'KALLA', band: 'J2',
+    dept_code: '2230',
+    dept_abb_name: 'ICD',
+    prob_date: '2021-01-01',
+    resn_date: '',
+    pre_test_score: 80,
+    pre_test_grade: 'A',
+    post_test_score: 90,
+    post_test_grade: 'A',
+    status: '',
+  }, {
+    emp_no: '014748',
+    sname_eng: 'MISS',
+    gname_eng: 'NUTTAYA',
+    fname_eng: 'KALLA', band: 'J2',
+    dept_code: '2230',
+    dept_abb_name: 'ICD',
+    prob_date: '2021-01-01',
+    resn_date: '',
+    pre_test_score: 80,
+    pre_test_grade: 'A',
+    post_test_score: 90,
+    post_test_grade: 'A',
+    status: '',
+  }, {
+    emp_no: '014748',
+    sname_eng: 'MISS',
+    gname_eng: 'NUTTAYA',
+    fname_eng: 'KALLA', band: 'J2',
+    dept_code: '2230',
+    dept_abb_name: 'ICD',
+    prob_date: '2021-01-01',
+    resn_date: '',
+    pre_test_score: 80,
+    pre_test_grade: 'A',
+    post_test_score: 90,
+    post_test_grade: 'A',
+    status: '',
+  }, {
+    emp_no: '014748',
+    sname_eng: 'MISS',
+    gname_eng: 'NUTTAYA',
+    fname_eng: 'KALLA', band: 'J2',
+    dept_code: '2230',
+    dept_abb_name: 'ICD',
+    prob_date: '2021-01-01',
+    resn_date: '',
+    pre_test_score: 80,
+    pre_test_grade: 'A',
+    post_test_score: 90,
+    post_test_grade: 'A',
+    status: '',
+  }, {
+    emp_no: '014748',
+    sname_eng: 'MISS',
+    gname_eng: 'NUTTAYA',
+    fname_eng: 'KALLA', band: 'J2',
+    dept_code: '2230',
+    dept_abb_name: 'ICD',
+    prob_date: '2021-01-01',
+    resn_date: '',
+    pre_test_score: 80,
+    pre_test_grade: 'A',
+    post_test_score: 90,
+    post_test_grade: 'A',
+    status: '',
+  }, {
+    emp_no: '014748',
+    sname_eng: 'MISS',
+    gname_eng: 'NUTTAYA',
+    fname_eng: 'KALLA', band: 'J2',
+    dept_code: '2230',
+    dept_abb_name: 'ICD',
+    prob_date: '2021-01-01',
+    resn_date: '',
+    pre_test_score: 80,
+    pre_test_grade: 'A',
+    post_test_score: 90,
+    post_test_grade: 'A',
+    status: '',
+  }, {
     emp_no: '014748',
     sname_eng: 'MISS',
     gname_eng: 'NUTTAYA',

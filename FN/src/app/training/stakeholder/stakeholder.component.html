@@ -2,48 +2,43 @@
   <form (ngSubmit)="save_stakeholders()">
   <div class="row">
       <div class="form-group col mb-0 p-1">
-          <label class="az-content-label tx-11 tx-medium tx-gray-600">Department</label>
-          <ng-select [items]="departments" 
-                      groupBy="parent_org.parent_org_code" 
-                      bindLabel="org_abb" 
-                      bindValue="org_abb"
-                      [(ngModel)]="stakeholder.org_code" 
-                      [ngModelOptions]="{standalone: true}"
-                      allow-clear="true">
-            <ng-template ng-optgroup-tmp let-item="item">
-                <b>{{item.org_abb || "f"}}</b>
-            </ng-template>
-        </ng-select>
+          <label class="az-content-label tx-11 tx-medium tx-gray-600">Organization</label>
+          <!-- <ng-select [items]="departments" 
+                    groupBy="parent_org_code" 
+                    bindLabel="org_abb" 
+                    bindValue="org_code"
+                    [selectableGroup]="true"
+                    [(ngModel)]="stakeholder.org_code" 
+                    [ngModelOptions]="{standalone: true}"
+                    allow-clear="true"
+                    (change)="get_stakeholder($event)">
+                    <ng-template ng-optgroup-tmp let-item="item" let-index="index">
+                        {{ item.org_abb + '('+item.parent_org_code+')' }}
+                    </ng-template>
+        </ng-select> -->
+        <input type="text" class="form-control" name="org_code" [(ngModel)]="stakeholder.org_code" value="1110">
       </div><!-- form-group -->
       <div class="form-group col mb-0 p-1">
           <label class="az-content-label tx-11 tx-medium tx-gray-600">committee</label>.
-          <input type="text" name="emp_no" class="form-control" required >
-          <!-- <input type="text" name="fname_en" class="form-control" required 
-            [(ngModel)]="stakeholder.stakeholders.emp_no" 
-              > -->
-              <!-- <ng-select
-    [multiple]="true"
-    [items]="employees"
-    [(ngModel)]="stakeholder.committee"
-    placeholder="Select employee"
-    [ngModelOptions]="{standalone: true}"
-    bindLabel="emp_no"
-    bindValue="emp_no"> -->
-    <!-- <ng-template ng-header-tmp>
-        <button (click)="selectAll()" class="btn btn-sm btn-secondary">Select all</button>
-        <button (click)="unselectAll()" class="btn btn-sm btn-secondary">Unselect all</button>
-    </ng-template>
-    <ng-template ng-footer-tmp>
-        Selected count: {{selectedPeople.length}}
-    </ng-template> -->
-<!-- </ng-select> -->
+          <select 
+            class="form-control" 
+            name="emp_no"
+            multiple
+            [(ngModel)]="stakeholder.committees">
+              <option selected>014496</option>
+              <option>000094</option>
+          </select>
       </div><!-- form-group -->
       <div class="form-group col mb-0 p-1">
           <label class="az-content-label tx-11 tx-medium tx-gray-600">approver</label>
-          <input type="text" name="emp_no" class="form-control" required >
-          <!-- <input type="text" name="fname_en" class="form-control" required 
-            [(ngModel)]="stakeholder.stakeholders.emp_no" 
-              > -->
+          <select 
+            class="form-control" 
+            name="emp_no"
+            multiple
+            [(ngModel)]="stakeholder.approvers">
+              <option>014496</option>
+              <option selected>000094</option>
+          </select>
       </div><!-- form-group -->
       <div class="form-group col pt-1">
         <label class="az-content-label tx-11 tx-medium tx-gray-600 invisible">222</label>
@@ -57,7 +52,7 @@
 </div>
 
 
-<table datatable [dtOptions]="dtOptions" class="table table-bordered table-hover w-100" id="example">
+<table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover w-100" id="example">
     <thead>
         <tr>
             <th class="text-center">DIVISION</th>
@@ -68,30 +63,41 @@
             <th class="text-center">MANAGE</th>
         </tr>
     </thead>
+    <tbody>
+        <tr *ngFor="let i of stakeholders">
+            <td class="text-center">
+                {{ i.parent_org.org_abb==null? i.org_abb: i.parent_org.org_abb }}
+            </td>
+            <td class="text-center">
+                {{ i.parent_org.org_abb==null? '': i.org_abb }}
+            </td>
+            <td>
+                {{ i.level_name | uppercase }}
+            </td>
+            <td>
+                <!-- <div *ngFor="let j of i.committees">
+                    {{ j.emp_no + j.employee.full_name_eng }}
+                </div> -->
+            </td>
+            <td>
+                <div *ngFor="let j of i.approvers">
+                    {{ j.emp_no + j.employee.full_name_eng }}
+                </div>
+            </td>
+            <td class="text-center">
+                <!-- {{ i.parent_org.org_abb==null? i.org_code: i.org_code }} -->
+                <!-- <a *ngIf="i.parent_org.org_abb==null"
+                    href="javascript:;" 
+                    (click)="get_stakeholder(i.parent_org_code)" >
+                    <i class="far fa-edit"></i>
+                </a>-->
+               <a 
+                    href="javascript:;" 
+                    (click)="get_stakeholder(i.org_code)" >
+                    <i class="far fa-edit"></i>
+                </a> 
+            </td>
+        </tr>
+    </tbody>
 </table>
   
-
-<ng-template #content let-modal>
-    <div class="modal-header">
-      <h4 class="modal-title" id="modal-basic-title">Profile update</h4>
-      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-      <form>
-        <div class="form-group">
-          <label for="dateOfBirth">Date of birth</label>
-          <div class="input-group">
-            <input id="dateOfBirth" class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #dp="ngbDatepicker">
-            <div class="input-group-append">
-              <button class="btn btn-outline-secondary calendar" (click)="dp.toggle()" type="button"></button>
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
-    </div>
-  </ng-template>

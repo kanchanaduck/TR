@@ -462,7 +462,7 @@ export class ApproveCenterComponent implements OnInit {
 
   array_chk:any;
   async fnGetband() {
-    this.array_chk = await this.service.axios_get('CourseMasters/GetBand'); //console.log(this.array_chk);
+    this.array_chk = await this.service.axios_get('Bands'); //console.log(this.array_chk);
     this.array_chk.forEach(object => {
       object.isChecked = false;
     }); //console.log(this.array_chk);

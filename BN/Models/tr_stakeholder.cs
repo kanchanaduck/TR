@@ -10,7 +10,6 @@ namespace api_hrgis.Models
     public class tr_stakeholder
     {
         [Key]
-        public int id { get; set; }
         public string emp_no { get; set; }
         public string role { get; set; }
         public string org_code { get; set; }

@@ -18,7 +18,6 @@ import { ChartsModule } from 'ng2-charts';
 import { TrainingComponent } from './training/training.component';
 import { CourseMasterComponent } from './course-master/course-master.component';
 import { CourseOpenComponent } from './course-open/course-open.component';
-import { TrainerComponent } from './trainer/trainer.component';
 import { SurveyCenterComponent } from './survey-center/survey-center.component';
 import { SurveyComponent } from './survey/survey.component';
 import { CourseTargetComponent } from './course-target/course-target.component';
@@ -37,9 +36,12 @@ import { CourseHistoryComponent } from './course-history/course-history.componen
 import { StakeholderComponent } from './stakeholder/stakeholder.component';
 import { CenterComponent } from './center/center.component';
 import { EvaluationFormComponent } from './evaluation-form/evaluation-form.component';
+import { TrainerComponent } from './trainer/trainer.component';
+import { TrainerHistoryComponent } from './trainer-history/trainer-history.component';
 
 const routes: Routes = [
   { path: '', component: TrainingComponent },
+  { path: 'training', component: TrainingComponent, data: { title: 'Training', active: true} },
   { path: 'approve-mgr', component: ApproveMgrComponent, data: { title: 'Mgr. approve trainee', active: true } },
   { path: 'approve-center', component: ApproveCenterComponent, data: { title: 'Center approve trainee', active: true } },
   { path: 'center', component: CenterComponent, data: { title: 'Center management', active: true } },
@@ -49,7 +51,8 @@ const routes: Routes = [
   { path: 'course-open', component: CourseOpenComponent, data: { title: 'Open course', active: true } },
   { path: 'course-map', component: CourseMapComponent, data: { title: 'Course map own department', active: true } },
   { path: 'course-signature-sheet', component: CourseSignatureSheetComponent, data: { title: 'ใบเซ็นชื่อ', active: true } },
-  { path: 'trainer', component: TrainerComponent, data: { title: 'Trainer management', active: true } },
+  { path: 'trainer', component: TrainerComponent, data: { title: 'Trainer', active: true} },
+  { path: 'trainer-history/:trainer_no', component: TrainerHistoryComponent, data: { title: 'Trainer history', active: true} },
   { path: 'survey-center', component: SurveyCenterComponent, data: { title: 'Need survey for center', active: true } },
   { path: 'survey', component: SurveyComponent, data: { title: 'Need survey for committee', active: true } },
   { path: 'course-target', component: CourseTargetComponent, data: { title: 'Target group of course', active: true } },
@@ -87,6 +90,7 @@ const routes: Routes = [
     StakeholderComponent,
     CenterComponent,
     EvaluationFormComponent,
+    TrainerHistoryComponent,
   ],
   imports: [
     CommonModule,

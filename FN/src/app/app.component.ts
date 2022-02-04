@@ -16,13 +16,13 @@ export class AppComponent implements OnInit {
 
 
   constructor(private router: Router) {
-    // console.log(this.router.config);
     // Removing Sidebar, Navbar, Footer for Documentation, Error and Auth pages
     router.events.forEach((event) => { 
       // console.log('event: ', event);      
       if(event instanceof NavigationStart) {
-        if( (event['url'] == '/authentication/signup') 
+        if((event['url'] == '/')  
         || (event['url'] == '/authentication/signin') 
+        || (event['url'] == '/authentication/signup') 
         || (event['url'] == '/authentication/page-404') ) {
           this.showHeader = false;
           this.showFooter = false;
@@ -47,6 +47,11 @@ export class AppComponent implements OnInit {
     const navbarBackdrop = document.createElement('div');
     navbarBackdrop.classList.add('az-navbar-backdrop');
     document.querySelector('body').appendChild(navbarBackdrop);
+    
+    if (localStorage.getItem('token_hrgis') == null) {
+      this.router.navigate(['/authentication/signin']);
+    }
+
   }
 
 }

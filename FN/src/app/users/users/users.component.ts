@@ -1,7 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import axios from 'axios';
 import { CommonModule } from '@angular/common';
-import { Employee } from 'src/app/interfaces/employee';
 
 @Component({
   selector: 'app-users',
@@ -87,7 +86,7 @@ export class UsersComponent implements OnInit {
       }
     ]
 
-
+/* 
     axios.post<Employee[]>('http://cptsvs531:1000/middleware/oracle/hrms', 
     {
       "command": "SELECT * FROM ADMIN.v_emp_data_all_cpt "+
@@ -99,7 +98,7 @@ export class UsersComponent implements OnInit {
     })
     .catch((error) => {
       console.error(error);
-    })
+    }) */
 
 
   }

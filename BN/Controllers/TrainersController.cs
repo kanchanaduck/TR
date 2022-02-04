@@ -48,10 +48,104 @@ namespace api_hrgis.Controllers
         }
 
         // GET: api/Trainers/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<tr_trainer>> Gettr_trainer(int id)
+        [HttpGet("{trainer_no}")]
+        public async Task<ActionResult<tr_trainer>> Gettr_trainer(int trainer_no)
         {
-            var tr_trainer = await _context.tr_trainer.FindAsync(id);
+            // var tr_trainer = await _context.tr_trainer.FindAsync(id);
+            var tr_trainer = await (from trainer in _context.tr_trainer
+            join data in  _context.tb_employee on trainer.emp_no equals data.emp_no into z
+            from emp in z.DefaultIfEmpty()
+            select new { 
+                    trainer_no = trainer.trainer_no,
+                    emp_no = trainer.emp_no,
+                    sname_en = trainer.sname_en?? emp.sname_eng,
+                    gname_en = trainer.gname_en?? emp.gname_eng,
+                    fname_en = trainer.fname_en?? emp.fname_eng,
+                    div_abb_name = emp.div_abb_name,
+                    dept_abb_name = emp.dept_abb_name,
+                    organization = trainer.organization,
+                    employed_status = emp.employed_status,
+                    trainer_type = trainer.trainer_type
+            }).Where(trainer=>trainer.trainer_no==trainer_no).FirstOrDefaultAsync();
+
+            /* var tr_trainer = await _context.tr_trainer
+                    .Include(t => t.courses_trainers)
+                    .Where(t => t.trainer_no==trainer_no)
+                    .FirstOrDefaultAsync(); */
+
+            if (tr_trainer == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(tr_trainer);
+        }
+
+        // GET: api/Trainers/History
+        [HttpGet("HistoryExcel")]
+        public async Task<ActionResult<IEnumerable<tr_trainer>>> trainers_history_excel()
+        {
+            var tr_trainer = await (from trainer in _context.tr_trainer
+            join data in  _context.tb_employee on trainer.emp_no equals data.emp_no into z
+            from emp in z.DefaultIfEmpty()
+            select new { 
+                    trainer_no = trainer.trainer_no,
+                    emp_no = trainer.emp_no,
+                    sname_en = trainer.sname_en?? emp.sname_eng,
+                    gname_en = trainer.gname_en?? emp.gname_eng,
+                    fname_en = trainer.fname_en?? emp.fname_eng,
+                    div_abb_name = emp.div_abb_name,
+                    dept_abb_name = emp.dept_abb_name,
+                    organization = trainer.organization,
+                    employed_status = emp.employed_status,
+                    trainer_type = trainer.trainer_type,
+                    courses_trainers = trainer.courses_trainers
+            })
+            .ToListAsync();
+
+        // return Ok(tr_trainer);
+
+            var time = DateTime.Now.ToString("yyyyMMddHHmmss");
+            var fileName = $"Trainer_History_{time}.xlsx";
+            var filepath = $"wwwroot/excel/Trainer_History/{fileName}";
+            var originalFileName = $"Trainer_History.xlsx";
+            var originalFilePath = $"wwwroot/excel/Trainer_History/{originalFileName}";
+
+            using(var package = new ExcelPackage(new FileInfo(originalFilePath)))
+            {
+                ExcelWorksheet worksheet = package.Workbook.Worksheets["trainer_history"];
+        
+                int recordIndex = 3; 
+                
+                foreach (var item in tr_trainer) 
+                { 
+                    worksheet.Cells[recordIndex, 1].Value = item.trainer_no; 
+                    worksheet.Cells[recordIndex, 2].Value = item.sname_en;
+                    worksheet.Cells[recordIndex, 3].Value = item.gname_en;
+                    worksheet.Cells[recordIndex, 4].Value = item.fname_en; 
+                    worksheet.Cells[recordIndex, 5].Value = item.organization; 
+                    worksheet.Cells[recordIndex, 6].Value = item.div_abb_name; 
+                    worksheet.Cells[recordIndex, 7].Value = item.dept_abb_name; 
+                    worksheet.Cells[recordIndex, 8].Value = item.trainer_type;
+                    // worksheet.Cells[recordIndex, 9].Value = item.prd_serial_num; 
+                    recordIndex++; 
+                } 
+                package.SaveAs(new FileInfo(filepath));
+                package.Dispose();
+            }  
+
+            byte[] fileBytes = System.IO.File.ReadAllBytes(filepath);
+            return File(fileBytes, "application/x-msdownload", fileName); 
+        }
+        
+        // GET: api/Trainers/History/5
+        [HttpGet("History/{trainer_no}")]
+        public async Task<ActionResult<tr_trainer>> trainer_history(int trainer_no)
+        {
+            var tr_trainer = await _context.tr_trainer
+                                .Include(t => t.courses_trainers)
+                                .Where(t => t.trainer_no==trainer_no)
+                                .FirstOrDefaultAsync();
 
             if (tr_trainer == null)
             {
@@ -79,7 +173,7 @@ namespace api_hrgis.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!tr_trainerExists(id))
+                if (!trainer_exists(id))
                 {
                     return NotFound();
                 }
@@ -101,11 +195,18 @@ namespace api_hrgis.Controllers
             {
                 return Conflict("Data is alredy exists");
             }
-
-            _context.tr_trainer.Add(tr_trainer);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("Gettr_trainer", new { id = tr_trainer.trainer_no }, tr_trainer);
+            else if (tr_trainer.trainer_type=="External" && trainer_exists(tr_trainer.trainer_no)) 
+            {
+                _context.Entry(tr_trainer).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return NoContent();
+            }
+            else
+            {
+                _context.tr_trainer.Add(tr_trainer);
+                await _context.SaveChangesAsync();
+                return CreatedAtAction("Gettr_trainer", new { id = tr_trainer.trainer_no }, tr_trainer);                
+            }
         }
 
         // DELETE: api/Trainers/5
@@ -124,7 +225,7 @@ namespace api_hrgis.Controllers
             return NoContent();
         }
 
-        private bool tr_trainerExists(int id)
+        private bool trainer_exists(int id)
         {
             return _context.tr_trainer.Any(e => e.trainer_no == id);
         }
@@ -137,18 +238,6 @@ namespace api_hrgis.Controllers
         [HttpGet("FullTrainers")]
         public async Task<ActionResult> FullTrainers()
         {
-            // SELECT tb1.trainer_no, tb1.emp_no
-            // , CASE WHEN tb1.organization IS NOT NULL THEN tb1.organization ELSE tb2.dept_abb_name END AS organization
-            // , CASE WHEN tb1.fname_en IS NOT NULL THEN tb1.fname_en ELSE tb2.fname_eng END AS fname_en
-            // , CASE WHEN tb1.gname_en IS NOT NULL THEN tb1.gname_en ELSE tb2.gname_eng END AS gname_en
-            // , CASE WHEN tb1.sname_en IS NOT NULL THEN tb1.sname_en ELSE tb2.sname_eng END AS sname_en
-            // , tb1.trainer_type
-            // , CASE WHEN tb1.trainer_type = 'Internal' 
-            //     THEN CASE WHEN tb2.sname_eng = 'MISS' THEN tb2.sname_eng + '.' ELSE tb2.sname_eng END + tb2.gname_eng + ' ' + LEFT(tb2.fname_eng,1) + ' ('+ tb2.dept_abb_name +')' 
-            //     ELSE tb1.sname_en + tb1.gname_en + ' ' + LEFT(tb1.fname_en,1) + '.' END AS fulls
-            // FROM [HRGIS].[dbo].[tr_trainer] tb1 
-            // LEFT JOIN tb_employee tb2 ON tb1.emp_no = tb2.emp_no
-            // WHERE status_active = 1
             var query = await (
                 from tb1 in _context.tr_trainer
                 join tb2 in _context.tb_employee on tb1.emp_no equals tb2.emp_no into tb

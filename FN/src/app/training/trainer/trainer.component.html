@@ -36,7 +36,9 @@
                 [(ngModel)]="trainer.emp_no" 
                 (keyup)="fillEmpNo($event)" 
                 [disabled]="trainer.trainer_type=='External'? true:false">
-            <!-- <p class="text-danger" *ngIf="errors">{{ errors.emp_no }}</p> -->
+            <div class="text-danger" *ngIf="errors" >
+                <p *ngFor="let e of errors.emp_no">{{ e }}</p>
+            </div>
         </div><!-- form-group -->
         <div class="form-group col mb-0 p-1">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Title</label>
@@ -44,6 +46,7 @@
                 [(ngModel)]="trainer.sname_en" 
                 [disabled]="trainer.trainer_type!='External'? true:false"
                 >
+                <option></option>
                 <option>MR.</option>
                 <option>MRS.</option>
                 <option>MISS</option>
@@ -53,13 +56,19 @@
             <label class="az-content-label tx-11 tx-medium tx-gray-600">FIRSTNAME</label>
             <input type="text" name="gname_en" class="form-control" required 
                 [(ngModel)]="trainer.gname_en" 
-                [disabled]="trainer.trainer_type!='External'? true:false">
+                [disabled]="trainer.trainer_type!='External'? true:false">      
+            <div class="text-danger" *ngIf="errors" >
+                <p *ngFor="let e of errors.gname_en">{{ e }}</p>
+            </div>
         </div><!-- form-group -->
         <div class="form-group col mb-0 p-1">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">LASTNAME</label>
             <input type="text" name="fname_en" class="form-control" required 
                 [(ngModel)]="trainer.fname_en" 
                 [disabled]="trainer.trainer_type!='External'? true:false">
+            <div class="text-danger" *ngIf="errors" >
+                <p *ngFor="let e of errors.fname_en">{{ e }}</p>
+            </div>
         </div><!-- form-group -->
     </div>
     <div class="row">
@@ -80,6 +89,9 @@
             <input type="text" name="organization" class="form-control" required 
                 [(ngModel)]="trainer.organization"
                 [disabled]="trainer.trainer_type!='External'? true:false">
+            <div class="text-danger" *ngIf="errors" >
+                <p *ngFor="let e of errors.organization">{{ e }}</p>
+            </div>
         </div><!-- form-group -->
         <div class="form-group col mb-0 p-1">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Status</label>
@@ -93,7 +105,7 @@
             <label class="az-content-label tx-11 tx-medium tx-gray-600"> </label>
             <div>
                 <button type="submit" class="btn btn-az-primary btn-sm">Save</button>
-                <button type="button" class="btn btn-outline-dark btn-sm" (click)="reset_form_trainer()">Clear</button>
+                <button type="button" class="btn btn-dark btn-sm" (click)="reset_form_trainer()">Clear</button>
             </div>
         </div><!-- form-group -->
     </div>
@@ -104,9 +116,6 @@
 <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover" id="example">
     <thead>
         <tr>
-            <th class="text-center">
-                <input type="checkbox">
-            </th>
             <th class="text-center">EMP NO</th>
             <th class="text-center">TITLE</th>
             <th class="text-center">FIRSTNAME</th>
@@ -118,4 +127,30 @@
             <th class="text-center">MANAGE</th>
         </tr>
     </thead>
+    <tbody>
+        <tr *ngFor="let t of trainers">
+            <td>{{ t.emp_no }}</td>
+            <td>{{ t.sname_en  }} </td>
+            <td>{{ t.gname_en  }} </td>
+            <td>{{ t.fname_en  }} </td>
+            <td>{{ t.div_abb_name==null? t.organization:t.div_abb_name+" - "+t.dept_abb_name  }} </td>
+            <td>{{ t.employed_status }}</td>
+            <td>{{ t.trainer_type }}</td>
+            <td class="text-center">
+                <a [routerLink]="['/training/trainer-history', t.trainer_no]"><i class="far fa-eye"></i></a>
+            </td>
+            <td class="text-center">
+                <a href="javascript:;"
+                    *ngIf="t.trainer_type=='External'" 
+                    (click)="get_trainer(t.trainer_no)"
+                >
+                    <i class="far fa-edit"></i>
+                </a>
+                <a href="javascript:;"
+                    (click)="delete_trainer(t.trainer_no)">
+                    <i class="far fa-trash-alt"></i>
+                </a>
+            </td>
+        </tr>
+    </tbody>
 </table>

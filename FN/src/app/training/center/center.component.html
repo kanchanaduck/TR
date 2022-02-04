@@ -1,12 +1,18 @@
-<!-- <div class="card card-info card-body p-2 mb-3">
-    <div>The Center is responsible for approving the final course registration and being able to see the learning and teaching information of students and teachers for the whole company</div>
-    <div>Center มีหน้าที่เพื่อ approve การลงทะเบียนคอร์สในขั้นตอนสุดท้าย และสามารถมองเห็นข้อมูลการเรียนและสอนของผู้เรียนและผู้สอนได้ทั้งบริษัท</div>
-</div> -->
-
-<!-- <ngb-alert [type]="outline-info" [dismissible]="true">
-    The Center is responsible for approving the final course registration and being able to see the learning and teaching information of students 
-    and teachers for the whole company
-</ngb-alert> -->
+<div class="card card-info card-body p-2 mb-3">
+    <div>
+        <h5>Responsibility of center</h5>
+        <ul>
+            <li>Setting master data</li>
+            <li>Approving course registration at the final </li>
+            <li>Being able to see the learning and teaching information of the whole company</li>
+        </ul>
+        <ul>
+            <li>จัดทำ master data</li>
+            <li>อนุมัติการลงทะเบียนคอร์สในขั้นตอนสุดท้าย</li>
+            <li>สามารถมองเห็นข้อมูลการเรียนการสอนของทั้งบริษัท</li>
+        </ul>
+    </div>
+</div> 
 
 <div class="card card-body mb-3">
     <form (ngSubmit)="save_center()">
@@ -15,7 +21,7 @@
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Emp no.</label>
             <input type="text" name="emp_no" class="form-control" required 
                 [(ngModel)]="center.emp_no" 
-                (keyup)="fillEmpNo($event)" >
+                (keyup)="fillEmpNo()" >
         </div><!-- form-group -->
         <div class="form-group col mb-0 p-1">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Title</label>
@@ -64,17 +70,16 @@
             <label class="az-content-label tx-11 tx-medium tx-gray-600"> </label>
             <div>
                 <button type="submit" class="btn btn-az-primary btn-sm">Save</button>
-                <button type="button" class="btn btn-outline-dark btn-sm" (click)="reset_form_center()">Clear</button>
+                <button type="button" class="btn btn-dark btn-sm" (click)="reset_form_center()">Clear</button>
             </div>
         </div><!-- form-group -->
     </div>
     </form>
 </div>
 
-<table datatable [dtOptions]="dtOptions" class="table table-bordered table-hover w-100" id="example">
+<table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover w-100" id="example">
     <thead>
         <tr>
-            <th class="text-center"></th>
             <th class="text-center">EMP NO.</th>
             <th class="text-center">TITLE NAME</th>
             <th class="text-center">FIRSTNAME</th>
@@ -86,4 +91,19 @@
             <th class="text-center">MANAGE</th>
         </tr>
     </thead>
+    <tbody>
+        <tr *ngFor="let center of centers">
+            <td>{{ center.emp_no }}</td>
+            <td>{{ center.sname_eng }}</td>
+            <td>{{ center.gname_eng }}</td>
+            <td>{{ center.fname_eng }}</td>
+            <td>{{ center.posn_ename }}</td>
+            <td>{{ center.div_abb_name }}</td>
+            <td>{{ center.dept_abb_name }}</td>
+            <td>{{ center.employed_status }}</td>
+            <td class="text-center">
+                <a href="javascript:;" (click)="delete_center(center.emp_no)"><i class="far fa-trash-alt"></i></a>
+            </td>
+        </tr>
+    </tbody>
 </table>

@@ -70,7 +70,7 @@
             <div class="dropdown az-profile-menu" ngbDropdown>
                 <a class="az-img-user" id="profileDropdown" ngbDropdownToggle>
                     <!-- <img src="assets/images/img1.jpg" alt="user"> -->
-                    <img src="{{images}}" class="img-radius" alt="user" #image (error)="image.hidden = true" [hidden]="image.hidden">
+                    <img src="{{images}}" class="img-radius" alt="image" (error)="image.hidden = true" [hidden]="image.hidden">
                 </a>
                 <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="profileDropdown">
                     <div class="az-dropdown-header d-sm-none">
@@ -78,7 +78,7 @@
                     </div>
                     <div class="az-header-profile" style="padding: 20px 0 20px 0;">
                         <div class="az-img-user">
-                            <img src="{{images}}" class="img-radius" alt="image" #image (error)="image.hidden = true" [hidden]="image.hidden">
+                            <img #image src="{{images}}" class="img-radius" alt="image" (error)="image.hidden = true" [hidden]="image.hidden">
                             <!-- <img src="assets/images/img1.jpg" alt=""> -->
                         </div>
                         <!-- az-img-user -->

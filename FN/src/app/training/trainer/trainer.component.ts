@@ -1,10 +1,11 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DataTableDirective } from 'angular-datatables';
 import axios from 'axios';
 import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
-import { AppServiceService } from '../../app-service.service';
+import { AppServiceService } from '../../app-service.service'
 import { Subject } from 'rxjs';
 
 // DBCC CHECKIDENT ('HRGIS.dbo.tr_trainer', RESEED, 0)
@@ -16,18 +17,25 @@ import { Subject } from 'rxjs';
 })
 export class TrainerComponent implements OnInit {
 
-
-
-  @ViewChildren(DataTableDirective)
-  dtElement: DataTableDirective;
-
-  dtOptions: any = {};
-  // dtOptions: DataTables.Settings = {};
+  trainers: any= [];
   trainer: any = {};
-  dtInstance: Promise<DataTables.Api>;
+  errors: any;
+  dtOptions: any = {};
   dtTrigger: Subject<any> = new Subject();
+  @ViewChild(DataTableDirective)
+  dtElement: DataTableDirective;
+  isDtInitialized: boolean = false;
+  headers: any = {
+    headers: {
+    Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
+      'Content-Type': 'application/json'
+    }
+  }
 
-  constructor(private service: AppServiceService) { }
+  constructor(
+    private service: AppServiceService, 
+    private httpClient: HttpClient
+  ) { }
 
 
   ngOnInit(): void {
@@ -37,52 +45,6 @@ export class TrainerComponent implements OnInit {
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
       "<'row'<'col-sm-12'tr>>" +
       "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
-      ajax: {
-        url: environment.API_URL+"Trainers",
-        dataSrc: "",
-      },
-      columns:
-      [
-        { 
-          "data": "trainer_no",
-          "render": function ( data, type, row ) {
-            return `<input type="checkbox" value=${data}>`
-          },
-        },
-        { "data": "emp_no" },
-        { "data": "sname_en" },
-        { "data": "gname_en" },
-        { "data": "fname_en" },
-        { 
-          "data": "organization",
-          "render": function ( data, type, row ) {
-            if(row.div_abb_name==null){
-              return row.organization
-            }
-            else{
-              return `${row.div_abb_name} - ${row.dept_abb_name}`
-            }
-          },
-        },
-        { "data": "employed_status" },
-        { "data": "trainer_type" },
-        { 
-          "data": "trainer_no",
-          "className": "text-center",
-          "render": function ( data, type, row ) {
-            return `<a href="javascript:;"><i class="far fa-eye"></i></a>`
-          },
-        },
-        { 
-          "data": "trainer_no",
-          "className": "text-center",
-          "render": function ( data, type, row ) {
-            let edit_icon = `<a href="javascript:;"><i class="far fa-edit"></i></a>`
-            let delete_icon = `<a href="javascript:;"><i class="far fa-trash-alt"></i></a>`
-            return row.trainer_type=="Internal"? `${delete_icon}`:`${edit_icon}${delete_icon}`
-          },
-        },
-      ],
       buttons: {
         "dom":{
           "container": {
@@ -109,41 +71,55 @@ export class TrainerComponent implements OnInit {
                 {
                     text: '<i class="far fa-file-excel"></i> History</button>',
                     action: function ( e, dt, node, config ) {
-                       alert('เอาไว้ดาวน์โหลดประวัติการสอนค่าาา')
+                      location.href = `${environment.API_URL}Trainers/HistoryExcel`
                     }
                 },
             ]
           },
         ],
       },
-      order: [[7, 'desc'],[1, 'asc']],
+      order: [[6, 'desc'],[0, 'asc']],
       rowGroup: {
-        dataSrc: "trainer_type"
+        dataSrc: 6
       },
       columnDefs: [ 
         {
-          targets: [ 0,8,9],
+          targets: [ 0,7,8],
           orderable: false 
         } 
       ],
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
-      rowCallback: (row: Node, data: any[] | Object, index: number) => {
-        const self = this;
-        $('.fa-trash-alt', row).off('click');
-        $('.fa-trash-alt', row).on('click', () => {
-          self.delete_trainer(data);
-        });
-        $('.fa-edit', row).off('click');
-        $('.fa-edit', row).on('click', () => {
-          self.get_trainer(data);
-        });
-        return row;
-      }
     };
 
+    this.get_trainers()
 
   }
 
+  ngOnDestroy(): void {
+    this.dtTrigger.unsubscribe();
+  }
+
+
+  async get_trainers(){
+    let self = this
+    await this.httpClient.get(`${environment.API_URL}Trainers`, this.headers)
+    .subscribe((response: any) => {
+      self.trainers = response;
+      if (this.isDtInitialized) {
+        this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+          dtInstance.destroy();
+          this.dtTrigger.next();
+        });
+      } 
+      else {
+        this.isDtInitialized = true
+        this.dtTrigger.next();
+      }
+    },
+    (error: any) => {
+      console.log(error);
+    });
+  }
 
   async reset_form_trainer() { 
     this.trainer = {};
@@ -156,32 +132,31 @@ export class TrainerComponent implements OnInit {
     }
   }
    
-   async get_employee() {
-    try {
-      const response = await axios.get(`${environment.API_URL}Employees/${this.trainer.emp_no}`, { headers: { Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'), Pragma: 'no-cache' } });
-      this.trainer = response
-      this.trainer.sname_en = this.trainer.sname_eng
-      this.trainer.gname_en = this.trainer.gname_eng
-      this.trainer.fname_en = this.trainer.fname_eng
-      this.trainer.trainer_type='Internal';
-      return response;
-    } 
-    catch (error) {
-      console.error(error.stack);
-      this.reset_form_trainer()
+  async get_employee() {
+    let self =this
+    await axios.get(`${environment.API_URL}Employees/${this.trainer.emp_no}`,this.headers)
+    .then(function (response) {
+      console.log(response)
+      self.trainer = response
+      self.trainer.trainer_type = "Internal"
+      self.trainer.sname_en = self.trainer.sname_eng
+      self.trainer.gname_en = self.trainer.gname_eng
+      self.trainer.fname_en = self.trainer.fname_eng
+    }) 
+    .catch(function (error) {
+      console.log(error)
+      self.reset_form_trainer()
       Swal.fire({
         icon: 'error',
         title: error.response.status,
-        text: "Data not found"
+        text: error.response.data
       })
-    }
-    console.log('data: ', this.trainer);
+    }) 
   }
 
-  async get_trainer(data: any) {
-    this.trainer = data
+  async get_trainer(trainer_no: number) {
     try {
-      const response = await axios.get(`${environment.API_URL}Trainers/${this.trainer.trainer_no}`, { headers: { Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'), Pragma: 'no-cache' } });
+      const response = await axios.get(`${environment.API_URL}Trainers/${trainer_no}`, this.headers);
       this.trainer = response
       return response;
     } 
@@ -192,15 +167,16 @@ export class TrainerComponent implements OnInit {
         text: "Data not found"
       })
     }
-    console.log('data: ', this.trainer);
   }
 
   async change_trainer_type(event: any) {
     this.reset_form_trainer()
     this.trainer.trainer_type = event;
+    this.errors = {};
   }
 
   async save_trainer() {
+    let self = this
     await axios.post(`${environment.API_URL}Trainers`,this.trainer)
     .then(function (response) {
       Swal.fire({
@@ -211,19 +187,30 @@ export class TrainerComponent implements OnInit {
         showConfirmButton: false,
         timer: 2000
       })
-      alert("Reload")
+    this.reset_form_trainer()
     })
     .catch(function (error) {
-      Swal.fire({
-        icon: 'error',
-        title: error.response.status,
-        text: error.response.data
-      })
+      if(error.response.status==400){
+        self.errors = error.response.data.errors
+        Swal.fire({
+          icon: 'error',
+          title: error.response.status,
+          text: error.response.data.title
+        })
+      }
+      else{
+        Swal.fire({
+          icon: 'error',
+          title: error.response.status,
+          text: error.response.data
+        })
+      }
     });
-    this.reset_form_trainer()
+    this.get_trainers()
   }
 
-  async delete_trainer(data: any) {
+  async delete_trainer(trainer_no: number) {
+    let self = this
     Swal.fire({
       title: 'Are you sure?',
       text: 'you want to delete this record',
@@ -232,19 +219,27 @@ export class TrainerComponent implements OnInit {
       confirmButtonText: 'Yes',
       cancelButtonText: 'No'
     }).then(async (result) => {
-      try{
       if (result.value) {
-        let response = await this.service.axios_delete(`Trainers/${data.trainer_no}`, 'Delete data success.');
-        console.log(response);
+        await axios.delete(`${environment.API_URL}Trainers/${trainer_no}`, this.headers)
+        .then(function (response) {
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: "Success",
+            showConfirmButton: false,
+            timer: 2000
+          })
+        })
+        .catch(function (error) {
+          Swal.fire({
+            icon: 'error',
+            title: error.response.status,
+            text: error.response.data
+          })
+        });
+        self.get_trainers()
       }
-    }
-    catch(error){
-      Swal.fire({
-        icon: 'error',
-        title: error.response.status,
-        text: error.response.data
-      })
-    }
     })
   }
 

@@ -14,6 +14,8 @@ export const environment = {
     wait: "Wait",
     duplication: "Duplication Data.",
     not_found: "Data not found.",
-    all : "All"
+    all : "All",
+    invalid_department : "Invalid department.",
+    unequal_band : "Unequal band."
   }
 };

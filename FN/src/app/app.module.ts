@@ -2,8 +2,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
-import { NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+
 import { ApiAuthorizationModule } from 'src/api-authorization/api-authorization.module';
 import { AuthorizeInterceptor } from 'src/api-authorization/authorize.interceptor';
 
@@ -33,11 +34,9 @@ import { BreadcrumbComponent } from './shared/breadcrumb/breadcrumb.component';
     AppRoutingModule,
     NgbModule,
     ChartsModule,
-    HttpClientModule,
+    HttpClientModule
   ],
-  providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthorizeInterceptor, multi: true }
-  ],
+  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthorizeInterceptor, multi: true }],
   bootstrap: [AppComponent],
 })
 export class AppModule { }

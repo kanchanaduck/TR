@@ -34,9 +34,27 @@ namespace api_hrgis.Controllers
                             .ToListAsync();
         }
 
-        // GET: api/Stakeholder/ICD
-        [HttpGet("{org_abb}")]
-        public async Task<ActionResult<tb_organization>> Gettr_stakeholder(string org_abb)
+        // GET: api/Stakeholder/55
+        [HttpGet("{org_code}")]
+        public async Task<ActionResult<tb_organization>> get_stakeholder_by_org_code(string org_code)
+        {
+            var tr_stakeholder = await _context.tb_organization
+                                    .Include(e => e.stakeholders)
+                                    .ThenInclude(p => p.employee)
+                                    .Where(e => e.org_code==org_code)
+                                    .FirstOrDefaultAsync();
+
+            if (tr_stakeholder == null)
+            {
+                return NotFound();
+            }
+
+            return tr_stakeholder;
+        }
+
+        // GET: api/Stakeholder/Org/ICD
+        [HttpGet("Org/{org_abb}")]
+        public async Task<ActionResult<tb_organization>> get_stakeholder_by_organization(string org_abb)
         {
             var tr_stakeholder = await _context.tb_organization
                                     .Include(e => e.stakeholders)
@@ -52,12 +70,31 @@ namespace api_hrgis.Controllers
             return tr_stakeholder;
         }
 
+        // GET: api/Stakeholder/Employee/000001
+        [HttpGet("Employee/{emp_no}")]
+        public async Task<ActionResult<tr_stakeholder>> get_stakeholder_by_emp_no(string emp_no)
+        {
+            var tr_stakeholder = await _context.tr_stakeholder
+                                    .Include(e => e.organization)
+                                    .ThenInclude(p => p.parent_org)
+                                    .ThenInclude(p => p.children_org)
+                                    .Where(e => e.emp_no == emp_no) 
+                                    .FirstOrDefaultAsync();
+
+            if (tr_stakeholder == null)
+            {
+                return NotFound();
+            }
+
+            return tr_stakeholder;
+        }
+
         // PUT: api/Stakeholder/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Puttr_stakeholder(int id, tr_stakeholder tr_stakeholder)
+        [HttpPut("{emp_no}")]
+        public async Task<IActionResult> Puttr_stakeholder(string emp_no, tr_stakeholder tr_stakeholder)
         {
-            if (id != tr_stakeholder.id)
+            if (emp_no != tr_stakeholder.emp_no)
             {
                 return BadRequest();
             }
@@ -70,7 +107,7 @@ namespace api_hrgis.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!tr_stakeholderExists(id))
+                if (!tr_stakeholderExists(emp_no))
                 {
                     return NotFound();
                 }
@@ -86,34 +123,24 @@ namespace api_hrgis.Controllers
         // POST: api/Stakeholder
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<tr_stakeholder>> Posttr_stakeholder(tr_stakeholder[] tr_stakeholder)
+        public async Task<ActionResult<tr_stakeholder>> Posttr_stakeholder(List<tr_stakeholder> tr_stakeholder)
         {
-            _context.tr_stakeholder.Add(tr_stakeholder[0]);
-            _context.tr_stakeholder.Add(tr_stakeholder[1]);
-            /* _context.tr_stakeholder.Add(
-                new tr_stakeholder { 
-                    emp_no = tr_stakeholder.committee,
-                    org_code = tr_stakeholder.org_code
-                });
+            // ModelState.Clear();
 
-            _context.tr_stakeholder.Add(
-                new tr_stakeholder { 
-                    emp_no = tr_stakeholder.approver,
-                    org_code = tr_stakeholder.org_code
-                }); */
+            foreach(var a in tr_stakeholder){      
+                _context.tr_stakeholder.Add(a);
+            }
             
             await _context.SaveChangesAsync();
-            return StatusCode(201);
-            // return Created();
 
-            // return CreatedAtAction("Gettr_stakeholder", new { id = tr_stakeholder.id }, tr_stakeholder);
+            return CreatedAtAction("Gettr_stakeholder", new { e = tr_stakeholder }, tr_stakeholder);
         }
 
-        // DELETE: api/Stakeholder/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Deletetr_stakeholder(int id)
+        // DELETE: api/Stakeholder/014496
+        [HttpDelete("{emp_no}")]
+        public async Task<IActionResult> Deletetr_stakeholder(string emp_no)
         {
-            var tr_stakeholder = await _context.tr_stakeholder.FindAsync(id);
+            var tr_stakeholder = await _context.tr_stakeholder.FindAsync(emp_no);
             if (tr_stakeholder == null)
             {
                 return NotFound();
@@ -125,9 +152,9 @@ namespace api_hrgis.Controllers
             return NoContent();
         }
 
-        private bool tr_stakeholderExists(int id)
+        private bool tr_stakeholderExists(string emp_no)
         {
-            return _context.tr_stakeholder.Any(e => e.id == id);
+            return _context.tr_stakeholder.Any(e => e.emp_no == emp_no);
         }
     }
 }

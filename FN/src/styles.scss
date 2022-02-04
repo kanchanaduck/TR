@@ -311,12 +311,13 @@ table.dataTable thead td {
 table.dataTable tbody th,
 table.dataTable tbody td {
     font-size: .8125rem !important;
+    padding: 4px;
 }
 
-table.dataTable thead th,
+/* table.dataTable thead th,
 table.dataTable thead td {
     padding: 5px 5px !important;
-}
+} */
 
 //////////////////////////// drop down select
 .ng-select.ng-select-single .ng-select-container {
@@ -376,3 +377,12 @@ table.dataTable thead td {
 .invisible {
     visibility: hidden;
   }
+
+table.dataTable tbody td.text-wrap{
+    white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 50px;
+  /* overflow:hidden;
+  text-overflow:ellipsis; */
+}

@@ -26,6 +26,43 @@
           "lib/net5.0/EPPlus.dll": {}
         }
       },
+      "FoolProof.Core/1.1.10": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "11.0.2"
+        },
+        "compile": {
+          "lib/net5.0/FoolProof.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/FoolProof.Core.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ],
+        "contentFiles": {
+          "contentFiles/any/net5.0/Scripts/mvcfoolproof.core.js": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/net5.0/Scripts/mvcfoolproof.jquery.validation.js": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/net5.0/Scripts/mvcfoolproof.msajax.validation.js": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          },
+          "contentFiles/any/net5.0/Scripts/mvcfoolproof.unobtrusive.js": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": false
+          }
+        }
+      },
       "Humanizer.Core/2.8.26": {
         "type": "package",
         "compile": {
@@ -3461,6 +3498,42 @@
         "lib/netstandard2.1/EPPlus.xml",
         "license.md",
         "readme.txt"
+      ]
+    },
+    "FoolProof.Core/1.1.10": {
+      "sha512": "sFr1I9i9AqFJQiDWcIf00Gu7SXgl8yyAQJBOEKN2Gd6xVn6cWdcwzfOiyNINhI6KeOxAWJlubDUx8ppIPgr/NA==",
+      "type": "package",
+      "path": "foolproof.core/1.1.10",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "content/Scripts/mvcfoolproof.core.js",
+        "content/Scripts/mvcfoolproof.jquery.validation.js",
+        "content/Scripts/mvcfoolproof.msajax.validation.js",
+        "content/Scripts/mvcfoolproof.unobtrusive.js",
+        "contentFiles/any/net472/Scripts/mvcfoolproof.core.js",
+        "contentFiles/any/net472/Scripts/mvcfoolproof.jquery.validation.js",
+        "contentFiles/any/net472/Scripts/mvcfoolproof.msajax.validation.js",
+        "contentFiles/any/net472/Scripts/mvcfoolproof.unobtrusive.js",
+        "contentFiles/any/net5.0/Scripts/mvcfoolproof.core.js",
+        "contentFiles/any/net5.0/Scripts/mvcfoolproof.jquery.validation.js",
+        "contentFiles/any/net5.0/Scripts/mvcfoolproof.msajax.validation.js",
+        "contentFiles/any/net5.0/Scripts/mvcfoolproof.unobtrusive.js",
+        "contentFiles/any/netcoreapp3.1/Scripts/mvcfoolproof.core.js",
+        "contentFiles/any/netcoreapp3.1/Scripts/mvcfoolproof.jquery.validation.js",
+        "contentFiles/any/netcoreapp3.1/Scripts/mvcfoolproof.msajax.validation.js",
+        "contentFiles/any/netcoreapp3.1/Scripts/mvcfoolproof.unobtrusive.js",
+        "contentFiles/any/netstandard2.0/Scripts/mvcfoolproof.core.js",
+        "contentFiles/any/netstandard2.0/Scripts/mvcfoolproof.jquery.validation.js",
+        "contentFiles/any/netstandard2.0/Scripts/mvcfoolproof.msajax.validation.js",
+        "contentFiles/any/netstandard2.0/Scripts/mvcfoolproof.unobtrusive.js",
+        "foolproof.core.1.1.10.nupkg.sha512",
+        "foolproof.core.nuspec",
+        "lib/net472/FoolProof.Core.dll",
+        "lib/net5.0/FoolProof.Core.dll",
+        "lib/netcoreapp3.1/FoolProof.Core.dll",
+        "lib/netstandard2.0/FoolProof.Core.dll",
+        "license.txt"
       ]
     },
     "Humanizer.Core/2.8.26": {
@@ -10725,6 +10798,7 @@
   "projectFileDependencyGroups": {
     "net5.0": [
       "EPPlus >= 5.8.5",
+      "FoolProof.Core >= 1.1.10",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 5.0.13",
       "Microsoft.AspNetCore.Identity >= 2.2.0",
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore >= 5.0.13",
@@ -10786,6 +10860,10 @@
           "EPPlus": {
             "target": "Package",
             "version": "[5.8.5, )"
+          },
+          "FoolProof.Core": {
+            "target": "Package",
+            "version": "[1.1.10, )"
           },
           "Microsoft.AspNetCore.Authentication.JwtBearer": {
             "target": "Package",

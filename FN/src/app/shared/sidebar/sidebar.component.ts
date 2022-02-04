@@ -12,7 +12,7 @@ import { environment } from 'src/environments/environment';
 })
 export class SidebarComponent implements OnInit {
 
-  menus: any=[];
+  menus: any = [];
   _data: any;
   _fullname: any;
   _positions: any;
@@ -31,12 +31,14 @@ export class SidebarComponent implements OnInit {
       // console.log(response)
     ));
 
-    console.log(this.menus)
+    // console.log(this.menus)
 
-    this._data = await this.service.service_jwt(); //console.log(this._data);
-    this._fullname = this._data.user.gname_eng + ' ' + this._data.user.fname_eng.substring(0, 1);
-    this._positions = this._data.user.posn_ename;
-    this.images = `${this.img_garoon}${this._data.user.emp_no}.jpg`;
+    if (localStorage.getItem('token_hrgis') != null) {
+      this._data = await this.service.service_jwt(); //console.log(this._data);
+      this._fullname = this._data.user.gname_eng + ' ' + this._data.user.fname_eng.substring(0, 1);
+      this._positions = this._data.user.posn_ename;
+      this.images = this.img_garoon + this._data.user.emp_no + ".jpg";
+    }
   }
 
 }

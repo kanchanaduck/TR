@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api_hrgis.Data;
 
 namespace api_hrgis.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220202032922_AlterKeyofCenter")]
+    partial class AlterKeyofCenter
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -592,13 +594,15 @@ namespace api_hrgis.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("post_test_grade")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1)");
 
                     b.Property<int?>("post_test_score")
                         .HasColumnType("int");
 
                     b.Property<string>("pre_test_grade")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1)");
 
                     b.Property<int?>("pre_test_score")
                         .HasColumnType("int");

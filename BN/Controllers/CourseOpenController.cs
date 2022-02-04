@@ -12,13 +12,13 @@ using api_hrgis.Models;
 
 namespace api_hrgis.Controllers
 {
-    [Authorize] // Microsoft.AspNetCore.Authorization; // [AllowAnonymous]
+    [Authorize] 
     [Route("api/[controller]")]
     [ApiController]
     public class CourseOpenController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly IConfiguration _config; // using Microsoft.Extensions.Configuration;
+        private readonly IConfiguration _config;
 
         public CourseOpenController(ApplicationDbContext context, IConfiguration config)
         {

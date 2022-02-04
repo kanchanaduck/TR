@@ -87,13 +87,13 @@
         </div><!-- form-group -->
         <div class="form-group col-5 mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Band</label>
-            <div class="form-row">
-                <label class="ckbox" *ngFor="let band of bands; let i=index;trackBy:trackByIdx">
-                    <input type="checkbox" [(ngModel)]="course_masters_bands[i]" 
-                        [ngModelOptions]="{standalone: true}"
-                        [checked]="isInCourseMaster(band.band)"
-                        [ngValue]="band.band">
-                    <span>{{band.band}} {{isInCourseMaster(band.band)}}</span>
+            <div class="form-row"><!-- 
+                        [checked]="course.course_masters_bands==undefined? false:isInCourseMaster(band.band)" -->
+                <label class="ckbox" *ngFor="let band of bands">
+                    <input type="checkbox" 
+
+                    >
+                    <span>{{band.band}} </span>
                 </label>
             </div>
         </div><!-- form-group -->
@@ -114,16 +114,12 @@
 
 <div class="row pt-2">
     <div class="col-12">
-        <table datatable [dtOptions]="dtOptions" class="table table-bordered table-hover w-100" id="example">
+        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover" id="example">
             <thead>
                 <tr class="text-uppercase">
-                    <th class="text-center">
-                        <input type="checkbox">
-                    </th>
                     <th class="text-center">course no.</th>
                     <th class="text-center">thai name</th>
                     <th class="text-center">english name</th>
-                    <th class="text-center">Group</th>
                     <th class="text-center">Capacity</th>
                     <th class="text-center">Required course</th>
                     <th class="text-center">days</th>
@@ -132,6 +128,30 @@
                     <th class="text-center">Manage</th>
                 </tr>
             </thead>
+            <tbody>
+                <tr *ngFor="let c of courses">
+                    <td>{{ c.course_no }}</td>
+                    <td class="text-wrap">{{ c.course_name_th }}</td>
+                    <td class="text-wrap">{{ c.course_name_en }}</td>
+                    <td class="text-right">{{ c.capacity }}</td>
+                    <td>{{ c.prev_course_no }}</td>
+                    <td class="text-right">{{ c.days }}</td>
+                    <td>{{ c.category }}</td>
+                    <td>{{ c.level }}</td>
+                    <td class="text-center">
+                        <a href="javascript:;" 
+                            (click)="get_course(c.course_no)"
+                            >
+                            <i class="far fa-edit"></i>
+                        </a>
+                        <a href="javascript:;"
+                            (click)="delete_course(c.course_no)"
+                            >
+                            <i class="far fa-trash-alt"></i>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
         </table>
     </div>
 </div>

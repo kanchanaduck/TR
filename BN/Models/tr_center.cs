@@ -9,9 +9,7 @@ namespace api_hrgis.Models
     [Comment("ตารางเก็บข้อมูลcenter")]
     public class tr_center
     {
-        [Key]
-        public int center_no { get; set; }  
-        [MaxLength(7)]    
+        [Key]   
         public string emp_no { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? created_at { get; set; }

@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { DataTableDirective } from 'angular-datatables';
 import { environment } from '../../../environments/environment';
 import { AppServiceService } from '../../app-service.service';
 import { ExportService } from '../../export.service';
@@ -14,8 +16,17 @@ import { ExportService } from '../../export.service';
 export class RegisterComponent implements OnInit {
   data_grid: any = [];
   data_grid_other: any = [];
+  // datatable
   dtOptions: any = {};
-  dtOptions_other: any = {};
+  dtOptionsOther: any = {};
+  dtTrigger: Subject<any> = new Subject();
+  dtTriggerOther: Subject<any> = new Subject();
+  @ViewChild(DataTableDirective)
+  dtElement: DataTableDirective;
+  isDtInitialized: boolean = false
+  dtElementOther: DataTableDirective;
+  isDtInitializedOther: boolean = false
+  // end datatable
   @ViewChild("txtgroup") txtgroup: any;
   @ViewChild("txtqty") txtqty: any;
   @ViewChild("txtdate_from") txtdate_from: any;
@@ -46,6 +57,7 @@ export class RegisterComponent implements OnInit {
         frm_emp_name: ['', [Validators.required]],
       },
     );
+
     this.dtOptions = {
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
         "<'row'<'col-sm-12'tr>>" +
@@ -114,6 +126,7 @@ export class RegisterComponent implements OnInit {
       },
       container: "#example_wrapper .col-md-6:eq(0)",
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
+      pageLength: 10,
       order: [[0, 'asc']],
       columnDefs: [
         {
@@ -122,8 +135,7 @@ export class RegisterComponent implements OnInit {
         }
       ],
     };
-
-    this.dtOptions_other = {
+    this.dtOptionsOther = {
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
         "<'row'<'col-sm-12'tr>>" +
         "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
@@ -186,10 +198,13 @@ export class RegisterComponent implements OnInit {
       },
       container: "#example_wrapper .col-md-6:eq(0)",
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
+      pageLength: 10,
     };
+
     this.fnGetband();
     this._getjwt = this.service.service_jwt();
     this.dept_abb_name = this._getjwt.user.dept_abb_name;
+    this.fnGet("", this.dept_abb_name);
   }
   get f(): { [key: string]: AbstractControl } {
     return this.form.controls;
@@ -212,7 +227,7 @@ export class RegisterComponent implements OnInit {
       })
 
       return;
-     }
+    }
 
     if (!this.arr_band.some(x => x.band == this.txtband.nativeElement.value)) {
       Swal.fire({
@@ -224,42 +239,41 @@ export class RegisterComponent implements OnInit {
 
       return;
     }
-    
+
     const send_data = {
       course_no: this.form.controls['frm_course'].value,
       emp_no: this.form.controls['frm_emp_no'].value,
-      last_status : (this.data_grid.length + this.data_grid_other.length) + 1 > this.txtqty.nativeElement.value ? environment.text.wait : null,
+      last_status: (this.data_grid.length + this.data_grid_other.length) + 1 > this.txtqty.nativeElement.value ? environment.text.wait : null,
       remark: this.txt_not_pass
     }
     // console.log(send_data);
     await this.service.axios_post('Registration', send_data, environment.text.success);
     await this.fnGet(this.form.controls['frm_course'].value, this.dept_abb_name);
   }
-  fnSendMail(){
+  fnSendMail() {
     var formData_M = new FormData();
     let emp_send = "nuttaya001@mail.canon";
     let subject = "Request for approval to participate in the training.";
     formData_M.append('from', emp_send);
 
-    let alllst_data = [{emp_no: "014748", email: "nuttaya001@mail.canon"}, {emp_no: "014749", email: "natirut@mail.canon"}];
+    let alllst_data = [{ emp_no: "014748", email: "nuttaya001@mail.canon" }, { emp_no: "014749", email: "natirut@mail.canon" }];
     let select_data = ["014748", "014749"];
     let emp_to = alllst_data.filter(function (item) {
-        return select_data.includes(item.emp_no)
-    });console.log(emp_to);
-    
+      return select_data.includes(item.emp_no)
+    }); console.log(emp_to);
+
     for (var i = 0; i < emp_to.length; i++) {
-        if (emp_to[i].email != null)
-        {
-            console.log(emp_to[i].email);
-            formData_M.append('to', emp_to[i].email);
-        }
+      if (emp_to[i].email != null) {
+        console.log(emp_to[i].email);
+        formData_M.append('to', emp_to[i].email);
+      }
     }
     let dear = "MISS.NUTTAYA K(ICD), MISS.KANCHANA S(ICD)"
     formData_M.append('subject', "[HRGIS TRAINING] " + subject);
-    formData_M.append('text', "Dear: "+ dear +" \n\n" + 
-                              "I would like to notify that your members request to participate in the training.\n" +
-                              "Please click the link to approve. http://cptsvs52t/HRGIS_TEST \n\n" +
-                              "Best Regards");
+    formData_M.append('text', "Dear: " + dear + " \n\n" +
+      "I would like to notify that your members request to participate in the training.\n" +
+      "Please click the link to approve. http://cptsvs52t/HRGIS_TEST \n\n" +
+      "Best Regards");
     // var url = "http://cptsvs531:1000/middleware/email/sendmail";
     // this.service.axios_formdata_post(url, formData_M, 'Send mail success.');
   }
@@ -299,8 +313,8 @@ export class RegisterComponent implements OnInit {
         this.txtqty.nativeElement.value = this.res_course.capacity;
         // this.txtdate_from.nativeElement.value = formatDate(this.res_course.date_start).toString() + ' ' + displayTime(this.res_course.time_in);
         // this.txtdate_to.nativeElement.value = formatDate(this.res_course.date_end).toString() + ' ' + displayTime(this.res_course.time_out);
-        this.txtdate_from.nativeElement.value = formatDate(this.res_course.date_start).toString() + ' ' + this.res_course.time_in.substring(0,5);
-        this.txtdate_to.nativeElement.value = formatDate(this.res_course.date_end).toString() + ' ' + this.res_course.time_out.substring(0,5);
+        this.txtdate_from.nativeElement.value = formatDate(this.res_course.date_start).toString() + ' ' + this.res_course.time_in.substring(0, 5);
+        this.txtdate_to.nativeElement.value = formatDate(this.res_course.date_end).toString() + ' ' + this.res_course.time_out.substring(0, 5);
 
         this.arr_band = this.res_course.courses_bands; // console.log(this.arr_band);
 
@@ -329,7 +343,7 @@ export class RegisterComponent implements OnInit {
     if (event.target.value.length >= 6 && event.target.value.length <= 7) {
       this.searchEmp(event.target.value);
       this.searchPrevCourse(event.target.value);
-    }else if (event.target.value.length == 0){
+    } else if (event.target.value.length == 0) {
       this.fnClear();
     }
   }
@@ -414,18 +428,49 @@ export class RegisterComponent implements OnInit {
 
   res_get: any;
   async fnGet(course_no, dept_abb_name) {
-    this.res_get = await this.service.axios_get('Registration/GetGridView/' + course_no + '/' + dept_abb_name);
-    // console.log('res_get: ', this.res_get);
-    this.data_grid = await this.res_get.your;
-    this.data_grid_other = await this.res_get.other;
+    await this.service.gethttp('Registration/GetGridView/' + course_no + '/' + dept_abb_name)
+      .subscribe((response: any) => {
+        this.data_grid = response.your;
+        this.data_grid_other = response.other;
+
+        // Calling the DT trigger to manually render the table
+        if (this.isDtInitialized) {
+          this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+            dtInstance.destroy();
+            this.dtTrigger.next();
+          });
+        } else {
+          this.isDtInitialized = true
+          this.dtTrigger.next();
+        }
+
+        if (this.isDtInitializedOther) {
+          this.dtElementOther.dtInstance.then((dtInstance: DataTables.Api) => {
+            dtInstance.destroy();
+            this.dtTrigger.next();
+          });
+        } else {
+          this.isDtInitializedOther = true
+          this.dtTriggerOther.next();
+        }
+      }, (error: any) => {
+        console.log(error);
+        this.data_grid = ELEMENT_DATA;
+        this.data_grid_other = ELEMENT_DATA_OTHER;
+      });
   }
-  array_chk:any;
+  array_chk: any;
   async fnGetband() {
-    this.array_chk = await this.service.axios_get('CourseMasters/GetBand'); //console.log(this.array_chk);
+    this.array_chk = await this.service.axios_get('Bands'); //console.log(this.array_chk);
     this.array_chk.forEach(object => {
       object.isChecked = false;
     }); //console.log(this.array_chk);
     this.checkboxesDataList = this.array_chk; //console.log(this.checkboxesDataList);
+  }
+
+  ngOnDestroy(): void {
+    this.dtTrigger.unsubscribe();
+    this.dtTriggerOther.unsubscribe();
   }
 }
 
@@ -460,195 +505,11 @@ export interface PeriodicElement {
   band: string;
   dept_code: string;
   dept_abb_name: string;
-  status: string;
+  last_status: string;
   remark: string;
-  course_name: string;
+  course_name_en: string;
 }
 
-const ELEMENT_DATA: PeriodicElement[] = [
-  {
-    emp_no: '014748',
-    sname_eng: 'MISS',
-    gname_eng: 'NUTTAYA',
-    fname_eng: 'KALLA',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: 'Center Approved',
-    remark: 'Not passed CPT-001',
-    course_name: 'Basic Excel'
-  }, {
-    emp_no: '014749',
-    sname_eng: 'MR.',
-    gname_eng: 'NATIRUT',
-    fname_eng: 'DAUNGPAK',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: 'Center Approved',
-    remark: '',
-    course_name: ''
-  }, {
-    emp_no: '014748',
-    sname_eng: 'MISS',
-    gname_eng: 'NUTTAYA',
-    fname_eng: 'KALLA',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: 'Center Approved',
-    remark: 'Not passed CPT-001',
-    course_name: 'Basic Excel'
-  }, {
-    emp_no: '014749',
-    sname_eng: 'MR.',
-    gname_eng: 'NATIRUT',
-    fname_eng: 'DAUNGPAK',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: 'Center Approved',
-    remark: '',
-    course_name: ''
-  }, {
-    emp_no: '014748',
-    sname_eng: 'MISS',
-    gname_eng: 'NUTTAYA',
-    fname_eng: 'KALLA',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: 'Center Approved',
-    remark: 'Not passed CPT-001',
-    course_name: 'Basic Excel'
-  }, {
-    emp_no: '014749',
-    sname_eng: 'MR.',
-    gname_eng: 'NATIRUT',
-    fname_eng: 'DAUNGPAK',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: 'Center Approved',
-    remark: '',
-    course_name: ''
-  }, {
-    emp_no: '014748',
-    sname_eng: 'MISS',
-    gname_eng: 'NUTTAYA',
-    fname_eng: 'KALLA',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: 'Center Approved',
-    remark: 'Not passed CPT-001',
-    course_name: 'Basic Excel'
-  }, {
-    emp_no: '014749',
-    sname_eng: 'MR.',
-    gname_eng: 'NATIRUT',
-    fname_eng: 'DAUNGPAK',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: 'Center Approved',
-    remark: '',
-    course_name: ''
-  }, {
-    emp_no: '014748',
-    sname_eng: 'MISS',
-    gname_eng: 'NUTTAYA',
-    fname_eng: 'KALLA',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: 'Center Approved',
-    remark: 'Not passed CPT-001',
-    course_name: 'Basic Excel'
-  }, {
-    emp_no: '014749',
-    sname_eng: 'MR.',
-    gname_eng: 'NATIRUT',
-    fname_eng: 'DAUNGPAK',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: 'Center Approved',
-    remark: '',
-    course_name: ''
-  }, {
-    emp_no: '014748',
-    sname_eng: 'MISS',
-    gname_eng: 'NUTTAYA',
-    fname_eng: 'KALLA',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: 'Center Approved',
-    remark: 'Not passed CPT-001',
-    course_name: 'Basic Excel'
-  }, {
-    emp_no: '014749',
-    sname_eng: 'MR.',
-    gname_eng: 'NATIRUT',
-    fname_eng: 'DAUNGPAK',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: 'Center Approved',
-    remark: '',
-    course_name: ''
-  }
-];
+const ELEMENT_DATA: PeriodicElement[] = [];
 
-const ELEMENT_DATA_OTHER: PeriodicElement[] = [
-  {
-    emp_no: '014748',
-    sname_eng: 'MISS',
-    gname_eng: 'NUTTAYA',
-    fname_eng: 'KALLA',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: '',
-    remark: '',
-    course_name: ''
-  }, {
-    emp_no: '014749',
-    sname_eng: 'MR.',
-    gname_eng: 'NATIRUT',
-    fname_eng: 'DAUNGPAK',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: 'Wait',
-    remark: 'Not passed CPT-001',
-    course_name: 'Basic Excel'
-  }, {
-    emp_no: '014748',
-    sname_eng: 'MISS',
-    gname_eng: 'NUTTAYA',
-    fname_eng: 'KALLA',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: '',
-    remark: '',
-    course_name: ''
-  },
-];
+const ELEMENT_DATA_OTHER: PeriodicElement[] = [];

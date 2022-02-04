@@ -34,6 +34,7 @@
       "api-hrgis/1.0.0": {
         "dependencies": {
           "EPPlus": "5.8.5",
+          "FoolProof.Core": "1.1.10",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "5.0.13",
           "Microsoft.AspNetCore.Identity": "2.2.0",
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "5.0.13",
@@ -353,6 +354,20 @@
         },
         "compile": {
           "lib/net5.0/EPPlus.dll": {}
+        }
+      },
+      "FoolProof.Core/1.1.10": {
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.1"
+        },
+        "runtime": {
+          "lib/net5.0/FoolProof.Core.dll": {
+            "assemblyVersion": "1.1.30.0",
+            "fileVersion": "1.1.30.0"
+          }
+        },
+        "compile": {
+          "lib/net5.0/FoolProof.Core.dll": {}
         }
       },
       "Humanizer.Core/2.8.26": {
@@ -4395,6 +4410,13 @@
       "sha512": "sha512-hszwVnSnw7HYsZlXm7PtP1cZexEF2Y1v6J9P93JjHeLbLWofllBq/6jT+5U4lplEoOwUN56pmu1ccNWBc44BsQ==",
       "path": "epplus/5.8.5",
       "hashPath": "epplus.5.8.5.nupkg.sha512"
+    },
+    "FoolProof.Core/1.1.10": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-sFr1I9i9AqFJQiDWcIf00Gu7SXgl8yyAQJBOEKN2Gd6xVn6cWdcwzfOiyNINhI6KeOxAWJlubDUx8ppIPgr/NA==",
+      "path": "foolproof.core/1.1.10",
+      "hashPath": "foolproof.core.1.1.10.nupkg.sha512"
     },
     "Humanizer.Core/2.8.26": {
       "type": "package",

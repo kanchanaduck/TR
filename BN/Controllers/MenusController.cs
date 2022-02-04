@@ -31,7 +31,7 @@ namespace api_hrgis.Controllers
         {
             // return await _context.tb_menus.ToListAsync();
             var menu = await _context.tb_menus
-                            .Include(e => e.children)
+                            // .Include(e => e.children)
                             .Where(e => e.parent_menu_code==null)
                             .ToListAsync();      
 

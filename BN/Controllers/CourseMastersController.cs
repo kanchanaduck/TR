@@ -13,7 +13,7 @@ using OfficeOpenXml;
 
 namespace api_hrgis.Controllers
 {
-    [Authorize] // Microsoft.AspNetCore.Authorization; // [AllowAnonymous]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CourseMastersController : ControllerBase
@@ -36,17 +36,12 @@ namespace api_hrgis.Controllers
                         .ToListAsync();
         }
 
-        // GET: api/CourseMasters/5
-        [HttpGet("{q}")]
-        public async Task<ActionResult<tr_course_master>> Gettr_course_master(string q)
+        // GET: api/CourseMasters/{course_no}
+        [HttpGet("{course_no}")]
+        public async Task<ActionResult<tr_course_master>> Search(string course_no)
         {
-            if (q == null)
-            {
-                q = "";
-            }
-
             var tr_course_master = await _context.tr_course_master
-                                        .Where(e => e.course_no == q)
+                                        .Where(e => e.course_no == course_no)
                                         .FirstOrDefaultAsync();
 
             if (tr_course_master == null)
@@ -57,33 +52,15 @@ namespace api_hrgis.Controllers
             return tr_course_master;
         }
 
-        // GET: api/CourseMasters/Search/{course_no}
-        [HttpGet("Search")]
-        public async Task<ActionResult<tr_course_master>> Search(string course_no)
+        // GET: api/CourseMasters/SearchCourse/{course_no}/{org_abb_name}
+        [HttpGet("SearchCourse/{course_no}/{org_abb_name}")]
+        public async Task<ActionResult<tr_course_master>> SearchCourse(string course_no, string org_abb_name)
         {
-            Console.WriteLine("Search: " + course_no);
+
             var tr_course_master = await _context.tr_course_master
-                                        .Where(
-                                        e => e.course_no == course_no
-                                        ).FirstOrDefaultAsync();
-
-            if (tr_course_master == null)
-            {
-                return NotFound();
-            }
-
-            return tr_course_master;
-        }
-
-        // GET: api/CourseMasters/SearchCourse/{course_no}
-        [HttpGet("SearchCourse")]
-        public async Task<ActionResult<tr_course_master>> SearchCourse(string course_no)
-        {
-            Console.WriteLine("Search: " + course_no);
-            Console.WriteLine("Search: " + User.FindFirst("dept_abb_name").Value);
-            var tr_course_master = await _context.tr_course_master.Include(e => e.course_masters_bands)
-                                    .Where(e => e.course_no == course_no 
-                                    && e.dept_abb_name == User.FindFirst("dept_abb_name").Value)
+                                    .Include(e => e.course_masters_bands)
+                                    .Where(e => e.course_no == course_no &&
+                                    e.dept_abb_name == org_abb_name)
                                     .FirstOrDefaultAsync();
 
             if (tr_course_master == null)
@@ -92,13 +69,6 @@ namespace api_hrgis.Controllers
             }
 
             return tr_course_master;
-        }
-
-        // GET: api/CourseMasters/GetBand
-        [HttpGet("GetBand")]
-        public async Task<ActionResult<IEnumerable<tb_band>>> GetBand()
-        {
-            return await _context.tb_band.ToListAsync();
         }
 
         // PUT: api/CourseMasters/5
