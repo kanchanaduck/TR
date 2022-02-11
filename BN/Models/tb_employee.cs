@@ -34,6 +34,12 @@ namespace api_hrgis.Models
                 return gname_eng + " " + fname_eng;
             }
         }
+        public string shortname_eng{
+            get
+            {
+                return gname_eng + "." + fname_eng.Substring(0,1);
+            }
+        }
         [StringLength(2)]
         public string div_cls { get; set; }
         [StringLength(50)]

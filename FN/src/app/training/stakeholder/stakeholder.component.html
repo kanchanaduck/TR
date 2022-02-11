@@ -1,50 +1,67 @@
 <div class="card card-body mb-3">
-  <form (ngSubmit)="save_stakeholders()">
-  <div class="row">
-      <div class="form-group col mb-0 p-1">
-          <label class="az-content-label tx-11 tx-medium tx-gray-600">Organization</label>
-          <!-- <ng-select [items]="departments" 
-                    groupBy="parent_org_code" 
-                    bindLabel="org_abb" 
-                    bindValue="org_code"
-                    [selectableGroup]="true"
-                    [(ngModel)]="stakeholder.org_code" 
-                    [ngModelOptions]="{standalone: true}"
-                    allow-clear="true"
-                    (change)="get_stakeholder($event)">
-                    <ng-template ng-optgroup-tmp let-item="item" let-index="index">
-                        {{ item.org_abb + '('+item.parent_org_code+')' }}
-                    </ng-template>
-        </ng-select> -->
-        <input type="text" class="form-control" name="org_code" [(ngModel)]="stakeholder.org_code" value="1110">
+    <form (ngSubmit)="save_stakeholders()">
+    <div class="row">
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Organization</label>
+            <!-- [compareWith]="compare_org" -->
+            <ng-select
+                autofocus
+                [items]="departments" 
+                [groupBy]="group_by_parent_org_code_fn"
+                [groupValue]="group_value_parent_org_code_fn"
+                [selectableGroup]="true"
+                bindLabel="org_abb" 
+                bindValue="org_code"
+                [(ngModel)]="stakeholder.org_code" 
+                [ngModelOptions]="{standalone: true}"
+                (change)="get_stakeholder($event.target.value)">
+                <ng-template ng-optgroup-tmp let-item="item" let-index="index">
+                    {{ item.org_abb + '('+item.org_code+')' }}
+                </ng-template>
+            </ng-select>
+            {{ stakeholder.org_code | json }}
+        </div><!-- form-group -->
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">committee</label>.
+            <ng-select 
+                [items]="employees"
+                bindLabel="emp_no"
+                bindValue="emp_no"
+                [multiple]="true"
+                [ngModelOptions]="{standalone: true}"
+                [(ngModel)]="stakeholder.committees"
+                >
+                <ng-template ng-label-tmp let-item="item" let-index="index">
+                    {{ item.emp_no+': '+item.shortname_eng  }}
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item" let-index="index">
+                    {{ item.emp_no+': '+item.shortname_eng  }}
+                </ng-template>
+            </ng-select>
       </div><!-- form-group -->
       <div class="form-group col mb-0 p-1">
-          <label class="az-content-label tx-11 tx-medium tx-gray-600">committee</label>.
-          <select 
-            class="form-control" 
-            name="emp_no"
-            multiple
-            [(ngModel)]="stakeholder.committees">
-              <option selected>014496</option>
-              <option>000094</option>
-          </select>
-      </div><!-- form-group -->
-      <div class="form-group col mb-0 p-1">
-          <label class="az-content-label tx-11 tx-medium tx-gray-600">approver</label>
-          <select 
-            class="form-control" 
-            name="emp_no"
-            multiple
-            [(ngModel)]="stakeholder.approvers">
-              <option>014496</option>
-              <option selected>000094</option>
-          </select>
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">approver</label>
+            <ng-select 
+                [items]="employees"
+                bindLabel="emp_no"
+                bindValue="emp_no"
+                [multiple]="true"
+                [ngModelOptions]="{standalone: true}"
+                [(ngModel)]="stakeholder.approvers"
+                >
+                <ng-template ng-label-tmp let-item="item" let-index="index">
+                    {{ item.emp_no+': '+item.shortname_eng  }}
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item" let-index="index">
+                    {{ item.emp_no+': '+item.shortname_eng  }}
+                </ng-template>
+            </ng-select>
       </div><!-- form-group -->
       <div class="form-group col pt-1">
         <label class="az-content-label tx-11 tx-medium tx-gray-600 invisible">222</label>
         <div>
             <button type="submit" class="btn btn-az-primary btn-sm">Save</button>
-            <button type="button" class="btn btn-dark btn-sm">Clear</button>
+            <button type="button" class="btn btn-dark btn-sm" (click)="reset_form_stakeholder()">Clear</button>
         </div>
     </div>
   </div>
@@ -75,22 +92,20 @@
                 {{ i.level_name | uppercase }}
             </td>
             <td>
-                <!-- <div *ngFor="let j of i.committees">
-                    {{ j.emp_no + j.employee.full_name_eng }}
-                </div> -->
+                <div *ngFor="let j of i.stakeholders">
+                    <div *ngIf="j.role=='COMMITTEE'">
+                        {{ j.emp_no + ": " + j.employee.shortname_eng }}
+                    </div>
+                </div>
             </td>
             <td>
-                <div *ngFor="let j of i.approvers">
-                    {{ j.emp_no + j.employee.full_name_eng }}
+                <div *ngFor="let j of i.stakeholders">
+                    <div *ngIf="j.role=='APPROVER'">
+                        {{ j.emp_no + ": " + j.employee.shortname_eng }}
+                    </div>
                 </div>
             </td>
             <td class="text-center">
-                <!-- {{ i.parent_org.org_abb==null? i.org_code: i.org_code }} -->
-                <!-- <a *ngIf="i.parent_org.org_abb==null"
-                    href="javascript:;" 
-                    (click)="get_stakeholder(i.parent_org_code)" >
-                    <i class="far fa-edit"></i>
-                </a>-->
                <a 
                     href="javascript:;" 
                     (click)="get_stakeholder(i.org_code)" >

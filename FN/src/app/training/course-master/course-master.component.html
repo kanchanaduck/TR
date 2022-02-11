@@ -1,9 +1,13 @@
+<!-- 
+<img *ngFor="let i of numbers" src="http://cis/cis/wwwroot/emp_pic/7000{{i | number:'2.0'}}.JPG" width="70"> -->
+
 <div class="card card-body">
     <form (ngSubmit)="save_course_master()">
     <div class="row">
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Course no.</label>
-            <input type="text" name="course.course_no" class="form-control" required 
+            <input type="text" name="course.course_no" class="form-control" 
+                autofocus required 
                 [(ngModel)]="course.course_no" >
             <p class="text-danger tx-12" *ngIf="errors"> 
                 <span *ngFor="let text of errors.course_no">{{ text }}</span>
@@ -30,10 +34,33 @@
     <div class="row">
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Group</label>
-            <input type="text" name="course.dept_abb_name" class="form-control" required
-                [(ngModel)]="course.dept_abb_name" >
+            <!-- <input type="text" name="course.org_code" class="form-control" required
+                [(ngModel)]="course.org_code" > -->
+                <!-- <select class="form-control"
+                    name="course.org_code"
+                    [(ngModel)]="course.org_code"
+                    required
+                    >
+                    <option value="55">MFG-1</option>
+                    <option value="5510">AAD</option>
+                </select> -->
+                <ng-select
+                    [items]="departments" 
+                    [groupBy]="group_by_parent_org_code_fn"
+                    [groupValue]="group_value_parent_org_code_fn"
+                    [selectableGroup]="true"
+                    bindLabel="org_abb" 
+                    bindValue="org_code"
+                    [(ngModel)]="course.org_code" 
+                    [ngModelOptions]="{standalone: true}"
+                    (change)="get_course($event.target.value)">
+                    <ng-template ng-optgroup-tmp let-item="item" let-index="index">
+                        {{ item.org_abb + '('+item.org_code+')' }}
+                    </ng-template>
+                </ng-select>
+                {{ course.org_code | json }}
                 <p class="text-danger tx-12" *ngIf="errors"> 
-                    <span *ngFor="let text of errors.dept_abb_name">{{ text }}</span>
+                    <span *ngFor="let text of errors.org_code">{{ text }}</span>
                 </p>
         </div><!-- form-group -->
         <div class="form-group col mb-0">
@@ -87,12 +114,9 @@
         </div><!-- form-group -->
         <div class="form-group col-5 mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Band</label>
-            <div class="form-row"><!-- 
-                        [checked]="course.course_masters_bands==undefined? false:isInCourseMaster(band.band)" -->
+            <div class="form-row">
                 <label class="ckbox" *ngFor="let band of bands">
-                    <input type="checkbox" 
-
-                    >
+                    <input type="checkbox" [(ngModel)]="band.isChecked" [ngModelOptions]="{standalone: true}">
                     <span>{{band.band}} </span>
                 </label>
             </div>

@@ -8,6 +8,8 @@ import Swal from 'sweetalert2';
 import { AppServiceService } from '../../app-service.service';
 import { Subject } from 'rxjs';
 import { DataTableDirective } from 'angular-datatables';
+import { map } from 'jquery';
+import { find } from 'rxjs/operators';
 @Component({
   selector: 'app-course-master',
   templateUrl: './course-master.component.html',
@@ -31,6 +33,11 @@ export class CourseMasterComponent implements OnInit {
       'Content-Type': 'application/json'
     }
   }
+  numbers = Array(100).fill(0).map((x,i)=>i);
+  departments: any;
+  group_by_parent_org_code_fn: (item: any) => any;
+  group_value_parent_org_code_fn: (_: string, children: any[]) => { org_abb: any; org_code: any; };
+  compare_org: (item: any, selected: any) => boolean;
 
 
   constructor(
@@ -81,17 +88,16 @@ export class CourseMasterComponent implements OnInit {
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
     };
 
-
     this.get_courses()
     this.get_bands()
+    this.get_departments()
     
-
   }
 
   isInCourseMaster(band:string){
-      return this.courses.some(function(el) {
-          return el.band === band;
-      }); 
+    return this.courses.some(function(el){
+      return el.band === band;
+    }); 
   }
 
   async get_courses(){
@@ -117,18 +123,31 @@ export class CourseMasterComponent implements OnInit {
 
 
   async get_course(course_no: number) {
-    try {
-      const response = await axios.get(`${environment.API_URL}CourseMasters/${course_no}`, this.headers);
-      this.course = response
-      return response;
-    } 
-    catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: error.response.status,
-        text: "Data not found"
-      })
-    }
+    let self = this
+    await axios.get(`${environment.API_URL}CourseMasters/${course_no}`, this.headers)
+      .then(function (response) {
+        self.course = response
+        console.log(response)
+        console.log(self.course)
+        self.course.course_masters_bands.forEach(element => {
+          element.isChecked= false
+        });
+
+        console.log(self.course.course_masters_bands)
+
+        for (const i of self.course.course_masters_bands) {
+          console.log(i)
+          self.bands.find(v => v.band === i.band).isChecked = true;
+        }
+
+      }) 
+      .catch(function (error) {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.status,
+          text: error.response.data
+        })
+    })
   }
 
   delete_course(data: any) {
@@ -157,20 +176,56 @@ export class CourseMasterComponent implements OnInit {
   }
   
   get_bands(){
-    axios.get(`${environment.API_URL}Bands`).then(response => (
-      this.bands = response
+    let self = this
+    axios.get(`${environment.API_URL}Bands`, this.headers).then(response => (
+      self.bands = response
     ));
+
+    self.bands.forEach(element => {
+      element.isChecked= false
+    });
   }
 
-  trackByIdx(index: number, obj: any): any {
-    return index;
+  async get_departments() {
+    let self = this
+    await axios.get(`${environment.API_URL}Organization/Level/Department/Parent`, this.headers)
+    .then(function (response) {
+      self.departments = response
+      //console.log(response)
+      self.group_by_parent_org_code_fn = (item) => item.parent_org_code;
+      self.group_value_parent_org_code_fn = (_: string, children: any[]) => ({ org_abb: children[0].parent_org.org_abb, org_code: children[0].parent_org.org_code });
+      self.compare_org = (item, selected) => {
+        if (selected.Grouby_parent_org_code_fn && item.Groupvalue_parent_org_code_fn) {
+          return item.Grouby_parent_org_code_fn === selected.Grouby_parent_org_code_fn;
+        }
+        if (item.org_abb && selected.org_abb) {
+          return item.org_abb === selected.org_abb;
+        }
+        return false;
+      };
+    })
+    .catch(function (error) {
+      //console.log(error)
+      Swal.fire({
+        icon: 'error',
+        title: error.response.status,
+        text: error.response.data
+      })
+    });
   }
   
   save_course_master(){
+    console.log(this.bands)
     console.log(this.course)
-    /* let self = this
+
+    this.course.course_masters_bands = this.bands.filter(element => element.isChecked == true);
+
+    console.log(this.course.course_masters_bands)
+
+    let self = this
     self.errors = null;
-    axios.post(`${environment.API_URL}CourseMasters`,this.course)
+
+    axios.post(`${environment.API_URL}CourseMasters`, this.course, this.headers)
     .then(function (response) {
       Swal.fire({
         toast: true,
@@ -180,7 +235,6 @@ export class CourseMasterComponent implements OnInit {
         showConfirmButton: false,
         timer: 2000
       })
-      alert("Reload")
     })
     .catch(function (error) {
       self.errors = error.response.data.errors
@@ -198,9 +252,7 @@ export class CourseMasterComponent implements OnInit {
           text: error.response.data
         })        
       }
-
-    }); */
-    // alert("reload")
+    });
   }
 
 }

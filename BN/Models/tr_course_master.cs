@@ -20,7 +20,7 @@ namespace api_hrgis.Models
         public string course_name_th { get; set; }
         public string course_name_en { get; set; }
         [Required]
-        public string dept_abb_name { get; set; }
+        public string org_code { get; set; }
         [Required]
         public int capacity { get; set; }
         public string prev_course_no { get; set; }
@@ -40,6 +40,8 @@ namespace api_hrgis.Models
         [ForeignKey("prev_course_no")]
         public virtual tr_course_master prev_course { get; set; }
         public virtual ICollection<tr_course_master> next_course { get; set; }
+        [ForeignKey("org_code")]
+        public virtual tb_organization organization { get; set; }
         private DateTime _date = DateTime.Now;
         private string _username = "014496";
     }

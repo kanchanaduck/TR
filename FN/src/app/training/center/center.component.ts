@@ -24,7 +24,7 @@ export class CenterComponent implements OnInit {
   isDtInitialized: boolean = false;
   headers: any = {
     headers: {
-    Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
+      Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
       'Content-Type': 'application/json'
     }
   } 
@@ -83,7 +83,7 @@ export class CenterComponent implements OnInit {
   }
 
   async get_centers(){
-    await this.httpClient.get(`${environment.API_URL}Center`)
+    await this.httpClient.get(`${environment.API_URL}Center`, this.headers)
     .subscribe((response: any) => {
       this.centers = response;
         if (this.isDtInitialized) {

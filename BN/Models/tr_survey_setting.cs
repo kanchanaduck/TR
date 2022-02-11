@@ -14,9 +14,11 @@ namespace api_hrgis.Models
         public string year { get; set; }
         [Required]
         [DataType(DataType.Date)]
+        [Column(TypeName = "datetime")]
         public DateTime date_start { get; set; }
         [Required]
         [DataType(DataType.Date)]
+        [Column(TypeName = "datetime")]
         public DateTime date_end { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? created_at { get; set; }

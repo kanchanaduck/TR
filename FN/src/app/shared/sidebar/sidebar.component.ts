@@ -3,6 +3,7 @@ import axios from 'axios';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppServiceService } from '../../app-service.service';
 import { environment } from 'src/environments/environment';
+import { HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-sidebar',
@@ -19,22 +20,29 @@ export class SidebarComponent implements OnInit {
   img_garoon: any = environment.img_garoon;
   images: any;
   activeUrl: any;
+  headers: any = {
+    headers: {
+      Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
+      'Content-Type': 'application/json'
+    }
+  }
 
-  constructor(private service: AppServiceService, private router: Router, private route: ActivatedRoute) { }
+  constructor(
+    private service: AppServiceService, 
+    private router: Router, 
+    private route: ActivatedRoute
+  ) { }
 
   async ngOnInit() {
 
     this.activeUrl = this.route
 
-    await axios.get(`${environment.API_URL}Menus`).then(response => (
+    await axios.get(`${environment.API_URL}Menus`, this.headers).then(response => (
       this.menus = response
-      // console.log(response)
     ));
 
-    // console.log(this.menus)
-
     if (localStorage.getItem('token_hrgis') != null) {
-      this._data = await this.service.service_jwt(); //console.log(this._data);
+      this._data = await this.service.service_jwt(); 
       this._fullname = this._data.user.gname_eng + ' ' + this._data.user.fname_eng.substring(0, 1);
       this._positions = this._data.user.posn_ename;
       this.images = this.img_garoon + this._data.user.emp_no + ".jpg";

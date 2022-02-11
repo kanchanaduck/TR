@@ -47,6 +47,8 @@ export class SigninComponent implements OnInit {
       this.response = await instance.post("/Authenticate/login", params);
       console.log("response: ", this.response);
       localStorage.setItem('token_hrgis', this.response.data.token);
+      localStorage.setItem('token_expiration_hrgis', this.response.data.expiration);
+      // localStorage.setItem('expiration_date_hrgis', expirationDate.toISOString());
 
       this.router.navigate(['/training']);
 

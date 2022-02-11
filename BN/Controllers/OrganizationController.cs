@@ -10,9 +10,11 @@ using api_hrgis.Models;
 using Microsoft.AspNetCore.Cors;
 using OfficeOpenXml;
 using System.IO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace api_hrgis.Controllers
 {
+    [Authorize]
     [EnableCors("_myAllowSpecificOrigins")]
     [Route("api/[controller]")]
     [ApiController]
@@ -32,16 +34,51 @@ namespace api_hrgis.Controllers
             return await _context.tb_organization
                             .Include(e => e.children_org)
                             .Include(e => e.parent_org)
+                            .OrderBy(e => e.org_abb)
                             .ToListAsync();
         }
-
+        
         // GET: api/Organization/Level/Division
         // GET: api/Organization/Level/Department
         [HttpGet("Level/{level}")]
         public async Task<ActionResult<IEnumerable<tb_organization>>> GetFromLevel(string level)
         {
             return await _context.tb_organization
+                            .Where(c => c.level_name.ToUpper().Contains(level.ToUpper()))
+                            .OrderBy(e => e.org_abb)
+                            .ToListAsync();
+        }
+
+        // GET: api/Organization/Level/Division/All
+        // GET: api/Organization/Level/Department/All
+        [HttpGet("Level/{level}/All")]
+        public async Task<ActionResult<IEnumerable<tb_organization>>> GetFromLevelIncludeAll(string level)
+        {
+            return await _context.tb_organization
                             .Include(e => e.children_org)
+                            .Include(e => e.parent_org)
+                            .Where(c => c.level_name.ToUpper().Contains(level.ToUpper()))
+                            .OrderBy(e => e.org_abb)
+                            .ToListAsync();
+        }
+        
+        // GET: api/Organization/Level/Division/Children
+        // GET: api/Organization/Level/Department/Children
+        [HttpGet("Level/{level}/Children")]
+        public async Task<ActionResult<IEnumerable<tb_organization>>> GetFromLevelIncludeChildren(string level)
+        {
+            return await _context.tb_organization
+                            .Include(e => e.children_org)
+                            .Where(c => c.level_name.ToUpper().Contains(level.ToUpper()))
+                            .OrderBy(e => e.org_abb)
+                            .ToListAsync();
+        }
+        // GET: api/Organization/Level/Division/Parent
+        // GET: api/Organization/Level/Department/Parent
+        [HttpGet("Level/{level}/Parent")]
+        public async Task<ActionResult<IEnumerable<tb_organization>>> GetFromLevelIncludeParent(string level)
+        {
+            return await _context.tb_organization
                             .Include(e => e.parent_org)
                             .Where(c => c.level_name.ToUpper().Contains(level.ToUpper()))
                             .OrderBy(e => e.org_abb)
@@ -138,6 +175,7 @@ namespace api_hrgis.Controllers
         {
             return _context.tb_organization.Any(e => e.org_code == id);
         }
+        [AllowAnonymous]
         [HttpGet("Mock")]
         public async Task<ActionResult<IEnumerable<tb_organization>>> CourseMaster()
         {

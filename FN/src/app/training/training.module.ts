@@ -49,7 +49,7 @@ const routes: Routes = [
   { path: 'course-confirmation-sheet', component: CourseConfirmationSheetComponent, data: { title: 'List trainee of course and send email', active: true } },
   { path: 'course-master', component: CourseMasterComponent, data: { title: 'Master course control', active: true } },
   { path: 'course-open', component: CourseOpenComponent, data: { title: 'Open course', active: true } },
-  { path: 'course-map', component: CourseMapComponent, data: { title: 'Course map own department', active: true } },
+  { path: 'course-map', component: CourseMapComponent, data: { title: 'Course map', active: true } },
   { path: 'course-signature-sheet', component: CourseSignatureSheetComponent, data: { title: 'ใบเซ็นชื่อ', active: true } },
   { path: 'trainer', component: TrainerComponent, data: { title: 'Trainer', active: true} },
   { path: 'trainer-history/:trainer_no', component: TrainerHistoryComponent, data: { title: 'Trainer history', active: true} },

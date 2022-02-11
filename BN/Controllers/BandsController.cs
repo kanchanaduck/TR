@@ -7,9 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using api_hrgis.Data;
 using api_hrgis.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 
 namespace api_hrgis.Controllers
 {
+    [Authorize]
+    [EnableCors("_myAllowSpecificOrigins")]
     [Route("api/[controller]")]
     [ApiController]
     public class BandsController : ControllerBase
@@ -118,6 +122,7 @@ namespace api_hrgis.Controllers
         {
             return _context.tb_band.Any(e => e.band == id);
         }
+        [AllowAnonymous]
         [HttpGet("Mock")]
         public async Task<IActionResult> Mock()
         {

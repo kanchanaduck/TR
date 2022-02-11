@@ -32,6 +32,42 @@ namespace api_hrgis.Controllers
             return await _context.tb_employee.ToListAsync();
         }
 
+        // GET: api/Employees/Course
+        [HttpGet("Course/{org_code}/{employed_status}")]
+        public async Task<ActionResult<IEnumerable<tb_employee>>> course_map(string org_code, string employed_status)
+        {
+            // return await _context.tb_employee.ToListAsync();
+            if(employed_status == "employed"){
+                return await _context.tb_employee
+                            .Include(e => e.courses_registrations)
+                            .Where(e => (e.div_cls==org_code || e.dept_code.Contains(org_code)) && (e.resn_date==null ||e.resn_date < DateTime.Today))
+                            .ToListAsync();
+            }
+            else{
+                return await _context.tb_employee
+                            .Include(e => e.courses_registrations)
+                            .Where(e => (e.div_cls==org_code || e.dept_code.Contains(org_code)) && (e.resn_date > DateTime.Today))
+                            .ToListAsync();
+            }
+        }
+
+        // GET: api/Employees/Organization/55
+        // GET: api/Employees/Organization/5510
+        [HttpGet("Organization/{org_code}")]
+        public async Task<ActionResult<IEnumerable<tb_employee>>> GetEmployeeDivision(string org_code)
+        {
+            var employees =  await _context.tb_employee
+                             .Where(e => e.div_cls==org_code ||
+                             e.dept_code==org_code).ToListAsync();
+
+            if (employees == null)
+            {
+                return NotFound("Data not found");
+            }
+
+            return employees;
+        }
+
         // GET: api/Employees/Update
         [HttpGet("Update")]
         public async Task<ActionResult<IEnumerable<tb_employee>>> UpdateFromHRMS()

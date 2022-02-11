@@ -39,6 +39,9 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    console.log("Token: ", localStorage.getItem('token_hrgis'))
+    
   
     axios.interceptors.response.use(function (response) {
       return response.data

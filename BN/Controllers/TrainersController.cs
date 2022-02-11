@@ -10,9 +10,11 @@ using api_hrgis.Models;
 using Microsoft.EntityFrameworkCore.Internal;
 using System.IO;
 using OfficeOpenXml;
+using Microsoft.AspNetCore.Authorization;
 
 namespace api_hrgis.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TrainersController : ControllerBase
@@ -262,6 +264,7 @@ namespace api_hrgis.Controllers
                 
             return Ok(query);
         }
+        [AllowAnonymous]
         [HttpGet("Mock")]
         public async Task<ActionResult<IEnumerable<tr_trainer>>> Trainer()
         {

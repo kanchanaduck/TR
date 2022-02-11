@@ -1,4 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { environment } from 'src/environments/environment';
+import { HttpClient } from '@angular/common/http';
+import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
+import Swal from 'sweetalert2';
+import axios from 'axios';
+import { Subject } from 'rxjs';
+import { DataTableDirective } from 'angular-datatables';
+import { AppServiceService } from '../../app-service.service'
 
 @Component({
   selector: 'app-survey-center',
@@ -7,19 +15,35 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SurveyCenterComponent implements OnInit {
   dtOptions: any = {};
-  constructor() { }
+  
+  dtTrigger: Subject<any> = new Subject();
+  @ViewChild(DataTableDirective)
+  dtElement: DataTableDirective;
+  isDtInitialized: boolean = false;
+  headers: any = {
+    headers: {
+      Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
+      'Content-Type': 'application/json'
+    }
+  }
+  survey: any = [];
+  
+  constructor(
+    private service: AppServiceService, 
+    private httpClient: HttpClient
+  ) { }
 
   ngOnInit(): void {
     this.dtOptions = {
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
       "<'row'<'col-sm-12'tr>>" +
       "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
-      language: {
+      /* language: {
         paginate: {
           next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
           previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
         }
-      },
+      }, */
       filter:{
         "dom":{
           "container": {
@@ -36,7 +60,7 @@ export class SurveyCenterComponent implements OnInit {
           },
           "button": {
             tag: "button",
-            className: "btn btn-outline-indigo"
+            className: "btn btn-outline-indigo btn-sm"
           },
         },
         "buttons": [
@@ -78,6 +102,37 @@ export class SurveyCenterComponent implements OnInit {
       container: "#example_wrapper .col-md-6:eq(0)",
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
     };
+
+    this.get_survey()
+
   }
+
+  ngOnDestroy(): void {
+    this.dtTrigger.unsubscribe();
+  }
+
+  async get_survey(){
+    let self = this
+    await this.httpClient.get(`${environment.API_URL}Survey`, this.headers)
+    .subscribe((response: any) => {
+      self.survey = response;
+      if (this.isDtInitialized) {
+        this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+          dtInstance.destroy();
+          this.dtTrigger.next();
+        });
+      } 
+      else {
+        this.isDtInitialized = true
+        this.dtTrigger.next();
+      }
+    },
+    (error: any) => {
+      console.log(error);
+    });
+  }
+
+
+  
 
 }

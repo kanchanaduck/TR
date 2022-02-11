@@ -7,9 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using api_hrgis.Data;
 using api_hrgis.Models;
-
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 namespace api_hrgis.Controllers
 {
+    [Authorize]
+    [EnableCors("_myAllowSpecificOrigins")]
     [Route("api/[controller]")]
     [ApiController]
     public class CenterController : ControllerBase

@@ -19,11 +19,19 @@ export class StakeholderComponent implements OnInit {
   closeResult = '';
   stakeholders: any = [];
   stakeholder: any = {};
+  committees: any = [];
+  committee: any = {};
+  approver: any = {};
+  approvers: any = [];
   
   departments: any;
   employees: any = [];
   errors: any;
   formData: any = [];
+
+  group_by_parent_org_code_fn: any;
+  group_value_parent_org_code_fn: any;
+  compare_org: any;
 
   dtTrigger: Subject<any> = new Subject();
   @ViewChild(DataTableDirective)
@@ -31,7 +39,7 @@ export class StakeholderComponent implements OnInit {
   isDtInitialized: boolean = false;
   headers: any = {
     headers: {
-    Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
+      Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
       'Content-Type': 'application/json'
     }
   }
@@ -43,69 +51,6 @@ export class StakeholderComponent implements OnInit {
 
   ngOnInit(): void {
     this.dtOptions = {
-      /* ajax: {
-        url: environment.API_URL+"Stakeholder",
-        dataSrc: "",
-      },
-      columns:
-      [
-        {
-          data: "org_abb",
-          className: "tx-bold",
-          "render": function ( data, type, row ) {
-            return row.parent_org.org_abb==null? `${data}`: `${row.parent_org.org_abb}`
-          }
-        },
-        { 
-          "data": "org_abb",
-          className: "pl-5",
-          "render": function ( data, type, row ) {
-            return row.parent_org.org_abb==null? ``: `${data}`
-          }
-        },
-        { 
-          "data": "level_name",
-          "render": function ( data, type, row ) {
-            return data
-          }
-        },
-        { 
-          "data": "stakeholders",
-          "render": function ( data, type, row ) {
-            const st = data.find(function(el){
-              return el.role === "Committee"
-            } )
-            if(st!== undefined){
-              return `${st.employee.emp_no}: ${st.employee.fullname_eng} (${st.employee.dept_abb_name})`;
-            }
-            else{
-              return '';
-            }
-          }  
-        },
-        { 
-          "data": "stakeholders",
-          "render": function ( data, type, row ) {
-            const st = data.find(function(el){
-              return el.role === "Approver"
-            } )
-            if(st!== undefined){
-              return `${st.employee.emp_no}: ${st.employee.fullname_eng} (${st.employee.dept_abb_name})`;
-            }
-            else{
-              return '';
-            }
-          }  
-        },
-        { 
-          "data": "org_abb",
-          className: 'text-center',
-          "render": function ( data, type, row ) {
-            // return data;
-            return  '<a href="javascript:;"><i class="far fa-edit"></i></a>'
-          },
-        },
-      ], */
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
       "<'row'<'col-sm-12'tr>>" +
       "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
@@ -155,7 +100,6 @@ export class StakeholderComponent implements OnInit {
   
     this.get_stakeholders();
     this.get_departments();
-    // this.get_employees();
   
   }
 
@@ -185,112 +129,11 @@ export class StakeholderComponent implements OnInit {
     });
   }
 
-  async get_employees() {
-    try {
-      const response = await axios.get(`${environment.API_URL}Employees`, this.headers);
-      this.employees = response
-      return response;
-    } 
-    catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: error.response.status,
-        text: "Data not found"
-      })
-    }
-  }
-
-  async get_departments() {
-    try {
-      const response = await axios.get(`${environment.API_URL}Organization/Level/Department`, this.headers);
-      this.departments = response
-      return response;
-    } 
-    catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: error.response.status,
-        text: "Data not found"
-      })
-    }
-  }
-
-  async get_stakeholder(org_code: string) {
-    const self = this;
-    // this.stakeholder = data
-    try {
-      const response = await axios.get(`${environment.API_URL}Stakeholder/${org_code}`, this.headers);
-      this.stakeholder = response
-      console.log(this.stakeholder)
-      console.log(self.stakeholder.stakeholders)
-
-      const committee = self.stakeholder.stakeholders.find(function(el){
-        return el.role === "COMMITTEE"
-      })
-
-      const approver = self.stakeholder.stakeholders.find(function(el){
-        return el.role === "APPROVER"
-      })
-
-      console.log(approver);
-      console.log(committee)
-
-      approver.forEach(element => {
-        self.stakeholder.committees.push(element.emp_no)
-      });
-
-      committee.forEach(element => {
-        self.stakeholder.approvers.push(element.emp_no)
-      });
-
-
-      // self.stakeholder.push(committee, approver) 
-    } 
-    catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: error.response.status,
-        text: "Data not found"
-      })
-    }
-    // console.log('data: ', this.stakeholder);
-  }
-
-  async save_stakeholders(){
-    this.formData = [];
-
-    this.stakeholder.committees.forEach(element => {
-      let c = {
-        emp_no: element,
-        org_code: this.stakeholder.org_code,
-        role: 'COMMITTEE'
-      }
-      this.formData.push(c)
-    });
-
-    this.stakeholder.approvers.forEach(element => {
-      let a = {
-        emp_no: element,
-        org_code: this.stakeholder.org_code,
-        role: 'APPROVER'
-      }
-      this.formData.push(a)
-    });
-    
-    console.log(this.formData)
-
-
-    await axios.post(`${environment.API_URL}Stakeholder`,this.formData, this.headers)
+  async get_employees(org_code) {
+    let self = this
+    await axios.get(`${environment.API_URL}Employees/Organization/${org_code}`,this.headers)
     .then(function (response) {
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: 'success',
-        title: "Success",
-        showConfirmButton: false,
-        timer: 2000
-      })
-      alert("Reload")
+      self.employees = response
     })
     .catch(function (error) {
       Swal.fire({
@@ -299,7 +142,180 @@ export class StakeholderComponent implements OnInit {
         text: error.response.data
       })
     });
-    // this.reset_form_stakeholders()
+  }
+
+  async get_departments() {
+    let self = this
+    await axios.get(`${environment.API_URL}Organization/Level/Department/Parent`, this.headers)
+    .then(function (response) {
+      self.departments = response
+      //console.log(response)
+      self.group_by_parent_org_code_fn = (item) => item.parent_org_code;
+      self.group_value_parent_org_code_fn = (_: string, children: any[]) => ({ org_abb: children[0].parent_org.org_abb, org_code: children[0].parent_org.org_code });
+      self.compare_org = (item, selected) => {
+        if (selected.Grouby_parent_org_code_fn && item.Groupvalue_parent_org_code_fn) {
+            return item.Grouby_parent_org_code_fn === selected.Grouby_parent_org_code_fn;
+        }
+        if (item.oeg_abb && selected.oeg_abb) {
+            return item.oeg_abb === selected.oeg_abb;
+        }
+        return false;
+      };
+    })
+    .catch(function (error) {
+      //console.log(error)
+      Swal.fire({
+        icon: 'error',
+        title: error.response.status,
+        text: error.response.data
+      })
+    });
+  }
+
+  async get_stakeholder(org_code: string) {
+    console.log(org_code)
+    const self = this;
+    self.get_employees(org_code)
+
+    await axios.get(`${environment.API_URL}Stakeholder/${org_code}`, this.headers)
+      .then(function (response) {
+        self.stakeholder = response
+      })
+      .catch(function (error) {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.status,
+          text: error.response.data
+        })
+    });
+
+    //console.log(self.stakeholder)
+    //console.log(self.stakeholder.stakeholders)
+    //console.log(self.stakeholder.stakeholders.length)
+
+    if(self.stakeholder.stakeholders.length>0){
+      const committees = self.stakeholder.stakeholders.filter(function(el){
+        //console.log(el)
+        return el.role === "COMMITTEE"
+      })
+      //console.log(committees);
+      //console.log(committees.length);
+
+      const approvers = self.stakeholder.stakeholders.filter(function(el){
+        //console.log(el)
+        return el.role === "APPROVER"
+      })
+      //console.log(approvers);
+      //console.log(approvers.length);
+
+      if(approvers.length>0){
+        //console.log(approvers);
+        self.stakeholder.approvers = [];
+        approvers.forEach(element => {
+          self.stakeholder.approvers.push(element.emp_no)
+        });
+      }
+      else{
+        //console.log("Approvers = 0")
+      }
+
+      if(committees.length>0){
+        //console.log(committees)
+        self.stakeholder.committees = [];
+        committees.forEach(element => {
+          self.stakeholder.committees.push(element.emp_no)
+        });
+      }
+      else{
+        //console.log("Committees = 0")
+      }        
+    }
+
+  }
+
+  async reset_form_stakeholder(){
+    this.stakeholder = {};
+  }
+
+  async save_stakeholders(){
+    let self = this
+    self.formData = [];
+    //console.log("Committee: ", self.stakeholder.committees)
+    //console.log("Approver: ", self.stakeholder.approvers)
+
+    if(self.stakeholder.committees!==undefined){
+      self.stakeholder.committees.forEach(element => {
+        let c = {
+          emp_no: element,
+          org_code: self.stakeholder.org_code,
+          role: 'COMMITTEE'
+        }
+        self.formData.push(c)
+      });      
+    }
+
+    if(self.stakeholder.approvers!==undefined){
+      self.stakeholder.approvers.forEach(element => {
+        let a = {
+          emp_no: element,
+          org_code: self.stakeholder.org_code,
+          role: 'APPROVER'
+        }
+        self.formData.push(a)
+      });
+    }
+
+    //console.log(self.formData)
+
+    if(self.formData.length>0)
+    {
+      await axios.post(`${environment.API_URL}Stakeholder`,self.formData, self.headers)
+      .then(function (response) {
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: "Success",
+          showConfirmButton: false,
+          timer: 2000
+        })
+        self.reset_form_stakeholder()
+        self.get_stakeholders()
+      })
+      .catch(function (error) {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.status,
+          text: error.response.data
+        })
+      });      
+    }
+    else
+    {
+      await axios.post(`${environment.API_URL}Stakeholder/Reset/${self.stakeholder.org_code}`, [], self.headers)
+      .then(function (response) {
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: "Success",
+          showConfirmButton: false,
+          timer: 2000
+        })
+        self.reset_form_stakeholder()
+        self.get_stakeholders()
+      })
+      .catch(function (error) {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.status,
+          text: error.response.data
+        })
+      });   
+    }
+    
+    self.reset_form_stakeholder()
+
   }
 
 

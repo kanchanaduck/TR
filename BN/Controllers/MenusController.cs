@@ -10,9 +10,11 @@ using api_hrgis.Models;
 using Microsoft.AspNetCore.Cors;
 using System.IO;
 using OfficeOpenXml;
+using Microsoft.AspNetCore.Authorization;
 
 namespace api_hrgis.Controllers
 {
+    [Authorize]    
     [EnableCors("_myAllowSpecificOrigins")]
     [Route("api/[controller]")]
     [ApiController]
@@ -137,7 +139,8 @@ namespace api_hrgis.Controllers
         {
             return _context.tb_menus.Any(e => e.menu_code == id);
         }
-         [HttpGet("Mock")]
+        [AllowAnonymous]
+        [HttpGet("Mock")]
         public async Task<ActionResult<IEnumerable<tb_menus>>> Menu()
         {
             string filePath = Path.Combine("./wwwroot/", $"Mockdata.xlsx");

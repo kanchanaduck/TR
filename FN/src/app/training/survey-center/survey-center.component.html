@@ -1,4 +1,4 @@
-<table class="table table-bordered table-bordered" datatable [dtOptions]="dtOptions">
+<table class="table table-bordered table-bordered" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
     <thead>
         <tr>
             <th class="text-center">YEAR</th>
@@ -10,10 +10,10 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td class="text-center tx-13">2022</td>
-            <td class="text-center tx-13">2021-12-01</td>
-            <td class="text-center tx-13">2021-12-31</td>
+        <tr *ngFor="let i of survey">
+            <td class="text-center tx-13">{{ i.year }}</td>
+            <td class="text-center tx-13">{{ i.date_start }}</td>
+            <td class="text-center tx-13">{{ i.date_end }}</td>
             <td class="text-center tx-13">
                 <a href=""><i class="far fa-eye"></i></a>
             </td>

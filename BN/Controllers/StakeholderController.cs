@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using api_hrgis.Data;
 using api_hrgis.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace api_hrgis.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class StakeholderController : ControllerBase
@@ -35,6 +37,7 @@ namespace api_hrgis.Controllers
         }
 
         // GET: api/Stakeholder/55
+        // GET: api/Stakeholder/5510
         [HttpGet("{org_code}")]
         public async Task<ActionResult<tb_organization>> get_stakeholder_by_org_code(string org_code)
         {
@@ -52,6 +55,7 @@ namespace api_hrgis.Controllers
             return tr_stakeholder;
         }
 
+        // GET: api/Stakeholder/Org/CPD
         // GET: api/Stakeholder/Org/ICD
         [HttpGet("Org/{org_abb}")]
         public async Task<ActionResult<tb_organization>> get_stakeholder_by_organization(string org_abb)
@@ -92,7 +96,7 @@ namespace api_hrgis.Controllers
         // PUT: api/Stakeholder/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{emp_no}")]
-        public async Task<IActionResult> Puttr_stakeholder(string emp_no, tr_stakeholder tr_stakeholder)
+        public async Task<IActionResult> Puttr_stakeholder(string emp_no, string org_code, string role, tr_stakeholder tr_stakeholder)
         {
             if (emp_no != tr_stakeholder.emp_no)
             {
@@ -107,7 +111,7 @@ namespace api_hrgis.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!tr_stakeholderExists(emp_no))
+                if (!stakeholder_exists(emp_no, org_code, role))
                 {
                     return NotFound();
                 }
@@ -120,24 +124,61 @@ namespace api_hrgis.Controllers
             return NoContent();
         }
 
+        // POST: api/Stakeholder/Reset/55
+        // POST: api/Stakeholder/Reset/5510
+        [HttpPost("Reset/{org_code}")]
+        public async Task<ActionResult<tr_stakeholder>> reset_stakeholder(String org_code)
+        {
+            var stakeholder = await _context.tr_stakeholder
+                            .Where(e => e.org_code==org_code)
+                            .ToListAsync();
+
+            if (stakeholder == null)
+            {
+                return NotFound();
+            }
+
+            _context.tr_stakeholder.RemoveRange(stakeholder);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         // POST: api/Stakeholder
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<tr_stakeholder>> Posttr_stakeholder(List<tr_stakeholder> tr_stakeholder)
         {
-            // ModelState.Clear();
+            String error_text = "";
 
-            foreach(var a in tr_stakeholder){      
-                _context.tr_stakeholder.Add(a);
+            if(tr_stakeholder.Count()>0){
+
+                var stakeholder = await _context.tr_stakeholder
+                            .Where(e => e.org_code==tr_stakeholder[0].org_code)
+                            .ToListAsync();
+                _context.tr_stakeholder.RemoveRange(stakeholder);
+                await _context.SaveChangesAsync();
+
+                foreach(var a in tr_stakeholder){
+                    if (stakeholder_exists(a.emp_no, a.org_code, a.role)){
+                        error_text = error_text+$"{ErrorStakeholder(a.emp_no, a.org_code, a.role)}\n";
+                    }
+                    else{
+                        Console.WriteLine("Not exists");
+                        _context.tr_stakeholder.Add(a);
+                    }
+                }                
+                await _context.SaveChangesAsync();
             }
-            
-            await _context.SaveChangesAsync();
+
+            if (error_text!=""){
+                return Conflict(error_text);
+            }
 
             return CreatedAtAction("Gettr_stakeholder", new { e = tr_stakeholder }, tr_stakeholder);
         }
 
         // DELETE: api/Stakeholder/014496
-        [HttpDelete("{emp_no}")]
+       /*  [HttpDelete("{emp_no}")]
         public async Task<IActionResult> Deletetr_stakeholder(string emp_no)
         {
             var tr_stakeholder = await _context.tr_stakeholder.FindAsync(emp_no);
@@ -150,11 +191,17 @@ namespace api_hrgis.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
+        } */
 
-        private bool tr_stakeholderExists(string emp_no)
+        private bool stakeholder_exists(string emp_no, string org_code, string role)
         {
-            return _context.tr_stakeholder.Any(e => e.emp_no == emp_no);
+            return _context.tr_stakeholder.Any(e => e.emp_no == emp_no 
+                        && e.org_code==org_code
+                        && e.role==role);
+        }
+        private string ErrorStakeholder(string emp_no, string org_code, string role)
+        {
+            return $"Employee no. {emp_no} in Organization {org_code} and role {role} is already exists";
         }
     }
 }

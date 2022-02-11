@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api_hrgis.Models
 {
-    [Keyless]
     [Comment("ตารางจับคู่คอร์สมาสเตอร์และแบนด์")]
     public class tr_course_master_band
     {

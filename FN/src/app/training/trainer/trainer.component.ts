@@ -27,7 +27,7 @@ export class TrainerComponent implements OnInit {
   isDtInitialized: boolean = false;
   headers: any = {
     headers: {
-    Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
+      Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
       'Content-Type': 'application/json'
     }
   }
@@ -177,7 +177,7 @@ export class TrainerComponent implements OnInit {
 
   async save_trainer() {
     let self = this
-    await axios.post(`${environment.API_URL}Trainers`,this.trainer)
+    await axios.post(`${environment.API_URL}Trainers`,this.trainer, this.headers)
     .then(function (response) {
       Swal.fire({
         toast: true,
@@ -187,7 +187,7 @@ export class TrainerComponent implements OnInit {
         showConfirmButton: false,
         timer: 2000
       })
-    this.reset_form_trainer()
+    self.reset_form_trainer()
     })
     .catch(function (error) {
       if(error.response.status==400){
@@ -206,7 +206,7 @@ export class TrainerComponent implements OnInit {
         })
       }
     });
-    this.get_trainers()
+    self.get_trainers()
   }
 
   async delete_trainer(trainer_no: number) {

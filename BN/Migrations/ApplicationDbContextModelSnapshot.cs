@@ -439,11 +439,11 @@ namespace api_hrgis.Migrations
                     b.Property<int>("days")
                         .HasColumnType("int");
 
-                    b.Property<string>("dept_abb_name")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool?>("open_register")
                         .HasColumnType("bit");
+
+                    b.Property<string>("org_code")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("place")
                         .IsRequired()
@@ -466,6 +466,8 @@ namespace api_hrgis.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("course_no");
+
+                    b.HasIndex("org_code");
 
                     b.ToTable("tr_course");
                 });
@@ -513,12 +515,12 @@ namespace api_hrgis.Migrations
                     b.Property<int>("days")
                         .HasColumnType("int");
 
-                    b.Property<string>("dept_abb_name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("level")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("org_code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("prev_course_no")
                         .HasColumnType("nvarchar(10)");
@@ -534,6 +536,8 @@ namespace api_hrgis.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("course_no");
+
+                    b.HasIndex("org_code");
 
                     b.HasIndex("prev_course_no");
 
@@ -648,10 +652,14 @@ namespace api_hrgis.Migrations
 
             modelBuilder.Entity("api_hrgis.Models.tr_stakeholder", b =>
                 {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("emp_no")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("org_code")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("role")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("datetime");
@@ -659,19 +667,7 @@ namespace api_hrgis.Migrations
                     b.Property<string>("created_by")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("emp_no")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("level")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("org_code")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("remark")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("role")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("updated_at")
@@ -681,9 +677,7 @@ namespace api_hrgis.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("id");
-
-                    b.HasIndex("emp_no");
+                    b.HasKey("emp_no", "org_code", "role");
 
                     b.HasIndex("org_code");
 
@@ -802,10 +796,10 @@ namespace api_hrgis.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("date_end")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime>("date_start")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime>("updated_at")
                         .HasColumnType("datetime");
@@ -903,6 +897,15 @@ namespace api_hrgis.Migrations
                     b.Navigation("parent_org");
                 });
 
+            modelBuilder.Entity("api_hrgis.Models.tr_course", b =>
+                {
+                    b.HasOne("api_hrgis.Models.tb_organization", "organization")
+                        .WithMany("courses")
+                        .HasForeignKey("org_code");
+
+                    b.Navigation("organization");
+                });
+
             modelBuilder.Entity("api_hrgis.Models.tr_course_band", b =>
                 {
                     b.HasOne("api_hrgis.Models.tb_band", "bands")
@@ -924,9 +927,17 @@ namespace api_hrgis.Migrations
 
             modelBuilder.Entity("api_hrgis.Models.tr_course_master", b =>
                 {
+                    b.HasOne("api_hrgis.Models.tb_organization", "organization")
+                        .WithMany("course_masters")
+                        .HasForeignKey("org_code")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("api_hrgis.Models.tr_course_master", "prev_course")
                         .WithMany("next_course")
                         .HasForeignKey("prev_course_no");
+
+                    b.Navigation("organization");
 
                     b.Navigation("prev_course");
                 });
@@ -992,11 +1003,15 @@ namespace api_hrgis.Migrations
                 {
                     b.HasOne("api_hrgis.Models.tb_employee", "employee")
                         .WithMany("stakeholders")
-                        .HasForeignKey("emp_no");
+                        .HasForeignKey("emp_no")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("api_hrgis.Models.tb_organization", "organization")
                         .WithMany("stakeholders")
-                        .HasForeignKey("org_code");
+                        .HasForeignKey("org_code")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("employee");
 
@@ -1025,6 +1040,10 @@ namespace api_hrgis.Migrations
             modelBuilder.Entity("api_hrgis.Models.tb_organization", b =>
                 {
                     b.Navigation("children_org");
+
+                    b.Navigation("course_masters");
+
+                    b.Navigation("courses");
 
                     b.Navigation("stakeholders");
                 });

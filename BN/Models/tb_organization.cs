@@ -32,6 +32,8 @@ namespace api_hrgis.Models
         public virtual tb_organization parent_org { get; set; }
         public virtual ICollection<tb_organization> children_org { get; set; }
         public virtual ICollection<tr_stakeholder> stakeholders { get; set; }
+        public virtual ICollection<tr_course_master> course_masters { get; set; }
+        public virtual ICollection<tr_course> courses { get; set; }
         private DateTime _date = DateTime.Now;
         private string _username = "014496";
     }
