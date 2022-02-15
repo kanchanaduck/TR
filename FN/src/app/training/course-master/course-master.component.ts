@@ -1,15 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { SelectionModel } from '@angular/cdk/collections';
 import axios from 'axios';
 import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
 import { AppServiceService } from '../../app-service.service';
 import { Subject } from 'rxjs';
 import { DataTableDirective } from 'angular-datatables';
-import { map } from 'jquery';
-import { find } from 'rxjs/operators';
 @Component({
   selector: 'app-course-master',
   templateUrl: './course-master.component.html',
@@ -21,7 +17,7 @@ export class CourseMasterComponent implements OnInit {
   courses: any = [];
   course: any = {};
   bands: any = [];
-  errors: any;
+  errors: any = {};
   course_masters_bands: any = [];
   dtTrigger: Subject<any> = new Subject();
   @ViewChild(DataTableDirective)
@@ -33,11 +29,10 @@ export class CourseMasterComponent implements OnInit {
       'Content-Type': 'application/json'
     }
   }
-  numbers = Array(100).fill(0).map((x,i)=>i);
   departments: any;
-  group_by_parent_org_code_fn: (item: any) => any;
-  group_value_parent_org_code_fn: (_: string, children: any[]) => { org_abb: any; org_code: any; };
-  compare_org: (item: any, selected: any) => boolean;
+  edit_mode: boolean = false;
+  _getjwt: any;
+  _dept_code: any;
 
 
   constructor(
@@ -51,6 +46,13 @@ export class CourseMasterComponent implements OnInit {
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
       "<'row'<'col-sm-12'tr>>" +
       "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
+      language: {
+        paginate: {
+          next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
+          previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
+        }
+      },
+      "processing": true,
       buttons: {
         "dom":{
           "container": {
@@ -78,21 +80,54 @@ export class CourseMasterComponent implements OnInit {
           },
         ],
       },
-      order: [ [0, 'asc']],
-      columnDefs: [ {
-        targets: [ 0,8 ],
-        "orderable": false
-      } ],
+      order: [ [3, 'asc'], [0, 'asc']],
+      rowGroup: {
+        dataSrc: [3]
+      },
+      columnDefs: [ 
+        {
+          targets: [ 0,8 ],
+          "orderable": false
+        },
+        {
+          targets: [ 3 ],
+          visible: false 
+        } 
+      ],
 
       container: "#example_wrapper .col-md-6:eq(0)",
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
     };
+    this._getjwt = this.service.service_jwt();  // get jwt
+    this._dept_code = this._getjwt.user.dept_code; // set emp_no
 
-    this.get_courses()
+
+    this.get_courses("")
     this.get_bands()
     this.get_departments()
+
     
   }
+
+  custom_search_org_fn(term: string, item: any) {
+    term = term.toLowerCase();
+    return item.org_code.toLowerCase().indexOf(term) > -1 ||  item.org_abb.toLowerCase().indexOf(term) > -1 ||item.org_abb.toLowerCase() === term;
+  }
+
+  custom_search_course_fn(term: string, item: any) {
+    term = term.toLowerCase();
+    return item.course_no.toLowerCase().indexOf(term) > -1 ||  item.course_name_th.toLowerCase().indexOf(term) > -1 ||  item.course_name_.toLowerCase().indexOf(term) > -1;
+  }
+
+  group_by_parent_org_code_fn = (item) => item.parent_org_code;
+  group_value_parent_org_code_fn = (_: string, children: any[]) => ({ org_abb: children[0].parent_org.org_abb, org_code: children[0].parent_org.org_code });
+  
+  compare_org = (item, selected) => {
+    if (item.org_code && selected) {
+      return item.org_code === selected;
+    }
+    return false;
+  };
 
   isInCourseMaster(band:string){
     return this.courses.some(function(el){
@@ -100,9 +135,19 @@ export class CourseMasterComponent implements OnInit {
     }); 
   }
 
-  async get_courses(){
+  async reset_form_course_master(){
+    this.errors = {};
+    this.course = {};
+    this.get_bands();
+    this.edit_mode = false;
+  }
+
+  async get_courses(org_code){
     let self = this
-    await this.httpClient.get(`${environment.API_URL}CourseMasters`, this.headers)
+    if(org_code==undefined || org_code==""){
+      org_code = ""
+    }
+    await this.httpClient.get(`${environment.API_URL}CourseMasters/${org_code}`, this.headers)
     .subscribe((response: any) => {
       self.courses = response;
       if (this.isDtInitialized) {
@@ -123,7 +168,11 @@ export class CourseMasterComponent implements OnInit {
 
 
   async get_course(course_no: number) {
+    console.log(course_no)
+    this.errors = [];
     let self = this
+    self.get_bands()
+    this.edit_mode = true;
     await axios.get(`${environment.API_URL}CourseMasters/${course_no}`, this.headers)
       .then(function (response) {
         self.course = response
@@ -191,21 +240,8 @@ export class CourseMasterComponent implements OnInit {
     await axios.get(`${environment.API_URL}Organization/Level/Department/Parent`, this.headers)
     .then(function (response) {
       self.departments = response
-      //console.log(response)
-      self.group_by_parent_org_code_fn = (item) => item.parent_org_code;
-      self.group_value_parent_org_code_fn = (_: string, children: any[]) => ({ org_abb: children[0].parent_org.org_abb, org_code: children[0].parent_org.org_code });
-      self.compare_org = (item, selected) => {
-        if (selected.Grouby_parent_org_code_fn && item.Groupvalue_parent_org_code_fn) {
-          return item.Grouby_parent_org_code_fn === selected.Grouby_parent_org_code_fn;
-        }
-        if (item.org_abb && selected.org_abb) {
-          return item.org_abb === selected.org_abb;
-        }
-        return false;
-      };
     })
     .catch(function (error) {
-      //console.log(error)
       Swal.fire({
         icon: 'error',
         title: error.response.status,
@@ -215,8 +251,8 @@ export class CourseMasterComponent implements OnInit {
   }
   
   save_course_master(){
-    console.log(this.bands)
-    console.log(this.course)
+    // console.log(this.bands)
+    // console.log(this.course)
 
     this.course.course_masters_bands = this.bands.filter(element => element.isChecked == true);
 
@@ -225,6 +261,39 @@ export class CourseMasterComponent implements OnInit {
     let self = this
     self.errors = null;
 
+    if(self.edit_mode){
+      axios.put(`${environment.API_URL}CourseMasters/${self.course.course_no}`, this.course, this.headers)
+      .then(function (response) {
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: "Success",
+          showConfirmButton: false,
+          timer: 2000
+        })
+        self.reset_form_course_master();
+        self.get_courses("");
+      })
+      .catch(function (error) {
+        self.errors = error.response.data.errors
+        if(error.response.status==400){
+          Swal.fire({
+            icon: 'error',
+            title: error.response.status,
+            text: error.response.data.title
+          })
+        }
+        else{
+          Swal.fire({
+            icon: 'error',
+            title: error.response.status,
+            text: error.response.data
+          })        
+        }
+      });
+  }
+  else{
     axios.post(`${environment.API_URL}CourseMasters`, this.course, this.headers)
     .then(function (response) {
       Swal.fire({
@@ -235,6 +304,8 @@ export class CourseMasterComponent implements OnInit {
         showConfirmButton: false,
         timer: 2000
       })
+      self.reset_form_course_master();
+      self.get_courses("");
     })
     .catch(function (error) {
       self.errors = error.response.data.errors
@@ -253,6 +324,8 @@ export class CourseMasterComponent implements OnInit {
         })        
       }
     });
+  }
+
   }
 
 }

@@ -6,7 +6,7 @@
                     course no.
                 </div>
             </div>
-            <input type="text" class="form-control" placeholder="Enter key..." value="PTM" #txtcourse_no>
+            <input type="text" class="form-control" placeholder="Enter key..." (keyup)="onKeyCourse($event)" #txtcourse_no>
         </div>
     </div>
     <div class="col-3">
@@ -33,7 +33,7 @@
 <hr>
 <div class="row">
     <div class="col-12">
-        <table datatable [dtOptions]="dtOptions" class="table table-bordered table-hover table-sm">
+        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm">
             <thead>
                 <tr class="text-uppercase">
                     <th>no.</th>
@@ -52,10 +52,10 @@
                     <td>{{ item.course_no }}</td>
                     <td>{{ item.course_name_th }}</td>
                     <td>{{ item.course_name_en }}</td>
-                    <td>{{ item.start_date }}</td>
-                    <td>{{ item.end_date }}</td>
+                    <td>{{ item.date_start | date:'dd-MMM-yy' }}</td>
+                    <td>{{ item.date_end | date:'dd-MMM-yy' }}</td>
                     <td>{{ item.place }}</td>
-                    <td>{{ item.count }}</td>
+                    <td>{{ item.count_emp }}</td>
                 </tr>
             </tbody>
         </table>

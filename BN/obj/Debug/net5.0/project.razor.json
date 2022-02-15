@@ -15619,33 +15619,8 @@
   "RootNamespace": "api_hrgis",
   "Documents": [
     {
-      "FilePath": "d:\\HRGIS\\BN\\Views\\Survey\\Edit.cshtml",
-      "TargetPath": "Views\\Survey\\Edit.cshtml",
-      "FileKind": "mvc"
-    },
-    {
-      "FilePath": "d:\\HRGIS\\BN\\Views\\Survey\\Create.cshtml",
-      "TargetPath": "Views\\Survey\\Create.cshtml",
-      "FileKind": "mvc"
-    },
-    {
-      "FilePath": "d:\\HRGIS\\BN\\Views\\Survey\\Delete.cshtml",
-      "TargetPath": "Views\\Survey\\Delete.cshtml",
-      "FileKind": "mvc"
-    },
-    {
       "FilePath": "d:\\HRGIS\\BN\\Views\\Shared\\_ValidationScriptsPartial.cshtml",
       "TargetPath": "Views\\Shared\\_ValidationScriptsPartial.cshtml",
-      "FileKind": "mvc"
-    },
-    {
-      "FilePath": "d:\\HRGIS\\BN\\Views\\Survey\\Index.cshtml",
-      "TargetPath": "Views\\Survey\\Index.cshtml",
-      "FileKind": "mvc"
-    },
-    {
-      "FilePath": "d:\\HRGIS\\BN\\Views\\Survey\\Details.cshtml",
-      "TargetPath": "Views\\Survey\\Details.cshtml",
       "FileKind": "mvc"
     }
   ],

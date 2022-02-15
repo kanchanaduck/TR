@@ -36,6 +36,9 @@ namespace api_hrgis.Data
             
             modelBuilder.Entity<tr_course_registration>()
                 .HasKey(t => new { t.course_no, t.emp_no });
+                
+            modelBuilder.Entity<tr_stakeholder>()
+                .HasKey(c => new { c.emp_no, c.org_code, c.role });
 
             modelBuilder.Entity<tr_stakeholder>()
                 .HasKey(c => new { c.emp_no, c.org_code, c.role });

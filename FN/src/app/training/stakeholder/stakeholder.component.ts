@@ -29,10 +29,6 @@ export class StakeholderComponent implements OnInit {
   errors: any;
   formData: any = [];
 
-  group_by_parent_org_code_fn: any;
-  group_value_parent_org_code_fn: any;
-  compare_org: any;
-
   dtTrigger: Subject<any> = new Subject();
   @ViewChild(DataTableDirective)
   dtElement: DataTableDirective;
@@ -107,6 +103,18 @@ export class StakeholderComponent implements OnInit {
     this.dtTrigger.unsubscribe();
   }
 
+  custom_search_org_fn(term: string, item: any) {
+    term = term.toLowerCase();
+    return item.org_code.toLowerCase().indexOf(term) > -1 ||  item.org_abb.toLowerCase().indexOf(term) > -1 ||item.org_abb.toLowerCase() === term;
+  }
+  group_by_parent_org_code_fn = (item) => item.parent_org_code;
+  group_value_parent_org_code_fn = (_: string, children: any[]) => ({ org_abb: children[0].parent_org.org_abb, org_code: children[0].parent_org.org_code });
+  compare_org = (item, selected) => {
+    if (item.org_code && selected) {
+      return item.org_code === selected;
+    }
+    return false;
+  };
 
   async get_stakeholders(){
     let self = this
@@ -129,8 +137,9 @@ export class StakeholderComponent implements OnInit {
     });
   }
 
-  async get_employees(org_code) {
+  async get_employees() {
     let self = this
+    let org_code = self.stakeholder.org_code
     await axios.get(`${environment.API_URL}Employees/Organization/${org_code}`,this.headers)
     .then(function (response) {
       self.employees = response
@@ -149,18 +158,6 @@ export class StakeholderComponent implements OnInit {
     await axios.get(`${environment.API_URL}Organization/Level/Department/Parent`, this.headers)
     .then(function (response) {
       self.departments = response
-      //console.log(response)
-      self.group_by_parent_org_code_fn = (item) => item.parent_org_code;
-      self.group_value_parent_org_code_fn = (_: string, children: any[]) => ({ org_abb: children[0].parent_org.org_abb, org_code: children[0].parent_org.org_code });
-      self.compare_org = (item, selected) => {
-        if (selected.Grouby_parent_org_code_fn && item.Groupvalue_parent_org_code_fn) {
-            return item.Grouby_parent_org_code_fn === selected.Grouby_parent_org_code_fn;
-        }
-        if (item.oeg_abb && selected.oeg_abb) {
-            return item.oeg_abb === selected.oeg_abb;
-        }
-        return false;
-      };
     })
     .catch(function (error) {
       //console.log(error)
@@ -175,7 +172,7 @@ export class StakeholderComponent implements OnInit {
   async get_stakeholder(org_code: string) {
     console.log(org_code)
     const self = this;
-    self.get_employees(org_code)
+    self.get_employees()
 
     await axios.get(`${environment.API_URL}Stakeholder/${org_code}`, this.headers)
       .then(function (response) {

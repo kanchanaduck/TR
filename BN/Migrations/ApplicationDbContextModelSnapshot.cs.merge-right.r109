@@ -3,17 +3,15 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api_hrgis.Data;
 
 namespace api_hrgis.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220131083923_DeleteCourseScore")]
-    partial class DeleteCourseScore
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -388,20 +386,15 @@ namespace api_hrgis.Migrations
 
             modelBuilder.Entity("api_hrgis.Models.tr_center", b =>
                 {
-                    b.Property<int>("center_no")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("emp_no")
+                        .HasMaxLength(7)
+                        .HasColumnType("nvarchar(7)");
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("datetime");
 
                     b.Property<string>("created_by")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("emp_no")
-                        .HasMaxLength(7)
-                        .HasColumnType("nvarchar(7)");
 
                     b.Property<DateTime>("updated_at")
                         .HasColumnType("datetime");
@@ -410,7 +403,7 @@ namespace api_hrgis.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("center_no");
+                    b.HasKey("emp_no");
 
                     b.ToTable("tr_center");
 
@@ -600,13 +593,13 @@ namespace api_hrgis.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("post_test_grade")
-                        .HasColumnType("nvarchar(1)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("post_test_score")
                         .HasColumnType("int");
 
                     b.Property<string>("pre_test_grade")
-                        .HasColumnType("nvarchar(1)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("pre_test_score")
                         .HasColumnType("int");
@@ -999,7 +992,7 @@ namespace api_hrgis.Migrations
             modelBuilder.Entity("api_hrgis.Models.tr_stakeholder", b =>
                 {
                     b.HasOne("api_hrgis.Models.tb_employee", "employee")
-                        .WithMany("stakeholders")
+                        .WithMany()
                         .HasForeignKey("emp_no");
 
                     b.HasOne("api_hrgis.Models.tb_organization", "organization")
@@ -1021,8 +1014,6 @@ namespace api_hrgis.Migrations
             modelBuilder.Entity("api_hrgis.Models.tb_employee", b =>
                 {
                     b.Navigation("courses_registrations");
-
-                    b.Navigation("stakeholders");
                 });
 
             modelBuilder.Entity("api_hrgis.Models.tb_menus", b =>

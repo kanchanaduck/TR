@@ -107,6 +107,10 @@ export class SurveyCenterComponent implements OnInit {
 
   }
 
+  close(alert: Alert) {
+    this.alerts.splice(this.alerts.indexOf(alert), 1);
+  }
+
   ngOnDestroy(): void {
     this.dtTrigger.unsubscribe();
   }

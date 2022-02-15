@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api_hrgis.Models
 {
-    [Comment("เปิ้ลอธิบายตารางนี้ให้ฟังหน่อย")]
     public class tr_course_registration
     {
          public string course_no	{ get; set; }

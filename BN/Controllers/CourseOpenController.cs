@@ -70,13 +70,25 @@ namespace api_hrgis.Controllers
 
             try
             {
+<<<<<<< .working
                 // var chk_course = await _context.tr_course.Where(x => x.course_no == id && x.dept_abb_name == User.FindFirst("dept_abb_name").Value).FirstOrDefaultAsync();
                 var chk_course = await _context.tr_course.FirstOrDefaultAsync();
+||||||| .merge-left.r108
+                var chk_course = await _context.tr_course.Where(x => x.course_no == id && x.dept_abb_name == User.FindFirst("dept_abb_name").Value).FirstOrDefaultAsync();
+=======
+                var chk_course = await _context.tr_course.Where(x => x.course_no == id && x.org_code == User.FindFirst("org_code").Value).FirstOrDefaultAsync();
+>>>>>>> .merge-right.r109
                 if (chk_course != null)
                 {
                     chk_course.course_name_th = tr_course.course_name_th;
                     chk_course.course_name_en = tr_course.course_name_en;
+<<<<<<< .working
                     // chk_course.dept_abb_name = tr_course.dept_abb_name;
+||||||| .merge-left.r108
+                    chk_course.dept_abb_name = tr_course.dept_abb_name;
+=======
+                    chk_course.org_code = tr_course.org_code;
+>>>>>>> .merge-right.r109
                     chk_course.days = tr_course.days;
                     chk_course.capacity = tr_course.capacity;
                     chk_course.open_register = tr_course.open_register;
@@ -116,17 +128,31 @@ namespace api_hrgis.Controllers
             {
                 List<tr_course_band> list1 = new List<tr_course_band>();
                 List<tr_course_trainer> list2 = new List<tr_course_trainer>();
+<<<<<<< .working
                 /* var result = await _context.tr_course.Where(x => x.course_no == tr_course.course_no
                 && x.dept_abb_name == User.FindFirst("dept_abb_name").Value).FirstOrDefaultAsync(); */
                 
                 var result = await _context.tr_course.Where(x => x.course_no == tr_course.course_no).FirstOrDefaultAsync();
+||||||| .merge-left.r108
+                var result = await _context.tr_course.Where(x => x.course_no == tr_course.course_no
+                && x.dept_abb_name == User.FindFirst("dept_abb_name").Value).FirstOrDefaultAsync();
+=======
+                var result = await _context.tr_course.Where(x => x.course_no == tr_course.course_no
+                && x.org_code == User.FindFirst("org_code").Value).FirstOrDefaultAsync();
+>>>>>>> .merge-right.r109
                 if (result == null)
                 {
                     tr_course tb = new tr_course();
                     tb.course_no = tr_course.course_no;
                     tb.course_name_th = tr_course.course_name_th;
                     tb.course_name_en = tr_course.course_name_en;
+<<<<<<< .working
                     // tb.dept_abb_name = tr_course.dept_abb_name;
+||||||| .merge-left.r108
+                    tb.dept_abb_name = tr_course.dept_abb_name;
+=======
+                    tb.org_code = tr_course.org_code;
+>>>>>>> .merge-right.r109
                     tb.days = tr_course.days;
                     tb.capacity = tr_course.capacity;
                     tb.open_register = tr_course.open_register;
@@ -162,10 +188,18 @@ namespace api_hrgis.Controllers
                 }
                 else
                 {
+<<<<<<< .working
                     /* var old = _context.tr_course.FirstOrDefault(x => x.course_no == tr_course.course_no
                     && x.dept_abb_name == User.FindFirst("dept_abb_name").Value && x.status_active == false); */
                     
                     var old = _context.tr_course.FirstOrDefault(x => x.course_no == tr_course.course_no && x.status_active == false);
+||||||| .merge-left.r108
+                    var old = _context.tr_course.FirstOrDefault(x => x.course_no == tr_course.course_no
+                    && x.dept_abb_name == User.FindFirst("dept_abb_name").Value && x.status_active == false);
+=======
+                    var old = _context.tr_course.FirstOrDefault(x => x.course_no == tr_course.course_no
+                    && x.org_code == User.FindFirst("org_code").Value && x.status_active == false);
+>>>>>>> .merge-right.r109
                     if (old == null)
                     {
                         return Conflict(_config.GetValue<string>("Text:duplication"));
@@ -174,7 +208,13 @@ namespace api_hrgis.Controllers
                     {
                         old.course_name_th = tr_course.course_name_th;
                         old.course_name_en = tr_course.course_name_en;
+<<<<<<< .working
                         // old.dept_abb_name = tr_course.dept_abb_name;
+||||||| .merge-left.r108
+                        old.dept_abb_name = tr_course.dept_abb_name;
+=======
+                        old.org_code = tr_course.org_code;
+>>>>>>> .merge-right.r109
                         old.days = tr_course.days;
                         old.capacity = tr_course.capacity;
                         old.open_register = tr_course.open_register;
@@ -217,7 +257,7 @@ namespace api_hrgis.Controllers
         {
             // ต้อง update [tr_course] status_active = false
             var tr_course = await _context.tr_course.Where(x => x.course_no == id
-                            && x.dept_abb_name == User.FindFirst("dept_abb_name").Value).FirstOrDefaultAsync();
+                            && x.org_code == User.FindFirst("org_code").Value).FirstOrDefaultAsync();
             if (tr_course == null)
             {
                 return NotFound(_config.GetValue<string>("Text:not_found"));
@@ -291,15 +331,41 @@ namespace api_hrgis.Controllers
             await _context.SaveChangesAsync();
         }
 
+<<<<<<< .working
         // GET: api/CourseOpen/GetGridView/{dept}
         /* [HttpGet("GetGridView/{dept}")]
         public async Task<ActionResult> GetGridView(string dept)
+||||||| .merge-left.r108
+        // GET: api/CourseOpen/GetGridView/{dept}
+        [HttpGet("GetGridView/{dept}")]
+        public async Task<ActionResult> GetGridView(string dept)
+=======
+        // GET: api/CourseOpen/GetGridView/{org_code}
+        [HttpGet("GetGridView/{org_code}")]
+        public async Task<ActionResult> GetGridView(string org_code)
+>>>>>>> .merge-right.r109
         {
             var list = new List<tr_course>();
+<<<<<<< .working
             if (dept != _config.GetValue<string>("Text:all"))
+||||||| .merge-left.r108
+            // ถ้ามีการเลือก check box All ให้ส่ง All ไป เพื่อค้นหาข้อมูลของแผนกอื่นได้ แต่แก้ไขไม่ได้
+            Console.WriteLine("======== Dept: " + dept);
+            if (dept != _config.GetValue<string>("Text:all"))
+=======
+            // ถ้ามีการเลือก check box All ให้ส่ง All ไป เพื่อค้นหาข้อมูลของแผนกอื่นได้ แต่แก้ไขไม่ได้
+            Console.WriteLine("======== org_code: " + org_code);
+            if (org_code != _config.GetValue<string>("Text:all"))
+>>>>>>> .merge-right.r109
             {
+<<<<<<< .working
                 list = await _context.tr_course.Where(x => x.status_active == true
                                         && x.dept_abb_name == User.FindFirst("dept_abb_name").Value).ToListAsync();
+||||||| .merge-left.r108
+                list = await _context.tr_course.Where(x => x.status_active == true && x.dept_abb_name == dept).ToListAsync();
+=======
+                list = await _context.tr_course.Where(x => x.status_active == true && x.org_code == org_code).ToListAsync();
+>>>>>>> .merge-right.r109
             }
             else
             {
@@ -310,11 +376,12 @@ namespace api_hrgis.Controllers
             List<datagrid> datagrid = new List<datagrid>();
             for (int i = 0; i < list.Count(); i++)
             {
+                var query_ogr = _context.tb_organization.Where(x => x.org_code == list[i].org_code).FirstOrDefault();
                 datagrid tb = new datagrid();
                 tb.course_no = list[i].course_no;
                 tb.course_name_th = list[i].course_name_th;
                 tb.course_name_en = list[i].course_name_en;
-                tb.dept_abb_name = list[i].dept_abb_name;
+                tb.org_abb = query_ogr.org_abb;
                 tb.days = list[i].days;
                 tb.capacity = list[i].capacity;
                 tb.open_register = list[i].open_register;
@@ -330,7 +397,6 @@ namespace api_hrgis.Controllers
             }
 
             // Console.WriteLine("=========: " + dept);
-            // Console.WriteLine("=========: " + User.FindFirst("dept_abb_name").Value);
             // Console.WriteLine("=========: " + User.FindFirst("emp_no").Value);
             return Ok(datagrid);
         } */
@@ -379,7 +445,7 @@ public class req_tr_course
     public string course_no { get; set; }
     public string course_name_th { get; set; }
     public string course_name_en { get; set; }
-    public string dept_abb_name { get; set; }
+    public string org_code { get; set; }
     public int days { get; set; }
     public int capacity { get; set; }
     public bool open_register { get; set; }
@@ -397,7 +463,7 @@ public class datagrid
     public string course_no { get; set; }
     public string course_name_th { get; set; }
     public string course_name_en { get; set; }
-    public string dept_abb_name { get; set; }
+    public string org_abb { get; set; }
     public int days { get; set; }
     public int capacity { get; set; }
     public bool? open_register { get; set; }

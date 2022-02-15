@@ -386,8 +386,19 @@ namespace api_hrgis.Migrations
 
             modelBuilder.Entity("api_hrgis.Models.tr_center", b =>
                 {
+<<<<<<< .working
                     b.Property<string>("emp_no")
                         .HasColumnType("nvarchar(450)");
+||||||| .merge-left.r108
+                    b.Property<int>("center_no")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+=======
+                    b.Property<string>("emp_no")
+                        .HasMaxLength(7)
+                        .HasColumnType("nvarchar(7)");
+>>>>>>> .merge-right.r109
 
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("datetime");
@@ -629,10 +640,19 @@ namespace api_hrgis.Migrations
 
                     b.HasIndex("emp_no");
 
+<<<<<<< .working
+                    b.ToTable("tr_course_registration");
+||||||| .merge-left.r108
+                    b.ToTable("tr_course_score");
+
+                    b
+                        .HasComment("ตารางเก็บคะแนนและเกรด");
+=======
                     b.ToTable("tr_course_registration");
 
                     b
                         .HasComment("เปิ้ลอธิบายตารางนี้ให้ฟังหน่อย");
+>>>>>>> .merge-right.r109
                 });
 
             modelBuilder.Entity("api_hrgis.Models.tr_course_trainer", b =>
@@ -667,6 +687,29 @@ namespace api_hrgis.Migrations
                     b.Property<string>("created_by")
                         .HasColumnType("nvarchar(max)");
 
+<<<<<<< .working
+||||||| .merge-left.r108
+                    b.Property<string>("emp_no")
+                        .HasMaxLength(7)
+                        .HasColumnType("nvarchar(7)");
+
+                    b.Property<string>("level")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("organization")
+                        .HasColumnType("nvarchar(max)");
+
+=======
+                    b.Property<string>("emp_no")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("level")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("org_code")
+                        .HasColumnType("nvarchar(450)");
+
+>>>>>>> .merge-right.r109
                     b.Property<string>("remark")
                         .HasColumnType("nvarchar(max)");
 
@@ -679,8 +722,16 @@ namespace api_hrgis.Migrations
 
                     b.HasKey("emp_no", "org_code", "role");
 
+<<<<<<< .working
                     b.HasIndex("org_code");
 
+||||||| .merge-left.r108
+=======
+                    b.HasIndex("emp_no");
+
+                    b.HasIndex("org_code");
+
+>>>>>>> .merge-right.r109
                     b.ToTable("tr_stakeholder");
 
                     b
@@ -796,10 +847,10 @@ namespace api_hrgis.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("date_end")
-                        .HasColumnType("datetime");
+                        .HasColumnType("date");
 
                     b.Property<DateTime>("date_start")
-                        .HasColumnType("datetime");
+                        .HasColumnType("date");
 
                     b.Property<DateTime>("updated_at")
                         .HasColumnType("datetime");
@@ -888,6 +939,7 @@ namespace api_hrgis.Migrations
                     b.Navigation("parent");
                 });
 
+<<<<<<< .working
             modelBuilder.Entity("api_hrgis.Models.tb_organization", b =>
                 {
                     b.HasOne("api_hrgis.Models.tb_organization", "parent_org")
@@ -906,6 +958,18 @@ namespace api_hrgis.Migrations
                     b.Navigation("organization");
                 });
 
+||||||| .merge-left.r108
+=======
+            modelBuilder.Entity("api_hrgis.Models.tb_organization", b =>
+                {
+                    b.HasOne("api_hrgis.Models.tb_organization", "parent_org")
+                        .WithMany("children_org")
+                        .HasForeignKey("parent_org_code");
+
+                    b.Navigation("parent_org");
+                });
+
+>>>>>>> .merge-right.r109
             modelBuilder.Entity("api_hrgis.Models.tr_course_band", b =>
                 {
                     b.HasOne("api_hrgis.Models.tb_band", "bands")
@@ -980,6 +1044,7 @@ namespace api_hrgis.Migrations
                     b.Navigation("employees");
                 });
 
+<<<<<<< .working
             modelBuilder.Entity("api_hrgis.Models.tr_course_trainer", b =>
                 {
                     b.HasOne("api_hrgis.Models.tr_course", "courses")
@@ -999,6 +1064,28 @@ namespace api_hrgis.Migrations
                     b.Navigation("trainers");
                 });
 
+||||||| .merge-left.r108
+            modelBuilder.Entity("api_hrgis.Models.tr_course_score", b =>
+                {
+                    b.HasOne("api_hrgis.Models.tr_course", "courses")
+                        .WithMany("course_scores")
+                        .HasForeignKey("course_no")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("api_hrgis.Models.tb_employee", "employees")
+                        .WithMany("course_scores")
+                        .HasForeignKey("emp_no")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("courses");
+
+                    b.Navigation("employees");
+                });
+
+=======
+>>>>>>> .merge-right.r109
             modelBuilder.Entity("api_hrgis.Models.tr_stakeholder", b =>
                 {
                     b.HasOne("api_hrgis.Models.tb_employee", "employee")
@@ -1018,6 +1105,21 @@ namespace api_hrgis.Migrations
                     b.Navigation("organization");
                 });
 
+            modelBuilder.Entity("api_hrgis.Models.tr_stakeholder", b =>
+                {
+                    b.HasOne("api_hrgis.Models.tb_employee", "employee")
+                        .WithMany()
+                        .HasForeignKey("emp_no");
+
+                    b.HasOne("api_hrgis.Models.tb_organization", "organization")
+                        .WithMany("stakeholders")
+                        .HasForeignKey("org_code");
+
+                    b.Navigation("employee");
+
+                    b.Navigation("organization");
+                });
+
             modelBuilder.Entity("api_hrgis.Models.tb_band", b =>
                 {
                     b.Navigation("course_masters_bands");
@@ -1027,8 +1129,14 @@ namespace api_hrgis.Migrations
 
             modelBuilder.Entity("api_hrgis.Models.tb_employee", b =>
                 {
+<<<<<<< .working
                     b.Navigation("courses_registrations");
 
+||||||| .merge-left.r108
+                    b.Navigation("course_scores");
+
+=======
+>>>>>>> .merge-right.r109
                     b.Navigation("stakeholders");
                 });
 
@@ -1037,6 +1145,7 @@ namespace api_hrgis.Migrations
                     b.Navigation("children");
                 });
 
+<<<<<<< .working
             modelBuilder.Entity("api_hrgis.Models.tb_organization", b =>
                 {
                     b.Navigation("children_org");
@@ -1048,6 +1157,16 @@ namespace api_hrgis.Migrations
                     b.Navigation("stakeholders");
                 });
 
+||||||| .merge-left.r108
+=======
+            modelBuilder.Entity("api_hrgis.Models.tb_organization", b =>
+                {
+                    b.Navigation("children_org");
+
+                    b.Navigation("stakeholders");
+                });
+
+>>>>>>> .merge-right.r109
             modelBuilder.Entity("api_hrgis.Models.tr_course", b =>
                 {
                     b.Navigation("courses_bands");

@@ -17,8 +17,17 @@ export class CourseOpenComponent implements OnInit {
   ddl_hh: any = [];
   ddl_mm: any = [];
   _getjwt: any;
+<<<<<<< .working
   _dept: any;
   _dept_send: any;
+||||||| .merge-left.r108
+  _emp_no: any;
+  _ogr_abb:string = "";
+=======
+  _emp_no: any;
+  _ogr_abb: string = "";
+  _ogr_code: string = "";
+>>>>>>> .merge-right.r109
   @ViewChild("txtgroup") txtgroup;
   @ViewChild("txtdate_from") txtdate_from;
   @ViewChild("txtdate_to") txtdate_to;
@@ -145,6 +154,7 @@ export class CourseOpenComponent implements OnInit {
       container: "#example_wrapper .col-md-6:eq(0)",
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
       order: [[0, 'asc']],
+      responsive: true,
       columnDefs: [
         {
           targets: [9],
@@ -198,7 +208,13 @@ export class CourseOpenComponent implements OnInit {
       console.log('send data: ', send_data);
 
       await this.service.axios_post('/CourseOpen/Posttr_course', send_data, 'Update data success.');
+<<<<<<< .working
       this.fnGet(this._dept_send);
+||||||| .merge-left.r108
+      this.fnGet(this._ogr_abb);
+=======
+      this.fnGet(this._ogr_code);
+>>>>>>> .merge-right.r109
     }
   }
   fnClear() {
@@ -292,7 +308,13 @@ export class CourseOpenComponent implements OnInit {
     console.log('send data: ', send_data);
 
     await this.service.axios_put('/CourseOpen/' + frm.frm_course, send_data, 'Update data success.');
+<<<<<<< .working
     this.fnGet(this._dept_send);
+||||||| .merge-left.r108
+    this.fnGet(this._ogr_abb);
+=======
+    this.fnGet(this._ogr_code);
+>>>>>>> .merge-right.r109
   }
   async fnDelete(item) {
     Swal.fire({
@@ -319,7 +341,13 @@ export class CourseOpenComponent implements OnInit {
     }).then(async (result) => {
       if (result.isConfirmed) {
         await this.service.axios_delete('CourseOpen/' + result.value, 'Delete data success.');
+<<<<<<< .working
         this.fnGet(this._dept_send);
+||||||| .merge-left.r108
+        this.fnGet(this._ogr_abb);
+=======
+        this.fnGet(this._ogr_code);
+>>>>>>> .merge-right.r109
         this.fnClear();
       }
     })
@@ -331,6 +359,20 @@ export class CourseOpenComponent implements OnInit {
       size: 'xl' //sm, mb, lg, xl
     });
   } // End Open popup trainer
+
+  closeResult: string;
+  // Open popup Course
+  openCourse(content) {
+    // this.modalService.open(content, {
+    //   size: 'lg' //sm, mb, lg, xl
+    // });    
+    const modalRef = this.modalService.open(content, { size: 'lg' });
+    modalRef.result.then((result) => {
+      if (result) {
+        console.log(result);
+      }
+    });    
+  } // End Open popup Course
 
   // Check box All
   onNgModelChange(e) {
@@ -344,9 +386,15 @@ export class CourseOpenComponent implements OnInit {
     this.fnGet(this._dept_send);
   } // EndCheck box All
 
+  addItemCourse(newItem: string) {
+    this.form.controls['frm_course'].setValue(newItem);
+    this.fnGetCourse(newItem);
+  }
+
   response: any = [];
   async onKeyCourse(event: any) {  // console.log(event.target.value.length);
     if (event.target.value.length >= 7 && event.target.value.length < 8) {
+<<<<<<< .working
       this.response = await this.service.axios_get('CourseMasters/SearchCourse?course_no=' + event.target.value);
       console.log('onKeyCourse: ', this.response);
       if (this.response != undefined) {
@@ -364,6 +412,30 @@ export class CourseOpenComponent implements OnInit {
 
         this.isdisabled = false;
       }
+||||||| .merge-left.r108
+      this.response = await this.service.axios_get('CourseMasters/SearchCourse/' + event.target.value + '/' + this._ogr_abb);
+      console.log('onKeyCourse: ', this.response);
+      if (this.response != undefined) {
+        this.form.controls['frm_course_th'].setValue(this.response.course_name_th);
+        this.form.controls['frm_course_en'].setValue(this.response.course_name_en);
+        this.form.controls['frm_day'].setValue(this.response.days);
+        this.form.controls['frm_qty'].setValue(this.response.capacity);
+        this.txtgroup.nativeElement.value = this.response.dept_abb_name;
+
+        var nameArr = this.response.course_masters_bands; // console.log(nameArr);
+        this.array_chk.forEach(object => {
+          object.isChecked = false; // reset isChecked => false
+        }); //console.log(this.array_chk);
+        for (const iterator of nameArr) {
+          this.array_chk.find(v => v.band === iterator.band).isChecked = true;
+        } // console.log(this.array_chk);
+        this.checkboxesDataList = this.array_chk;
+
+        this.isdisabled = false;
+      }
+=======
+      this.fnGetCourse(event.target.value);
+>>>>>>> .merge-right.r109
     } else if (event.target.value.length < 7) {
       this.form.controls['frm_course_th'].setValue("");
       this.form.controls['frm_course_en'].setValue("");
@@ -417,6 +489,94 @@ export class CourseOpenComponent implements OnInit {
     console.log(this.checkedIDs);
   }
   // End Multiple Checkbox
+
+<<<<<<< .working
+||||||| .merge-left.r108
+  async fnGetStakeholder(emp_no: any) {
+    await this.service.gethttp('Stakeholder/Employee/' + emp_no)
+      .subscribe((response: any) => {
+        console.log(response);
+        if (response.role.toUpperCase() == environment.role.committee) {
+          this._ogr_abb = response.organization.org_abb;
+          this.fnGet(this._ogr_abb);
+          this.visableSave = true;
+          this.visableUpdate = false;
+          this.visableClear = true;
+        }
+      }, (error: any) => {
+        console.log(error);
+        this.fnGet(this._ogr_abb);
+        this.visableSave = false;
+        this.visableUpdate = false;
+        this.visableClear = false;
+      });
+  }
+  async fnGetCenter(emp_no: any) {
+    await this.service.gethttp('Center/' + emp_no)
+      .subscribe((response: any) => {
+        this.chk_disable = true;
+        this.fnGet(this._ogr_abb);
+      }, (error: any) => {
+        console.log(error);
+        this.chk_disable = false;
+      });
+  }
+
+=======
+  async fnGetStakeholder(emp_no: any) {
+    await this.service.gethttp('Stakeholder/Employee/' + emp_no)
+      .subscribe((response: any) => {
+        console.log(response);
+        if (response.role.toUpperCase() == environment.role.committee) {
+          this._ogr_abb = response.organization.org_abb;
+          this._ogr_code = response.organization.org_code;
+          this.fnGet(this._ogr_code);
+          this.visableSave = true;
+          this.visableUpdate = false;
+          this.visableClear = true;
+        }
+      }, (error: any) => {
+        console.log(error);
+        this.fnGet(this._ogr_code);
+        this.visableSave = false;
+        this.visableUpdate = false;
+        this.visableClear = false;
+      });
+  }
+  async fnGetCenter(emp_no: any) {
+    await this.service.gethttp('Center/' + emp_no)
+      .subscribe((response: any) => {
+        this.chk_disable = true;
+        this.fnGet(this._ogr_code);
+      }, (error: any) => {
+        console.log(error);
+        this.chk_disable = false;
+      });
+  }
+
+>>>>>>> .merge-right.r109
+  async fnGetCourse(course_no: any) {
+    this.response = await this.service.axios_get('CourseMasters/SearchCourse/' + course_no + '/' + this._ogr_code);
+    console.log('fnGetCourse: ', this.response);
+    if (this.response != undefined) {
+      this.form.controls['frm_course_th'].setValue(this.response.course_name_th);
+      this.form.controls['frm_course_en'].setValue(this.response.course_name_en);
+      this.form.controls['frm_day'].setValue(this.response.days);
+      this.form.controls['frm_qty'].setValue(this.response.capacity);
+      this.txtgroup.nativeElement.value = this.response.org_code;
+
+      var nameArr = this.response.course_masters_bands; // console.log(nameArr);
+      this.array_chk.forEach(object => {
+        object.isChecked = false; // reset isChecked => false
+      }); //console.log(this.array_chk);
+      for (const iterator of nameArr) {
+        this.array_chk.find(v => v.band === iterator.band).isChecked = true;
+      } // console.log(this.array_chk);
+      this.checkboxesDataList = this.array_chk;
+
+      this.isdisabled = false;
+    }
+  }
 
   async fnGet(dept: any) {
     this.data_grid = await this.service.axios_get('CourseOpen/GetGridView/' + dept); // console.log('fnGet: : ', this.data_grid);

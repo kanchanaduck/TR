@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 import { ApiAuthorizationModule } from 'src/api-authorization/api-authorization.module';
@@ -36,7 +36,7 @@ import { BreadcrumbComponent } from './shared/breadcrumb/breadcrumb.component';
     ChartsModule,
     HttpClientModule
   ],
-  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthorizeInterceptor, multi: true }],
+  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthorizeInterceptor, multi: true }, NgbActiveModal],
   bootstrap: [AppComponent],
 })
 export class AppModule { }

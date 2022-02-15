@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { DataTableDirective } from 'angular-datatables';
+import { Subject } from 'rxjs';
+import { AppServiceService } from 'src/app/app-service.service';
 
 @Component({
   selector: 'app-course-history',
@@ -7,13 +10,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CourseHistoryComponent implements OnInit {
   data_grid: any = [];
+  // datatable
   dtOptions: any = {};
+  dtTrigger: Subject<any> = new Subject();
+  @ViewChild(DataTableDirective)
+  dtElement: DataTableDirective;
+  isDtInitialized: boolean = false
+  // end datatable
 
-  constructor() { }
+  constructor(private service: AppServiceService) { }
 
   ngOnInit(): void {
-    this.data_grid = ELEMENT_DATA;
-
     this.dtOptions = {
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
         "<'row'<'col-sm-12'tr>>" +
@@ -22,14 +29,6 @@ export class CourseHistoryComponent implements OnInit {
         paginate: {
           next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
           previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
-        }
-      },
-      filter: {
-        "dom": {
-          "container": {
-            tag: "div",
-            className: "dt-buttons btn-group flex-wrap float-left"
-          },
         }
       },
       buttons: {
@@ -73,6 +72,43 @@ export class CourseHistoryComponent implements OnInit {
         visible: false
       }]
     };
+
+    this.fnGet("NULL");
+  }
+
+  async onKeyCourse(event: any) {
+    if (event.target.value.length >= 3 && event.target.value.length < 15) {
+      this.fnGet(event.target.value);
+    }else if(event.target.value.length == 0){
+      this.fnGet("NULL");
+    }
+  }
+
+  async fnGet(course_no:string) {
+    await this.service.gethttp('OtherData/GetCountAttendee?course_no=' + course_no)
+      .subscribe((response: any) => {
+        console.log(response);
+
+        this.data_grid = response;
+
+        // Calling the DT trigger to manually render the table
+        if (this.isDtInitialized) {
+          this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+            dtInstance.destroy();
+            this.dtTrigger.next();
+          });
+        } else {
+          this.isDtInitialized = true
+          this.dtTrigger.next();
+        }
+      }, (error: any) => {
+        console.log(error);
+        this.data_grid = [];
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.dtTrigger.unsubscribe();
   }
 }
 

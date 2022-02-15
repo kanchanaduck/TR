@@ -57,7 +57,7 @@ namespace api_hrgis.Controllers
         public async Task<ActionResult<IEnumerable<tb_employee>>> GetEmployeeDivision(string org_code)
         {
             var employees =  await _context.tb_employee
-                             .Where(e => e.div_cls==org_code ||
+                             .Where(e => e.div_abb_name==org_code ||
                              e.dept_code==org_code).ToListAsync();
 
             if (employees == null)

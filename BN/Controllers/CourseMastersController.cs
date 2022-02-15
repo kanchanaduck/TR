@@ -12,8 +12,8 @@ using System.IO;
 using OfficeOpenXml;
 
 namespace api_hrgis.Controllers
-{
-    [Authorize]
+{    
+	[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CourseMastersController : ControllerBase
@@ -27,18 +27,17 @@ namespace api_hrgis.Controllers
 
         // GET: api/CourseMasters
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<tr_course_master>>> Gettr_course_master()
+        public async Task<ActionResult<IEnumerable<tr_course_master>>> get_course_master()
         {
             return await _context.tr_course_master
                         .Include(e => e.course_masters_bands)
-                        .Include(e => e.prev_course)
-                        .Include(e => e.next_course)
+                        // .Include(e => e.organization)
+                        // .Include(e => e.prev_course)
                         .ToListAsync();
         }
-
         // GET: api/CourseMasters/{course_no}
         [HttpGet("{course_no}")]
-        public async Task<ActionResult<tr_course_master>> Search(string course_no)
+        public async Task<ActionResult<tr_course_master>> search_from_course_no(string course_no)
         {
             var tr_course_master = await _context.tr_course_master
                                         .Include(e => e.course_masters_bands)
@@ -53,32 +52,17 @@ namespace api_hrgis.Controllers
 
             return tr_course_master;
         }
-
-        // GET: api/CourseMasters/SearchCourse/{course_no}/{org_abb}
-        [HttpGet("SearchCourse/{course_no}/{org_abb}")]
-        public async Task<ActionResult<tr_course_master>> SearchCourse(string course_no, string org_abb)
+		// GET: api/CourseMasters/Org/{org_code}
+        // GET: api/CourseMasters/Org/55
+        // GET: api/CourseMasters/Org/5510
+        [HttpGet("Org/{org_code}")]
+        public async Task<ActionResult<IEnumerable<tr_course_master>>> search_from_org(string org_code)
         {
-
-            /* var tr_course_master = await _context.tr_course_master
-                                    .Include(e => e.course_masters_bands)
-                                    .Where(e => e.course_no == course_no &&
-                                    e.dept_abb_name == org_abb_name)
-                                    .FirstOrDefaultAsync(); */
-            
-            /* var tr_course_master = await _context.tr_course_master
-                                    // .Include(e => e.course_masters_bands)
-                                    .Include(
-                                        e => e.organization
-                                        .Where(o => o.org_abb_name == org_abb_name)
-                                        .Take(1))
-                                    .Where(e => e.course_no == course_no)
-                                    .ToListAsync(); */
-
             var tr_course_master = await _context.tr_course_master
-         .Include(e => e.course_masters_bands)
-         .Include(e => e.organization)
-          .Where(e => e.course_no == course_no)
-         .FirstOrDefaultAsync();
+                                        .Include(e => e.course_masters_bands)
+                                        .Include(e => e.prev_course)
+                                        .Where(e => e.org_code == org_code)
+                                        .ToListAsync();
 
             if (tr_course_master == null)
             {
@@ -86,35 +70,44 @@ namespace api_hrgis.Controllers
             }
 
             return tr_course_master;
-        } 
-
+        }
+        }
         // PUT: api/CourseMasters/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Puttr_course_master(string id, tr_course_master tr_course_master)
+        [HttpPut("{course_no}")]
+        public async Task<IActionResult> Puttr_course_master(string course_no, tr_course_master tr_course_master)
         {
-            if (id != tr_course_master.course_no)
+            if (course_no != tr_course_master.course_no)
             {
                 return BadRequest();
             }
 
             _context.Entry(tr_course_master).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            var course = await _context.tr_course_master
+                            .Include(b => b.course_masters_bands)
+                            .Where(b => b.course_no==tr_course_master.course_no)
+                            .FirstOrDefaultAsync();
+            await _context.SaveChangesAsync(); 
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!course_master_exists(id))
-                {
-                    return NotFound();
+            if(course.course_masters_bands!=null){
+                foreach(var i in course.course_masters_bands.Where(b => b.course_no==tr_course_master.course_no).ToList()){
+                    course.course_masters_bands.Remove(i);
                 }
-                else
-                {
-                    throw;
-                }
+                await _context.SaveChangesAsync(); 
             }
+
+            if(tr_course_master.course_masters_bands!=null){
+                foreach(var i in tr_course_master.course_masters_bands.ToList()){
+                    Console.WriteLine(course.course_no+": "+i.band);
+                    course.course_masters_bands.Add(new tr_course_master_band {
+                        course_no = course.course_no,
+                        band = i.band
+                    });
+                } 
+
+                await _context.SaveChangesAsync();                          
+            } 
 
             return NoContent();
         }
@@ -124,67 +117,20 @@ namespace api_hrgis.Controllers
         [HttpPost]
         public async Task<ActionResult<tr_course_master>> Posttr_course_master(tr_course_master tr_course_master)
         {
-            if (course_master_exists(tr_course_master.course_no)){
-                Console.WriteLine("COURSE EXIST");
-
-                var course = await _context.tr_course_master
-                                .Include(b => b.course_masters_bands)
-                                .Where(b => b.course_no==tr_course_master.course_no)
-                                .FirstOrDefaultAsync();
-
-                var courses_bands = course.course_masters_bands.ToList();
-
-                // foreach(var i in courses_bands){
-                //     Console.WriteLine(i.band);
-                // }
-
-                // await course.course_masters_bands.Remove(courses_bands);
-                // await _context.SaveChangesAsync();
-
-                /* if(tr_course_master.course_masters_bands.Count() > 0) {                 
-                    foreach(var i in tr_course_master.course_masters_bands){
-                        course.course_masters_bands = new tr_course_masters_bands{  
-                            course_no = tr_course_master.course_no,
-                            band = i.band
-                        };
-                    }
-                }  */  
-
-                // _context.Entry(course).State = EntityState.Modified;
-                // await _context.SaveChangesAsync();
-                // return NoContent();
-                            
-                
-                return Ok(courses_bands);
-                // course.course_masters_bands.Remove(bands);
-                // _context.SaveChanges();
-
-                // _context.Entry(tr_course_master).State = EntityState.Modified;
-                // return NoContent();
-            }
-            else{
-                Console.WriteLine("ADD NEW COURSE");
-                //Recheck ด้วยนะ
+            var course = await _context.tr_course_master
+                                        .Where(e => e.course_no == tr_course_master.course_no)
+                                        .FirstOrDefaultAsync();
+                                        
+            if (course == null)
+            {
                 _context.tr_course_master.Add(tr_course_master);
                 await _context.SaveChangesAsync();
                 return CreatedAtAction("Gettr_course_master", new { id = tr_course_master.course_no }, tr_course_master);
             }
-            // var cm = new tr_course_master
-            // {
-            //     course_no= "ICD-001",
-            //     course_name_th= "ทดสอบครั้งแรก",
-            //     dept_abb_name= "ICD",
-            //     days= 2,
-            //     course_masters_bands = new List<tr_course_master_band>
-            //     {
-            //         new tr_course_master_band { band = "E" },
-            //         new tr_course_master_band { band = "J1" },
-            //         new tr_course_master_band { band = "J2" },
-            //     }
-            // };
-
-            // _context.tr_course_master.Add(cm);
-            // _context.SaveChanges();
+            else
+            {
+                return Conflict("Cannot add duplicate course no.");
+            }
         }
         // DELETE: api/CourseMasters/5
         [HttpDelete("{id}")]
@@ -209,6 +155,10 @@ namespace api_hrgis.Controllers
         [HttpGet("Mock")]
         public async Task<ActionResult<IEnumerable<tr_course_master>>> CourseMaster()
         {
+            var itemsToDelete = _context.Set<tr_course_master>();
+            _context.tr_course_master.RemoveRange(itemsToDelete);
+            _context.SaveChanges();
+
             string filePath = Path.Combine("./wwwroot/", $"Mockdata.xlsx");
 
             if(System.IO.File.Exists(filePath)){

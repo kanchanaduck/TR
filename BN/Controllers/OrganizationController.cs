@@ -104,7 +104,7 @@ namespace api_hrgis.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Puttb_organization(string id, tb_organization tb_organization)
         {
-            if (id != tb_organization.org_code)
+            if (id != tb_organization.org_abb)
             {
                 return BadRequest();
             }
@@ -142,7 +142,7 @@ namespace api_hrgis.Controllers
             }
             catch (DbUpdateException)
             {
-                if (tb_organizationExists(tb_organization.org_code))
+                if (tb_organizationExists(tb_organization.org_abb))
                 {
                     return Conflict();
                 }
@@ -152,7 +152,7 @@ namespace api_hrgis.Controllers
                 }
             }
 
-            return CreatedAtAction("Gettb_organization", new { id = tb_organization.org_code }, tb_organization);
+            return CreatedAtAction("Gettb_organization", new { id = tb_organization.org_abb }, tb_organization);
         }
 
         // DELETE: api/Organization/5
@@ -173,7 +173,7 @@ namespace api_hrgis.Controllers
 
         private bool tb_organizationExists(string id)
         {
-            return _context.tb_organization.Any(e => e.org_code == id);
+            return _context.tb_organization.Any(e => e.org_abb == id);
         }
         [AllowAnonymous]
         [HttpGet("Mock")]

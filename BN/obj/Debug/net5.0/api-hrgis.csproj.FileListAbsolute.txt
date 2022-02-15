@@ -181,11 +181,6 @@ D:\HRGIS\BN\obj\Debug\net5.0\api-hrgis.TagHelpers.input.cache
 D:\HRGIS\BN\obj\Debug\net5.0\api-hrgis.TagHelpers.output.cache
 D:\HRGIS\BN\obj\Debug\net5.0\api-hrgis.RazorCoreGenerate.cache
 D:\HRGIS\BN\obj\Debug\net5.0\Razor\Views\Shared\_ValidationScriptsPartial.cshtml.g.cs
-D:\HRGIS\BN\obj\Debug\net5.0\Razor\Views\Survey\Create.cshtml.g.cs
-D:\HRGIS\BN\obj\Debug\net5.0\Razor\Views\Survey\Delete.cshtml.g.cs
-D:\HRGIS\BN\obj\Debug\net5.0\Razor\Views\Survey\Details.cshtml.g.cs
-D:\HRGIS\BN\obj\Debug\net5.0\Razor\Views\Survey\Edit.cshtml.g.cs
-D:\HRGIS\BN\obj\Debug\net5.0\Razor\Views\Survey\Index.cshtml.g.cs
 D:\HRGIS\BN\obj\Debug\net5.0\api-hrgis.RazorTargetAssemblyInfo.cs
 D:\HRGIS\BN\obj\Debug\net5.0\api-hrgis.Views.pdb
 D:\HRGIS\BN\obj\Debug\net5.0\api-hrgis.csproj.CopyComplete

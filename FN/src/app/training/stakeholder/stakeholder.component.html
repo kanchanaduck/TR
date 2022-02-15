@@ -3,26 +3,30 @@
     <div class="row">
         <div class="form-group col mb-0 p-1">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Organization</label>
-            <!-- [compareWith]="compare_org" -->
             <ng-select
                 autofocus
                 [items]="departments" 
-                [groupBy]="group_by_parent_org_code_fn"
-                [groupValue]="group_value_parent_org_code_fn"
+                [searchFn]="custom_search_org_fn"
                 [selectableGroup]="true"
                 bindLabel="org_abb" 
                 bindValue="org_code"
+                [groupBy]="group_by_parent_org_code_fn"
+                [groupValue]="group_value_parent_org_code_fn"
+                [compareWith]="compare_org"
                 [(ngModel)]="stakeholder.org_code" 
                 [ngModelOptions]="{standalone: true}"
-                (change)="get_stakeholder($event.target.value)">
+                (change)="get_employees()"
+                >
+                <ng-template ng-label-tmp let-item="item">
+                    {{ item.org_abb + '('+item.org_code+')' }}
+                </ng-template>
                 <ng-template ng-optgroup-tmp let-item="item" let-index="index">
                     {{ item.org_abb + '('+item.org_code+')' }}
                 </ng-template>
             </ng-select>
-            {{ stakeholder.org_code | json }}
         </div><!-- form-group -->
         <div class="form-group col mb-0 p-1">
-            <label class="az-content-label tx-11 tx-medium tx-gray-600">committee</label>.
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">committee</label>
             <ng-select 
                 [items]="employees"
                 bindLabel="emp_no"

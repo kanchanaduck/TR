@@ -3,17 +3,15 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api_hrgis.Data;
 
 namespace api_hrgis.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220211100534_AlterSurveyDatetime")]
-    partial class AlterSurveyDatetime
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -632,9 +630,6 @@ namespace api_hrgis.Migrations
                     b.HasIndex("emp_no");
 
                     b.ToTable("tr_course_registration");
-
-                    b
-                        .HasComment("เปิ้ลอธิบายตารางนี้ให้ฟังหน่อย");
                 });
 
             modelBuilder.Entity("api_hrgis.Models.tr_course_trainer", b =>
@@ -798,10 +793,10 @@ namespace api_hrgis.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("date_end")
-                        .HasColumnType("datetime");
+                        .HasColumnType("date");
 
                     b.Property<DateTime>("date_start")
-                        .HasColumnType("datetime");
+                        .HasColumnType("date");
 
                     b.Property<DateTime>("updated_at")
                         .HasColumnType("datetime");

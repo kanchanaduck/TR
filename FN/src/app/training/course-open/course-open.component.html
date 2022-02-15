@@ -3,7 +3,10 @@
         <div class="row">
             <div class="col-3">
                 <div class="form-group">
-                    <label class="az-content-label tx-11 tx-medium tx-gray-600">course no.</label>
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">course no&nbsp;&nbsp;&nbsp;
+                        <i class="typcn typcn-zoom tx-20 lh--9 op-6 pointer" (click)="openCourse(contentCourse)"></i>
+                    </label>
+                    <!-- <label class="az-content-label tx-11 tx-medium tx-gray-600">course no.</label> -->
                     <input type="text" class="form-control" [readonly]="isreadonly" placeholder="Enter key..." autofocus (keyup)="onKeyCourse($event)" formControlName="frm_course" [ngClass]="{ 'is-invalid': submitted && f.frm_course.errors }" #txtcourse_no>
                     <div *ngIf="submitted && f.frm_course.errors" class="invalid-feedback">
                         <div *ngIf="f.frm_course.errors.required">Course no is required</div>
@@ -236,6 +239,7 @@
     <div class="modal-footer">
         <button type="button" class="btn btn-outline-dark btn-sm" (click)="modal.close('Close click')">Close</button>
     </div>
+<<<<<<< .working
 </ng-template>
 
 
@@ -256,4 +260,22 @@
 
     <h4>Array of IDs</h4>
     <code>{{checkedIDs}}</code>
-</div> -->
+</div> -->||||||| .merge-left.r108
+</ng-template>=======
+</ng-template>
+
+<ng-template #contentCourse let-modal>
+    <app-dialog-course (newItemEvent)="addItemCourse($event)"></app-dialog-course>
+    <!-- <div class="modal-header">
+        <h4 class="modal-title text-capitalize" id="modal-basic-title">Find Course</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body text-capitalize">
+        <app-dialog-course (newItemEvent)="addItemCourse($event)"></app-dialog-course>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark btn-sm" (click)="modal.close('Close click')">Close</button>
+    </div> -->
+</ng-template>>>>>>>> .merge-right.r109

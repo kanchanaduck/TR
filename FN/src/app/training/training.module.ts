@@ -35,9 +35,14 @@ import { EmployeeCourseHistoryComponent } from './employee-course-history/employ
 import { CourseHistoryComponent } from './course-history/course-history.component';
 import { StakeholderComponent } from './stakeholder/stakeholder.component';
 import { CenterComponent } from './center/center.component';
+<<<<<<< .working
 import { EvaluationFormComponent } from './evaluation-form/evaluation-form.component';
 import { TrainerComponent } from './trainer/trainer.component';
 import { TrainerHistoryComponent } from './trainer-history/trainer-history.component';
+||||||| .merge-left.r108
+=======
+import { DialogCourseComponent } from './dialog-course/dialog-course.component';
+>>>>>>> .merge-right.r109
 
 const routes: Routes = [
   { path: '', component: TrainingComponent },
@@ -88,9 +93,16 @@ const routes: Routes = [
     EmployeeCourseHistoryComponent,
     CourseHistoryComponent,
     StakeholderComponent,
+<<<<<<< .working
     CenterComponent,
     EvaluationFormComponent,
     TrainerHistoryComponent,
+||||||| .merge-left.r108
+    CenterComponent
+=======
+    CenterComponent,
+    DialogCourseComponent
+>>>>>>> .merge-right.r109
   ],
   imports: [
     CommonModule,

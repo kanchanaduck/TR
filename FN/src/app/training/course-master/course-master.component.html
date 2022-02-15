@@ -1,7 +1,6 @@
-<!-- 
-<img *ngFor="let i of numbers" src="http://cis/cis/wwwroot/emp_pic/7000{{i | number:'2.0'}}.JPG" width="70"> -->
 
-<div class="card card-body">
+
+<div class="card card-body mb-2">
     <form (ngSubmit)="save_course_master()">
     <div class="row">
         <div class="form-group col mb-0">
@@ -9,7 +8,7 @@
             <input type="text" name="course.course_no" class="form-control" 
                 autofocus required 
                 [(ngModel)]="course.course_no" >
-            <p class="text-danger tx-12" *ngIf="errors"> 
+            <p class="text-danger tx-12" *ngIf="errors.course_no"> 
                 <span *ngFor="let text of errors.course_no">{{ text }}</span>
             </p>
         </div><!-- form-group -->
@@ -17,7 +16,7 @@
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Thai Name</label>
             <input type="text" name="course.course_name_th" class="form-control" required 
                 [(ngModel)]="course.course_name_th" >
-            <p class="text-danger tx-12" *ngIf="errors"> 
+            <p class="text-danger tx-12" *ngIf="errors.course_name_th"> 
                 <span *ngFor="let text of errors.course_name_th">{{ text }}</span>
             </p>
         </div><!-- form-group -->
@@ -25,7 +24,7 @@
             <label class="az-content-label tx-11 tx-medium tx-gray-600">English Name</label>
             <input type="text" name="course.course_name_en" class="form-control" required 
                 [(ngModel)]="course.course_name_en" >
-            <p class="text-danger tx-12" *ngIf="errors"> 
+            <p class="text-danger tx-12" *ngIf="errors.course_name_en"> 
                 <span *ngFor="let text of errors.course_name_en">{{ text }}</span>
             </p>
         </div><!-- form-group -->
@@ -34,32 +33,26 @@
     <div class="row">
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Group</label>
-            <!-- <input type="text" name="course.org_code" class="form-control" required
-                [(ngModel)]="course.org_code" > -->
-                <!-- <select class="form-control"
-                    name="course.org_code"
-                    [(ngModel)]="course.org_code"
-                    required
-                    >
-                    <option value="55">MFG-1</option>
-                    <option value="5510">AAD</option>
-                </select> -->
                 <ng-select
                     [items]="departments" 
-                    [groupBy]="group_by_parent_org_code_fn"
-                    [groupValue]="group_value_parent_org_code_fn"
+                    [searchFn]="custom_search_org_fn"
                     [selectableGroup]="true"
                     bindLabel="org_abb" 
                     bindValue="org_code"
+                    [groupBy]="group_by_parent_org_code_fn"
+                    [groupValue]="group_value_parent_org_code_fn"
+                    [compareWith]="compare_org"
                     [(ngModel)]="course.org_code" 
                     [ngModelOptions]="{standalone: true}"
-                    (change)="get_course($event.target.value)">
+                    >
+                    <ng-template ng-label-tmp let-item="item">
+                        {{ item.org_abb + '('+item.org_code+')' }}
+                    </ng-template>
                     <ng-template ng-optgroup-tmp let-item="item" let-index="index">
                         {{ item.org_abb + '('+item.org_code+')' }}
                     </ng-template>
                 </ng-select>
-                {{ course.org_code | json }}
-                <p class="text-danger tx-12" *ngIf="errors"> 
+                <p class="text-danger tx-12" *ngIf="errors.org_code"> 
                     <span *ngFor="let text of errors.org_code">{{ text }}</span>
                 </p>
         </div><!-- form-group -->
@@ -67,7 +60,7 @@
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Capacity</label>
             <input type="number" name="course.capacity" class="form-control"
                 [(ngModel)]="course.capacity" >
-            <p class="text-danger tx-12" *ngIf="errors"> 
+            <p class="text-danger tx-12" *ngIf="errors.capacity"> 
                 <span *ngFor="let text of errors.capacity">{{ text }}</span>
             </p>
         </div><!-- form-group -->
@@ -77,6 +70,7 @@
                 [(ngModel)]="course.prev_course_no"
                 [items]="courses"
                 [ngModelOptions]="{standalone: true}"
+                [searchFn]="custom_search_course_fn"
                 bindLabel="course_no" 
                 bindValue="course_no" 
                 allow-clear="true">	
@@ -91,8 +85,8 @@
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Days</label>
             <input type="text" name="course.days" class="form-control"
-            [(ngModel)]="course.days" >
-                        <p class="text-danger tx-12" *ngIf="errors"> 
+                [(ngModel)]="course.days" >
+            <p class="text-danger tx-12" *ngIf="errors.days"> 
                 <span *ngFor="let text of errors.days">{{ text }}</span>
             </p>
         </div><!-- form-group -->
@@ -100,7 +94,7 @@
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Category</label>
             <input type="text" name="course.category" class="form-control"
             [(ngModel)]="course.category" >
-            <p class="text-danger tx-12" *ngIf="errors"> 
+            <p class="text-danger tx-12" *ngIf="errors.category"> 
                 <span *ngFor="let text of errors.category">{{ text }}</span>
             </p>
         </div><!-- form-group -->
@@ -108,7 +102,7 @@
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Level</label>
             <input type="text" name="course.level" class="form-control"
             [(ngModel)]="course.level" >
-            <p class="text-danger tx-12" *ngIf="errors"> 
+            <p class="text-danger tx-12" *ngIf="errors.level"> 
                 <span *ngFor="let text of errors.level">{{ text }}</span>
             </p>
         </div><!-- form-group -->
@@ -128,7 +122,7 @@
             <label class="az-content-label tx-11 tx-medium tx-gray-600"> </label>
             <div>
                 <button type="submit" class="btn btn-az-primary btn-sm">Save</button>
-                <button type="reset" class="btn btn-outline-dark btn-sm">Clear</button>
+                <button type="button" class="btn btn-dark btn-sm" (click)="reset_form_course_master()">Clear</button>
             </div>
         </div><!-- form-group -->
     </div>
@@ -136,47 +130,58 @@
 </div>
 
 
-<div class="row pt-2">
-    <div class="col-12">
-        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover" id="example">
-            <thead>
-                <tr class="text-uppercase">
-                    <th class="text-center">course no.</th>
-                    <th class="text-center">thai name</th>
-                    <th class="text-center">english name</th>
-                    <th class="text-center">Capacity</th>
-                    <th class="text-center">Required course</th>
-                    <th class="text-center">days</th>
-                    <th class="text-center">Category</th>
-                    <th class="text-center">Level</th>
-                    <th class="text-center">Manage</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let c of courses">
-                    <td>{{ c.course_no }}</td>
-                    <td class="text-wrap">{{ c.course_name_th }}</td>
-                    <td class="text-wrap">{{ c.course_name_en }}</td>
-                    <td class="text-right">{{ c.capacity }}</td>
-                    <td>{{ c.prev_course_no }}</td>
-                    <td class="text-right">{{ c.days }}</td>
-                    <td>{{ c.category }}</td>
-                    <td>{{ c.level }}</td>
-                    <td class="text-center">
-                        <a href="javascript:;" 
-                            (click)="get_course(c.course_no)"
-                            >
-                            <i class="far fa-edit"></i>
-                        </a>
-                        <a href="javascript:;"
-                            (click)="delete_course(c.course_no)"
-                            >
-                            <i class="far fa-trash-alt"></i>
-                        </a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+<!-- <div class="card card-body mb-2">
+    <div class="form-group col-5 mb-0">
+        <label class="az-content-label tx-11 tx-medium tx-gray-600">Group</label>
+        <div class="form-row">
+            <select class="form-control" (change)="get_courses($event.target.value)">
+                <option value="">All</option>
+                <option value="22">CPD</option>
+                <option value="2210">MTP</option>
+            </select>
+        </div>
     </div>
-</div>
+</div> -->
 
+
+<table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover w-100" id="example">
+    <thead>
+        <tr class="text-uppercase">
+            <th class="text-center">Course No.</th>
+            <th class="text-center">Thai Name</th>
+            <th class="text-center">English Name</th>
+            <th class="text-center">Group</th>
+            <th class="text-center">Capacity</th>
+            <th class="text-center">Required course</th>
+            <th class="text-center">Days</th>
+            <th class="text-center">Category</th>
+            <th class="text-center">Level</th>
+            <th class="text-center">Manage</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let c of courses">
+            <td>{{ c.course_no }}</td>
+            <td class="text-wrap">{{ c.course_name_th }}</td>
+            <td class="text-wrap">{{ c.course_name_en }}</td>
+            <td class="text-right">{{ c.org_code }}</td>
+            <td class="text-right">{{ c.capacity }}</td>
+            <td>{{ c.prev_course_no }}</td>
+            <td class="text-right">{{ c.days }}</td>
+            <td>{{ c.category }}</td>
+            <td>{{ c.level }}</td>
+            <td class="text-center">
+                <a href="javascript:;" 
+                    (click)="get_course(c.course_no)"
+                    >
+                    <i class="far fa-edit"></i>
+                </a>
+                <a href="javascript:;"
+                    (click)="delete_course(c.course_no)"
+                    >
+                    <i class="far fa-trash-alt"></i>
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>

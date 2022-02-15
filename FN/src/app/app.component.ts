@@ -41,6 +41,9 @@ export class AppComponent implements OnInit {
   ngOnInit() {
 
     console.log("Token: ", localStorage.getItem('token_hrgis'))
+    let now = new Date(Date.now());
+    let token_expired_date = new Date(localStorage.getItem('token_expiration_hrgis'))
+    let token_expried = now>token_expired_date
     
   
     axios.interceptors.response.use(function (response) {
@@ -52,6 +55,11 @@ export class AppComponent implements OnInit {
     document.querySelector('body').appendChild(navbarBackdrop);
     
     if (localStorage.getItem('token_hrgis') == null) {
+      this.router.navigate(['/authentication/signin']);
+    }
+    if (token_expried) {
+      console.log("Token expired")
+      localStorage.clear();
       this.router.navigate(['/authentication/signin']);
     }
 

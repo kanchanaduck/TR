@@ -55,6 +55,7 @@ namespace api_hrgis.Controllers
                   signingCredentials: credentials);
 
                 var query = await (from tb in _context.tb_employee
+                                   join tbs in _context.tr_stakeholder on tb.emp_no equals tbs.emp_no
                                    where tb.emp_no == model.Username
                                    select new
                                    {
@@ -64,6 +65,7 @@ namespace api_hrgis.Controllers
                                        tb.fname_eng,
                                        tb.dept_code,
                                        tb.dept_abb_name,
+                                       tbs.org_code,
                                        tb.band,
                                        tb.posn_ename
                                    }

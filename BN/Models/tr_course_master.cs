@@ -15,13 +15,27 @@ namespace api_hrgis.Models
     {
         [Key]
         [MaxLength(10)]
+        [Required]
+        [Display(Name = "COURSE NO.")]
         public string course_no { get; set; }
         [Required]
+        [Display(Name = "THAI NAME")]
+        [RegularExpression(@"^[\p{N}\p{P}\p{Sm}\p{IsThai}\s]+$", ErrorMessage = "Characters are allowed only Thai, number, and symbol")]
         public string course_name_th { get; set; }
+        [Display(Name = "ENGLISH NAME")]
+        [RegularExpression(@"^[\p{L}\p{N}\p{P}\p{Sm}\s]+$", ErrorMessage = "Characters are not allowed only English, number, and symbol")]
         public string course_name_en { get; set; }
         [Required]
+<<<<<<< .working
+        [Display(Name = "GROUP")]
         public string org_code { get; set; }
+||||||| .merge-left.r108
+        public string dept_abb_name { get; set; }
+=======
+        public string org_code { get; set; }
+>>>>>>> .merge-right.r109
         [Required]
+        [Display(Name = "CAPACITY")]
         public int capacity { get; set; }
         public string prev_course_no { get; set; }
         [Required]

@@ -36,8 +36,8 @@ namespace api_hrgis.Controllers
                             .ToListAsync();
         }
 
-        // GET: api/Stakeholder/55
-        // GET: api/Stakeholder/5510
+        // GET: api/Stakeholder/MFG-1
+        // GET: api/Stakeholder/ASSY-1
         [HttpGet("{org_code}")]
         public async Task<ActionResult<tb_organization>> get_stakeholder_by_org_code(string org_code)
         {
@@ -57,13 +57,13 @@ namespace api_hrgis.Controllers
 
         // GET: api/Stakeholder/Org/CPD
         // GET: api/Stakeholder/Org/ICD
-        [HttpGet("Org/{org_abb}")]
-        public async Task<ActionResult<tb_organization>> get_stakeholder_by_organization(string org_abb)
+        [HttpGet("Org/{org_code}")]
+        public async Task<ActionResult<tb_organization>> get_stakeholder_by_organization(string org_code)
         {
             var tr_stakeholder = await _context.tb_organization
                                     .Include(e => e.stakeholders)
                                     .ThenInclude(p => p.employee)
-                                    .Where(e => e.org_abb==org_abb)
+                                    .Where(e => e.org_code==org_code)
                                     .FirstOrDefaultAsync();
 
             if (tr_stakeholder == null)
