@@ -1,8 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { SelectionModel } from '@angular/cdk/collections';
 import Swal from 'sweetalert2';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { DataTableDirective } from 'angular-datatables';
 import { environment } from '../../../environments/environment';
 import { AppServiceService } from '../../app-service.service';
 import { ExportService } from '../../export.service';
@@ -15,8 +17,18 @@ import { ExportService } from '../../export.service';
 export class ApproveMgrComponent implements OnInit {
   data_grid: any = [];
   data_grid_other: any = [];
+  // datatable
   dtOptions: any = {};
-  dtOptions_other: any = {};
+  dtTrigger: Subject<any> = new Subject();
+  @ViewChild(DataTableDirective)
+  dtElement: DataTableDirective;
+  isDtInitialized: boolean = false
+  dtOptionsOther: any = {};
+  dtTriggerOther: Subject<any> = new Subject();
+  // @ViewChild(DataTableDirective)
+  dtElementOther: DataTableDirective;
+  isDtInitializedOther: boolean = false
+  // end datatable
   @ViewChild("txtgroup") txtgroup: any;
   @ViewChild("txtqty") txtqty: any;
   @ViewChild("txtdate_from") txtdate_from: any;
@@ -26,14 +38,16 @@ export class ApproveMgrComponent implements OnInit {
   @ViewChild("txtdept") txtdept: any;
   not_pass: boolean = false;
   disabled_chkall: boolean = false;
+  visableButton: boolean = false;
   txt_not_pass = '';
   _getjwt: any;
-  dept_abb_name = '';
+  _emp_no: any;
+  _org_abb: string = "";
   checkboxesDataList: any[];
   form: FormGroup;
   submitted = false;
 
-  constructor(config: NgbModalConfig, private formBuilder: FormBuilder, private service: AppServiceService, private exportexcel: ExportService) {
+  constructor(private modalService: NgbModal, config: NgbModalConfig, private formBuilder: FormBuilder, private service: AppServiceService, private exportexcel: ExportService) {
     config.backdrop = 'static'; // popup
     config.keyboard = false;
   }
@@ -47,6 +61,9 @@ export class ApproveMgrComponent implements OnInit {
         frm_emp_name: ['', [Validators.required]],
       },
     );
+
+    this._getjwt = this.service.service_jwt();  // get jwt
+    this._emp_no = this._getjwt.user.emp_no; // set emp_no
 
     this.dtOptions = {
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
@@ -110,13 +127,16 @@ export class ApproveMgrComponent implements OnInit {
             key: '1',
             action: () => {
               // ถ้า Mgr. กด Approve ให้ส่งเมล์หา committee ด้วย
-              this.fnApproved();
+              if (this.visableButton == true) {
+                this.fnApproved();
+              }
             }
           }
         ],
       },
       container: "#example_wrapper .col-md-6:eq(0)",
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
+      pageLength: 10,
       order: [[1, 'asc']],
       columnDefs: [
         {
@@ -126,7 +146,7 @@ export class ApproveMgrComponent implements OnInit {
       ],
     };
 
-    this.dtOptions_other = {
+    this.dtOptionsOther = {
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
         "<'row'<'col-sm-12'tr>>" +
         "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
@@ -188,11 +208,11 @@ export class ApproveMgrComponent implements OnInit {
       },
       container: "#example_wrapper .col-md-6:eq(0)",
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
+      pageLength: 10,
     };
 
     this.fnGetband();
-    this._getjwt = this.service.service_jwt();
-    this.dept_abb_name = this._getjwt.user.dept_abb_name;
+    this.fnGetStakeholder(this._emp_no);
   }
   get f(): { [key: string]: AbstractControl } {
     return this.form.controls;
@@ -206,7 +226,7 @@ export class ApproveMgrComponent implements OnInit {
     }
     // console.log(JSON.stringify(this.form.value, null, 2));
 
-    if (this._dept != this.dept_abb_name) {
+    if (this.dept_emp != this._org_abb && this.div_emp != this._org_abb) {
       Swal.fire({
         icon: 'error',
         title: "",
@@ -236,11 +256,19 @@ export class ApproveMgrComponent implements OnInit {
     }
     // console.log(send_data);
     await this.service.axios_post('Registration', send_data, environment.text.success);
-    await this.fnGet(this.form.controls['frm_course'].value, this.dept_abb_name);
+    await this.fnGet(this.form.controls['frm_course'].value, this._org_abb);
   }
   async fnApproved() {
+    let text = "";
+    if (this.array_grid.length > 0) {
+      text = "you want to approve these trainees";
+    } else {
+      text = "you want to cancle approve these trainees"
+    }
+
     Swal.fire({
-      text: 'Approve ?',
+      title: 'Are you sure?',
+      text: text,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes',
@@ -269,7 +297,7 @@ export class ApproveMgrComponent implements OnInit {
         this.selection.clear();
         this.array_grid = [];
         await this.service.axios_put('/Registration/MgrApprove/' + this.form.controls['frm_course'].value, send_data, environment.text.success);
-        await this.fnGet(this.form.controls['frm_course'].value, this.dept_abb_name);
+        await this.fnGet(this.form.controls['frm_course'].value, this._org_abb);
       }
     })
   }
@@ -292,7 +320,7 @@ export class ApproveMgrComponent implements OnInit {
     }).then(async (result) => {
       if (result.value) {
         await this.service.axios_delete('Registration/' + item.course_no + '/' + item.emp_no + '/' + this.txtqty.nativeElement.value, environment.text.delete);
-        this.fnGet(item.course_no, this.dept_abb_name);
+        this.fnGet(item.course_no, this._org_abb);
       }
     })
   }
@@ -301,7 +329,7 @@ export class ApproveMgrComponent implements OnInit {
   arr_band: any;
   async onKeyCourse(event: any) { // console.log(event.target.value);
     if (event.target.value.length >= 11 && event.target.value.length < 12) {
-      this.res_course = await this.service.axios_get('CourseOpen/' + event.target.value);
+      this.res_course = await this.service.axios_get('CourseOpen/Open/' + event.target.value);
       if (this.res_course != undefined) {
         this.form.controls['frm_course_name'].setValue(this.res_course.course_name_en);
         this.txtgroup.nativeElement.value = this.res_course.dept_abb_name;
@@ -317,7 +345,7 @@ export class ApproveMgrComponent implements OnInit {
         } // console.log(this.array_chk);
         this.checkboxesDataList = this.array_chk;
 
-        this.fnGet(event.target.value, this.dept_abb_name);
+        this.fnGet(event.target.value, this._org_abb);
       }
     } else if (event.target.value.length < 11) {
       this.form.controls['frm_course_name'].setValue("");
@@ -329,6 +357,10 @@ export class ApproveMgrComponent implements OnInit {
         value.isChecked = false;
       });
       this.fnClear();
+    }
+
+    if (event.target.value.length == 0) {
+      await this.fnGet("No", "No");
     }
   }
 
@@ -342,12 +374,13 @@ export class ApproveMgrComponent implements OnInit {
   }
 
   res_emp: any = [];
-  _dept: any = '';
+  dept_emp: any = ''; div_emp: any = '';
   async searchEmp(empno: any) {
     this.res_emp = await this.service.axios_get('Employees/' + empno); // console.log('searchEmp: ', this.res_emp);
     if (this.res_emp != null || this.res_emp != undefined) {
       this.form.controls['frm_emp_name'].setValue(this.res_emp.sname_eng + " " + this.res_emp.gname_eng + " " + this.res_emp.fname_eng);
-      this._dept = this.res_emp.dept_abb_name;
+      this.dept_emp = this.res_emp.dept_abb_name;
+      this.div_emp = this.res_emp.div_abb_name;
       this.txtdept.nativeElement.value = this.res_emp.dept_code + ":" + this.res_emp.dept_abb_name;
       this.txtposition.nativeElement.value = this.res_emp.posn_ename;
       this.txtband.nativeElement.value = this.res_emp.band;
@@ -381,6 +414,7 @@ export class ApproveMgrComponent implements OnInit {
   nameFile: string = 'Choose file';
   file: any;
   fileName: any;
+  @ViewChild('customFile') customFile: any;
   chooseFile(e: any) {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -400,22 +434,24 @@ export class ApproveMgrComponent implements OnInit {
     }
 
     let formData = new FormData();
-    if (this.file !== undefined && this.file !== "" && this.file !== null) {
+    if (this.customFile.nativeElement.value !== undefined && this.customFile.nativeElement.value !== "" && this.customFile.nativeElement.value !== null) {
       formData.append('file_form', this.file)
       formData.append('file_name', this.fileName)
-      formData.append('dept_abb_name', this.dept_abb_name)
+      formData.append('dept_abb_name', this._org_abb)
       formData.append('capacity', this.txtqty.nativeElement.value)
+
+      this.result = await this.service.axios_formdata_post('/Registration/UploadCourseRegistration/' + this.form.controls['frm_course'].value, formData, environment.text.success);
+      // console.log('result: ', this.result.data);
+      if (this.result.data.length > 0) {
+        let element = this.result.data;
+        this.exportexcel.exportJSONToExcel(element, 'ResultRegistration');
+      }
+
+      this.customFile.nativeElement.value = ""; // console.log(this.file); // console.log(this.fileName);
+      this.nameFile = 'Choose file';
+      await this.fnGet(this.form.controls['frm_course'].value, this._org_abb);
     }
 
-    this.result = await this.service.axios_formdata_post('/Registration/UploadCourseRegistration/' + this.form.controls['frm_course'].value, formData, environment.text.success);
-    // console.log('result: ', this.result.data);
-    if (this.result.data.length > 0) {
-      let element = this.result.data;
-      this.exportexcel.exportJSONToExcel(element, 'ResultRegistration');
-    }
-
-    this.nameFile = 'Choose file';
-    await this.fnGet(this.form.controls['frm_course'].value, this.dept_abb_name);
   }
   /** End File Upload, Download */
 
@@ -457,28 +493,139 @@ export class ApproveMgrComponent implements OnInit {
   }
   // End Check box
 
-  res_get: any;
-  async fnGet(course_no, dept_abb_name) {
-    this.res_get = await this.service.axios_get('Registration/GetGridView/' + course_no + '/' + dept_abb_name);
-    // console.log('res_get: ', this.res_get);
-    this.data_grid = await this.res_get.your;
-    this.data_grid_other = await this.res_get.other;
-
-    let chk_true = this.res_get.your.filter(x => x.manager_approved_checked == true);
-    if (chk_true.length > 0) {
-      this.selection = new SelectionModel<PeriodicElement>(true, chk_true) // console.log("1", this.selection.selected);
-    }
-
-    if (this.res_get.your.filter(x => x.center_approved_checked == true).length > 0) { this.disabled_chkall = true; }
+  async fnGetStakeholder(emp_no: any) {
+    await this.service.gethttp('Stakeholder/Employee/' + emp_no)
+      .subscribe((response: any) => {
+        if (response.role.toUpperCase() == environment.role.approver) {
+          this._org_abb = response.organization.org_abb;
+          this.visableButton = true;
+        }
+        this.fnGet("No", "No");
+      }, (error: any) => {
+        console.log(error);
+        this.fnGet("No", "No");
+        this.visableButton = false;
+      });
   }
 
-  array_chk:any;
+  async fnGet(course_no, dept_abb_name) {
+    await this.service.gethttp('Registration/GetGridView/' + course_no + '/' + dept_abb_name)
+      .subscribe((response: any) => {
+        console.log(response);
+
+        this.data_grid = response.your;
+        this.data_grid_other = response.other;
+
+        let chk_true = response.your.filter(x => x.manager_approved_checked == true);
+        if (chk_true.length > 0) {
+          this.selection = new SelectionModel<PeriodicElement>(true, chk_true) // console.log("1", this.selection.selected);
+        }
+
+        if (response.your.filter(x => x.center_approved_checked == true).length > 0) { this.disabled_chkall = true; }
+
+        // Calling the DT trigger to manually render the table
+        if (this.isDtInitialized) {
+          this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+            dtInstance.destroy();
+            this.dtTrigger.next();
+          });
+        } else {
+          this.isDtInitialized = true
+          this.dtTrigger.next();
+        }
+
+        if (this.isDtInitializedOther) {
+          this.dtElementOther.dtInstance.then((dtInstance: DataTables.Api) => {
+            dtInstance.destroy();
+            this.dtTriggerOther.next();
+          });
+        } else {
+          this.isDtInitializedOther = true
+          this.dtTriggerOther.next();
+        }
+      }, (error: any) => {
+        console.log(error);
+        this.data_grid = [];
+        this.data_grid_other = [];
+      });
+  }
+
+  array_chk: any;
   async fnGetband() {
     this.array_chk = await this.service.axios_get('Bands'); //console.log(this.array_chk);
     this.array_chk.forEach(object => {
       object.isChecked = false;
     }); //console.log(this.array_chk);
     this.checkboxesDataList = this.array_chk; //console.log(this.checkboxesDataList);
+  }
+
+  // Open popup Course
+  inputitem = 'approve-mgr';
+  openCourse(content) {
+    //   size: 'lg' //sm, mb, lg, xl
+    this.v_course_no = "";
+    const modalRef = this.modalService.open(content, { size: 'lg' });
+    modalRef.result.then(
+      (result) => {
+        console.log(result);
+        if (result != "OK") {
+          this.form.controls['frm_course'].setValue("");
+          this.fnGetCourse("NULL");
+          this.v_course_no = "";
+        }
+      },
+      (reason) => {
+        console.log(reason);
+        this.form.controls['frm_course'].setValue("");
+        this.fnGetCourse("NULL");
+        this.v_course_no = "";
+      }
+    );
+  }
+
+  v_course_no: string = "";
+  addItemCourse(newItem: string) {
+    this.v_course_no = newItem;
+    this.form.controls['frm_course'].setValue(newItem);
+    this.fnGetCourse(newItem);
+  }
+
+  async fnGetCourse(course_no: any) {
+    this.res_course = await this.service.axios_get('CourseOpen/Open/' + course_no);
+    console.log('fnGetCourse: ', this.res_course);
+    if (this.res_course != undefined) {
+      this.form.controls['frm_course_name'].setValue(this.res_course.course_name_en);
+        this.txtgroup.nativeElement.value = this.res_course.org_code;
+        this.txtqty.nativeElement.value = this.res_course.capacity;
+        this.txtdate_from.nativeElement.value = formatDate(this.res_course.date_start).toString() + ' ' + this.res_course.time_in.substring(0, 5);
+        this.txtdate_to.nativeElement.value = formatDate(this.res_course.date_end).toString() + ' ' + this.res_course.time_out.substring(0, 5);
+
+        this.arr_band = this.res_course.courses_bands; // console.log(this.arr_band);
+
+        var nameArr = this.res_course.courses_bands; // console.log(nameArr);
+        for (const iterator of nameArr) {
+          this.array_chk.find(v => v.band === iterator.band).isChecked = true;
+        } // console.log(this.array_chk);
+        this.checkboxesDataList = this.array_chk;
+        
+        this.fnGet(course_no, this._org_abb);
+    } else {
+      this.form.controls['frm_course_name'].setValue("");
+      this.txtgroup.nativeElement.value = "";
+      this.txtqty.nativeElement.value = "";
+      this.txtdate_from.nativeElement.value = "";
+      this.txtdate_to.nativeElement.value = "";
+      this.checkboxesDataList.forEach((value, index) => {
+        value.isChecked = false;
+      });
+      await this.fnGet("No", "No");
+    }
+  }
+  // End Open popup Course
+
+  ngOnDestroy(): void {
+    this.dtTrigger.unsubscribe();
+    this.dtTriggerOther.unsubscribe();
   }
 }
 
@@ -524,155 +671,3 @@ export interface PeriodicElement {
   remark: string;
   course_name: string;
 }
-
-const ELEMENT_DATA: PeriodicElement[] = [
-  {
-    emp_no: '014748',
-    sname_eng: 'MISS',
-    gname_eng: 'NUTTAYA',
-    fname_eng: 'KALLA',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: 'Center Approved',
-    remark: 'Not passed CPT-001',
-    course_name: 'Basic Excel'
-  }, {
-    emp_no: '014749',
-    sname_eng: 'MR.',
-    gname_eng: 'NATIRUT',
-    fname_eng: 'DAUNGPAK',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: 'Wait',
-    remark: '',
-    course_name: ''
-  }, {
-    emp_no: '014750',
-    sname_eng: 'MR.',
-    gname_eng: 'NATIRUT',
-    fname_eng: 'DAUNGPAK',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: 'Wait',
-    remark: '',
-    course_name: ''
-  }, {
-    emp_no: '014751',
-    sname_eng: 'MR.',
-    gname_eng: 'NATIRUT',
-    fname_eng: 'DAUNGPAK',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: 'Wait',
-    remark: '',
-    course_name: ''
-  }, {
-    emp_no: '014752',
-    sname_eng: 'MR.',
-    gname_eng: 'NATIRUT',
-    fname_eng: 'DAUNGPAK',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: 'Wait',
-    remark: '',
-    course_name: ''
-  }
-];
-
-const ELEMENT_DATA_OTHER: PeriodicElement[] = [
-  {
-    emp_no: '014748',
-    sname_eng: 'MISS',
-    gname_eng: 'NUTTAYA',
-    fname_eng: 'KALLA',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: '',
-    remark: '',
-    course_name: ''
-  }, {
-    emp_no: '014749',
-    sname_eng: 'MR.',
-    gname_eng: 'NATIRUT',
-    fname_eng: 'DAUNGPAK',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: 'Wait',
-    remark: 'Not passed CPT-001',
-    course_name: 'Basic Excel'
-  }, {
-    emp_no: '014748',
-    sname_eng: 'MISS',
-    gname_eng: 'NUTTAYA',
-    fname_eng: 'KALLA',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: '',
-    remark: '',
-    course_name: ''
-  }, {
-    emp_no: '014749',
-    sname_eng: 'MR.',
-    gname_eng: 'NATIRUT',
-    fname_eng: 'DAUNGPAK',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: 'Wait',
-    remark: '',
-    course_name: ''
-  }, {
-    emp_no: '014748',
-    sname_eng: 'MISS',
-    gname_eng: 'NUTTAYA',
-    fname_eng: 'KALLA',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: '',
-    remark: '',
-    course_name: ''
-  }, {
-    emp_no: '014749',
-    sname_eng: 'MR.',
-    gname_eng: 'NATIRUT',
-    fname_eng: 'DAUNGPAK',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: 'Wait',
-    remark: '',
-    course_name: ''
-  }, {
-    emp_no: '014748',
-    sname_eng: 'MISS',
-    gname_eng: 'NUTTAYA',
-    fname_eng: 'KALLA',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    status: '',
-    remark: '',
-    course_name: ''
-  },
-];

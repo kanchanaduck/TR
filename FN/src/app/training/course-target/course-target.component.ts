@@ -108,11 +108,11 @@ export class CourseTargetComponent implements OnInit {
 export interface PeriodicElement {
   emp_no: string;
   status_eng: string;
-  gname_eng: string;
-  fname_eng: string;
+  firstname_en: string;
+  lastname_en: string;
   posn_name: string;
-  dept_abb_name: string;
-  div_abb_name: string;
+  dept_abb: string;
+  div_abb: string;
   status_th: string;
   gname_th: string;
   fname_th: string;
@@ -122,22 +122,22 @@ const ELEMENT_DATA: PeriodicElement[] = [
   {
     emp_no: '014748',
     status_eng: 'MISS',
-    gname_eng: 'NUTTAYA',
-    fname_eng: 'KALLA',
+    firstname_en: 'NUTTAYA',
+    lastname_en: 'KALLA',
     posn_name: 'PROGRAMMER',
-    dept_abb_name: 'ICD',
-    div_abb_name: 'CPD',
+    dept_abb: 'ICD',
+    div_abb: 'CPD',
     status_th: 'นางสาว',
     gname_th: 'นุตยา',
     fname_th: 'กัลลา',
   },{
     emp_no: '014205',
     status_eng: 'MR.',
-    gname_eng: 'KHETCHANA',
-    fname_eng: 'KETSAUAONG',
+    firstname_en: 'KHETCHANA',
+    lastname_en: 'KETSAUAONG',
     posn_name: 'TECHNICIAN',
-    dept_abb_name: 'ICD',
-    div_abb_name: 'CPD',
+    dept_abb: 'ICD',
+    div_abb: 'CPD',
     status_th: 'นาย',
     gname_th: 'เขตชนะ',
     fname_th: 'เกษสาวงค์',

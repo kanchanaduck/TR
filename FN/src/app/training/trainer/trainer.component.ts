@@ -45,6 +45,13 @@ export class TrainerComponent implements OnInit {
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
       "<'row'<'col-sm-12'tr>>" +
       "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
+      language: {
+        paginate: {
+          next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
+          previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
+        }
+      },
+      "processing": true,
       buttons: {
         "dom":{
           "container": {
@@ -139,9 +146,9 @@ export class TrainerComponent implements OnInit {
       console.log(response)
       self.trainer = response
       self.trainer.trainer_type = "Internal"
-      self.trainer.sname_en = self.trainer.sname_eng
-      self.trainer.gname_en = self.trainer.gname_eng
-      self.trainer.fname_en = self.trainer.fname_eng
+      self.trainer.title_name_en = self.trainer.title_name_en
+      self.trainer.firstname_en = self.trainer.firstname_en
+      self.trainer.lastname_en = self.trainer.lastname_en
     }) 
     .catch(function (error) {
       console.log(error)

@@ -37,10 +37,26 @@ export class TrainerHistoryComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.route.params.subscribe(params => {
+      this.trainer_no = params['trainer_no'];
+    });
+
+    this.get_trainer()
+    this.get_trainer_history()
+
+    let trainer_no  = this.trainer_no
+    
     this.dtOptions = {
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
       "<'row'<'col-sm-12'tr>>" +
       "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
+      language: {
+        paginate: {
+          next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
+          previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
+        }
+      },
+      "processing": true,
       buttons: {
         "dom":{
           "container": {
@@ -60,15 +76,15 @@ export class TrainerHistoryComponent implements OnInit {
             extend: 'collection',
             text: '<i class="fas fa-cloud-download-alt"></i> Download</button>',
             buttons: [
-                {
+                /* {
                     extend: 'excel',
                     text: '<i class="far fa-file-excel"></i> Excel</button>',
-                },
+                }, */
                 {
-                    text: '<i class="far fa-file-excel"></i> History</button>',
+                    text: '<i class="far fa-file-excel"></i> Excel</button>',
                     action: function ( e, dt, node, config ) {
-                      //  alert('เอาไว้ดาวน์โหลดประวัติการสอนค่าาา')
-                      location.href = `${environment.API_URL}Trainers/History`
+                      // alert(trainer_no)
+                      location.href = `${environment.API_URL}Trainers/HistoryExcel/${trainer_no}`
                     }
                 },
             ]
@@ -80,12 +96,6 @@ export class TrainerHistoryComponent implements OnInit {
     };
 
 
-    this.route.params.subscribe(params => {
-      this.trainer_no = params['trainer_no'];
-    });
-
-    this.get_trainer()
-    this.get_trainer_history()
 
   }
 

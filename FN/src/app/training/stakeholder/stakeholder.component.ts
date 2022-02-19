@@ -140,7 +140,7 @@ export class StakeholderComponent implements OnInit {
   async get_employees() {
     let self = this
     let org_code = self.stakeholder.org_code
-    await axios.get(`${environment.API_URL}Employees/Organization/${org_code}`,this.headers)
+    await axios.get(`${environment.API_URL}Employees/Organization/${org_code}/employed`,this.headers)
     .then(function (response) {
       self.employees = response
     })
@@ -172,6 +172,7 @@ export class StakeholderComponent implements OnInit {
   async get_stakeholder(org_code: string) {
     console.log(org_code)
     const self = this;
+    self.stakeholder.org_code = org_code;
     self.get_employees()
 
     await axios.get(`${environment.API_URL}Stakeholder/${org_code}`, this.headers)

@@ -12,13 +12,13 @@ using api_hrgis.Models;
 
 namespace api_hrgis.Controllers
 {
-    [Authorize] 
+    [Authorize] // Microsoft.AspNetCore.Authorization; // [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class CourseOpenController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly IConfiguration _config;
+        private readonly IConfiguration _config; // using Microsoft.Extensions.Configuration;
 
         public CourseOpenController(ApplicationDbContext context, IConfiguration config)
         {
@@ -34,6 +34,7 @@ namespace api_hrgis.Controllers
                         .Include(e => e.courses_bands)
                         .Include(e => e.courses_trainers)
                         .Include(e => e.courses_registrations)
+                        .Where(e => e.status_active == true)
                         .ToListAsync();
         }
 
@@ -46,7 +47,45 @@ namespace api_hrgis.Controllers
                         .Include(e => e.courses_trainers)
                         .Include(e => e.courses_registrations)
                         .Where(e => e.course_no == course_no
-                        && e.open_register == true).FirstOrDefaultAsync();
+                        && e.status_active == true).FirstOrDefaultAsync();
+
+            if (tr_course == null)
+            {
+                return NotFound();
+            }
+
+            return tr_course;
+        }
+
+        // GET: api/CourseOpen/Open/5
+        [HttpGet("Open/{course_no}")]
+        public async Task<ActionResult<tr_course>> Gettr_course_all(string course_no)
+        {
+            var tr_course = await _context.tr_course
+                        .Include(e => e.courses_bands)
+                        .Include(e => e.courses_trainers)
+                        .Include(e => e.courses_registrations)
+                        .Where(e => e.course_no == course_no
+                        && e.open_register == true
+                        && e.status_active == true).FirstOrDefaultAsync();
+
+            if (tr_course == null)
+            {
+                return NotFound();
+            }
+
+            return tr_course;
+        }
+
+        // GET: api/CourseOpen/GetCourse
+        [HttpGet("GetCourse")]
+        public async Task<ActionResult<IEnumerable<tr_course>>> Gettr_course_list()
+        {
+            var tr_course = await _context.tr_course
+                        .Include(e => e.courses_bands)
+                        .Include(e => e.courses_trainers)
+                        .Include(e => e.courses_registrations)
+                        .Where(e =>  e.open_register == true && e.status_active == true).ToListAsync();
 
             if (tr_course == null)
             {
@@ -70,25 +109,12 @@ namespace api_hrgis.Controllers
 
             try
             {
-<<<<<<< .working
-                // var chk_course = await _context.tr_course.Where(x => x.course_no == id && x.dept_abb_name == User.FindFirst("dept_abb_name").Value).FirstOrDefaultAsync();
-                var chk_course = await _context.tr_course.FirstOrDefaultAsync();
-||||||| .merge-left.r108
-                var chk_course = await _context.tr_course.Where(x => x.course_no == id && x.dept_abb_name == User.FindFirst("dept_abb_name").Value).FirstOrDefaultAsync();
-=======
                 var chk_course = await _context.tr_course.Where(x => x.course_no == id && x.org_code == User.FindFirst("org_code").Value).FirstOrDefaultAsync();
->>>>>>> .merge-right.r109
                 if (chk_course != null)
                 {
                     chk_course.course_name_th = tr_course.course_name_th;
                     chk_course.course_name_en = tr_course.course_name_en;
-<<<<<<< .working
-                    // chk_course.dept_abb_name = tr_course.dept_abb_name;
-||||||| .merge-left.r108
-                    chk_course.dept_abb_name = tr_course.dept_abb_name;
-=======
                     chk_course.org_code = tr_course.org_code;
->>>>>>> .merge-right.r109
                     chk_course.days = tr_course.days;
                     chk_course.capacity = tr_course.capacity;
                     chk_course.open_register = tr_course.open_register;
@@ -128,31 +154,15 @@ namespace api_hrgis.Controllers
             {
                 List<tr_course_band> list1 = new List<tr_course_band>();
                 List<tr_course_trainer> list2 = new List<tr_course_trainer>();
-<<<<<<< .working
-                /* var result = await _context.tr_course.Where(x => x.course_no == tr_course.course_no
-                && x.dept_abb_name == User.FindFirst("dept_abb_name").Value).FirstOrDefaultAsync(); */
-                
-                var result = await _context.tr_course.Where(x => x.course_no == tr_course.course_no).FirstOrDefaultAsync();
-||||||| .merge-left.r108
-                var result = await _context.tr_course.Where(x => x.course_no == tr_course.course_no
-                && x.dept_abb_name == User.FindFirst("dept_abb_name").Value).FirstOrDefaultAsync();
-=======
                 var result = await _context.tr_course.Where(x => x.course_no == tr_course.course_no
                 && x.org_code == User.FindFirst("org_code").Value).FirstOrDefaultAsync();
->>>>>>> .merge-right.r109
                 if (result == null)
                 {
                     tr_course tb = new tr_course();
                     tb.course_no = tr_course.course_no;
                     tb.course_name_th = tr_course.course_name_th;
                     tb.course_name_en = tr_course.course_name_en;
-<<<<<<< .working
-                    // tb.dept_abb_name = tr_course.dept_abb_name;
-||||||| .merge-left.r108
-                    tb.dept_abb_name = tr_course.dept_abb_name;
-=======
                     tb.org_code = tr_course.org_code;
->>>>>>> .merge-right.r109
                     tb.days = tr_course.days;
                     tb.capacity = tr_course.capacity;
                     tb.open_register = tr_course.open_register;
@@ -188,18 +198,8 @@ namespace api_hrgis.Controllers
                 }
                 else
                 {
-<<<<<<< .working
-                    /* var old = _context.tr_course.FirstOrDefault(x => x.course_no == tr_course.course_no
-                    && x.dept_abb_name == User.FindFirst("dept_abb_name").Value && x.status_active == false); */
-                    
-                    var old = _context.tr_course.FirstOrDefault(x => x.course_no == tr_course.course_no && x.status_active == false);
-||||||| .merge-left.r108
-                    var old = _context.tr_course.FirstOrDefault(x => x.course_no == tr_course.course_no
-                    && x.dept_abb_name == User.FindFirst("dept_abb_name").Value && x.status_active == false);
-=======
                     var old = _context.tr_course.FirstOrDefault(x => x.course_no == tr_course.course_no
                     && x.org_code == User.FindFirst("org_code").Value && x.status_active == false);
->>>>>>> .merge-right.r109
                     if (old == null)
                     {
                         return Conflict(_config.GetValue<string>("Text:duplication"));
@@ -208,13 +208,7 @@ namespace api_hrgis.Controllers
                     {
                         old.course_name_th = tr_course.course_name_th;
                         old.course_name_en = tr_course.course_name_en;
-<<<<<<< .working
-                        // old.dept_abb_name = tr_course.dept_abb_name;
-||||||| .merge-left.r108
-                        old.dept_abb_name = tr_course.dept_abb_name;
-=======
                         old.org_code = tr_course.org_code;
->>>>>>> .merge-right.r109
                         old.days = tr_course.days;
                         old.capacity = tr_course.capacity;
                         old.open_register = tr_course.open_register;
@@ -252,7 +246,7 @@ namespace api_hrgis.Controllers
         }
 
         // DELETE: api/CourseOpen/5
-        /* [HttpDelete("{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Deletetr_course(string id)
         {
             // ต้อง update [tr_course] status_active = false
@@ -270,7 +264,7 @@ namespace api_hrgis.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        } */
+        }
 
         private bool tr_courseExists(string id)
         {
@@ -331,41 +325,16 @@ namespace api_hrgis.Controllers
             await _context.SaveChangesAsync();
         }
 
-<<<<<<< .working
-        // GET: api/CourseOpen/GetGridView/{dept}
-        /* [HttpGet("GetGridView/{dept}")]
-        public async Task<ActionResult> GetGridView(string dept)
-||||||| .merge-left.r108
-        // GET: api/CourseOpen/GetGridView/{dept}
-        [HttpGet("GetGridView/{dept}")]
-        public async Task<ActionResult> GetGridView(string dept)
-=======
         // GET: api/CourseOpen/GetGridView/{org_code}
         [HttpGet("GetGridView/{org_code}")]
         public async Task<ActionResult> GetGridView(string org_code)
->>>>>>> .merge-right.r109
         {
             var list = new List<tr_course>();
-<<<<<<< .working
-            if (dept != _config.GetValue<string>("Text:all"))
-||||||| .merge-left.r108
-            // ถ้ามีการเลือก check box All ให้ส่ง All ไป เพื่อค้นหาข้อมูลของแผนกอื่นได้ แต่แก้ไขไม่ได้
-            Console.WriteLine("======== Dept: " + dept);
-            if (dept != _config.GetValue<string>("Text:all"))
-=======
             // ถ้ามีการเลือก check box All ให้ส่ง All ไป เพื่อค้นหาข้อมูลของแผนกอื่นได้ แต่แก้ไขไม่ได้
             Console.WriteLine("======== org_code: " + org_code);
             if (org_code != _config.GetValue<string>("Text:all"))
->>>>>>> .merge-right.r109
             {
-<<<<<<< .working
-                list = await _context.tr_course.Where(x => x.status_active == true
-                                        && x.dept_abb_name == User.FindFirst("dept_abb_name").Value).ToListAsync();
-||||||| .merge-left.r108
-                list = await _context.tr_course.Where(x => x.status_active == true && x.dept_abb_name == dept).ToListAsync();
-=======
                 list = await _context.tr_course.Where(x => x.status_active == true && x.org_code == org_code).ToListAsync();
->>>>>>> .merge-right.r109
             }
             else
             {
@@ -381,6 +350,7 @@ namespace api_hrgis.Controllers
                 tb.course_no = list[i].course_no;
                 tb.course_name_th = list[i].course_name_th;
                 tb.course_name_en = list[i].course_name_en;
+                tb.org_code = query_ogr.org_code;
                 tb.org_abb = query_ogr.org_abb;
                 tb.days = list[i].days;
                 tb.capacity = list[i].capacity;
@@ -399,7 +369,7 @@ namespace api_hrgis.Controllers
             // Console.WriteLine("=========: " + dept);
             // Console.WriteLine("=========: " + User.FindFirst("emp_no").Value);
             return Ok(datagrid);
-        } */
+        }
 
         protected async Task<string[]> GetBand(string str)
         {
@@ -426,10 +396,10 @@ namespace api_hrgis.Controllers
                 {
                     fulls = (
                         tb2.trainer_type == _config.GetValue<string>("Text:internal") ?
-                        table.sname_eng == null ? "" :
-                        table.sname_eng == _config.GetValue<string>("Text:miss") ? table.sname_eng + "." + table.gname_eng + " " + table.fname_eng.Substring(0, 1) + ". (" + table.dept_abb_name + ")"
-                        : table.sname_eng + table.gname_eng + " " + table.fname_eng.Substring(0, 1) + ". (" + table.dept_abb_name + ")"
-                        : tb2.sname_en + tb2.gname_en + " " + tb2.fname_en.Substring(0, 1) + "."
+                        table.title_name_en == null ? "" :
+                        table.title_name_en == _config.GetValue<string>("Text:miss") ? table.title_name_en + "." + table.firstname_en + " " + table.lastname_en.Substring(0, 1) + ". (" + table.dept_abb + ")"
+                        : table.title_name_en + table.firstname_en + " " + table.lastname_en.Substring(0, 1) + ". (" + table.dept_abb + ")"
+                        : tb2.title_name_en + tb2.firstname_en + " " + tb2.lastname_en.Substring(0, 1) + "."
                     )
                 }).ToListAsync();
 
@@ -463,6 +433,7 @@ public class datagrid
     public string course_no { get; set; }
     public string course_name_th { get; set; }
     public string course_name_en { get; set; }
+    public string org_code { get; set; }
     public string org_abb { get; set; }
     public int days { get; set; }
     public int capacity { get; set; }

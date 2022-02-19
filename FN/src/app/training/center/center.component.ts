@@ -33,10 +33,16 @@ export class CenterComponent implements OnInit {
 
   ngOnInit(): void {
     this.dtOptions = {
-      "processing": true,
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
       "<'row'<'col-sm-12'tr>>" +
       "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
+      language: {
+        paginate: {
+          next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
+          previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
+        }
+      },
+      "processing": true,
       buttons: {
         "dom":{
           "container": {

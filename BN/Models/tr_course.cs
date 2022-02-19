@@ -42,9 +42,7 @@ namespace api_hrgis.Models
         public List<tr_course_trainer> courses_trainers { get; set; }
         public List<tr_course_registration> courses_registrations { get; set; } 
         [ForeignKey("org_code")]
-        public virtual tb_organization organization { get; set; }   
-        [ForeignKey("org_code")]
-        public virtual tb_organization organization { get; set; }   
+        public virtual tb_organization organization { get; set; } 
         private DateTime _date = DateTime.Now;
         private string _username = "014496";
     }

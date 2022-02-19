@@ -169,28 +169,28 @@ namespace api_hrgis
                                     var claimed = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "user");
 
                                     JObject data = JObject.Parse("{" + claimed.ToString() + "}");
-                                    // Console.WriteLine(data);
+                                    Console.WriteLine(data);
                                     var emp_no = data["user"]["emp_no"];
-                                    var sname_eng = data["user"]["sname_eng"];
-                                    var gname_eng = data["user"]["gname_eng"];
-                                    var fname_eng = data["user"]["fname_eng"];
+                                    var title_name_en = data["user"]["title_name_en"];
+                                    var firstname_en = data["user"]["firstname_en"];
+                                    var lastname_en = data["user"]["lastname_en"];
                                     var dept_code = data["user"]["dept_code"];
-                                    var dept_abb_name = data["user"]["dept_abb_name"];
+                                    var dept_abb = data["user"]["dept_abb"];
                                     var org_code = data["user"]["org_code"];
                                     var band = data["user"]["band"];
-                                    var posn_ename = data["user"]["posn_ename"];
+                                    var position_name_en = data["user"]["position_name_en"];
 
                                     identity.AddClaim(new Claim("access_token", accessToken.RawData));
                                     // Console.WriteLine(empno);
                                     identity.AddClaim(new Claim("emp_no", emp_no.ToString()));
-                                    identity.AddClaim(new Claim("sname_eng", sname_eng.ToString()));
-                                    identity.AddClaim(new Claim("gname_eng", gname_eng.ToString()));
-                                    identity.AddClaim(new Claim("fname_eng", fname_eng.ToString()));
+                                    identity.AddClaim(new Claim("title_name_en", title_name_en.ToString()));
+                                    identity.AddClaim(new Claim("firstname_en", firstname_en.ToString()));
+                                    identity.AddClaim(new Claim("lastname_en", lastname_en.ToString()));
                                     identity.AddClaim(new Claim("dept_code", dept_code.ToString()));
-                                    identity.AddClaim(new Claim("dept_abb_name", dept_abb_name.ToString()));
+                                    identity.AddClaim(new Claim("dept_abb", dept_abb.ToString()));
                                     identity.AddClaim(new Claim("org_code", org_code.ToString()));
                                     identity.AddClaim(new Claim("band", band.ToString()));
-                                    identity.AddClaim(new Claim("posn_ename", posn_ename.ToString()));
+                                    identity.AddClaim(new Claim("position_name_en", position_name_en.ToString()));
                                 }
                             }
                         }

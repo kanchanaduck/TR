@@ -117,11 +117,11 @@ export interface PeriodicElement {
   course_name_en: string;
   emp_no: string;
   status_eng: string;
-  gname_eng: string;
-  fname_eng: string;
+  firstname_en: string;
+  lastname_en: string;
   posn_name: string;
-  dept_abb_name: string;
-  div_abb_name: string;
+  dept_abb: string;
+  div_abb: string;
   pre_test_score: number;
   pre_test_grade: string;
   post_test_score: number;
@@ -134,11 +134,11 @@ const ELEMENT_DATA: PeriodicElement[] = [
     course_name_en: 'QC Basics',
     emp_no: '014748',
     status_eng: 'MISS',
-    gname_eng: 'NUTTAYA',
-    fname_eng: 'KALLA',
+    firstname_en: 'NUTTAYA',
+    lastname_en: 'KALLA',
     posn_name: 'PROGRAMMER',
-    dept_abb_name: 'ICD',
-    div_abb_name: 'CPD',
+    dept_abb: 'ICD',
+    div_abb: 'CPD',
     pre_test_score: 80,
     pre_test_grade: 'A',
     post_test_score: 90,
@@ -148,11 +148,11 @@ const ELEMENT_DATA: PeriodicElement[] = [
     course_name_en: 'QC Basics',
     emp_no: '014205',
     status_eng: 'MR.',
-    gname_eng: 'KHETCHANA',
-    fname_eng: 'KETSAUAONG',
+    firstname_en: 'KHETCHANA',
+    lastname_en: 'KETSAUAONG',
     posn_name: 'TECHNICIAN',
-    dept_abb_name: 'ICD',
-    div_abb_name: 'CPD',
+    dept_abb: 'ICD',
+    div_abb: 'CPD',
     pre_test_score: 95,
     pre_test_grade: 'A',
     post_test_score: 100,
@@ -162,11 +162,11 @@ const ELEMENT_DATA: PeriodicElement[] = [
     course_name_en: 'QC Basics',
     emp_no: '014748',
     status_eng: 'MISS',
-    gname_eng: 'NUTTAYA',
-    fname_eng: 'KALLA',
+    firstname_en: 'NUTTAYA',
+    lastname_en: 'KALLA',
     posn_name: 'PROGRAMMER',
-    dept_abb_name: 'ICD',
-    div_abb_name: 'CPD',
+    dept_abb: 'ICD',
+    div_abb: 'CPD',
     pre_test_score: 80,
     pre_test_grade: 'A',
     post_test_score: 90,
@@ -176,11 +176,11 @@ const ELEMENT_DATA: PeriodicElement[] = [
     course_name_en: 'QC Basics',
     emp_no: '014205',
     status_eng: 'MR.',
-    gname_eng: 'KHETCHANA',
-    fname_eng: 'KETSAUAONG',
+    firstname_en: 'KHETCHANA',
+    lastname_en: 'KETSAUAONG',
     posn_name: 'TECHNICIAN',
-    dept_abb_name: 'ICD',
-    div_abb_name: 'CPD',
+    dept_abb: 'ICD',
+    div_abb: 'CPD',
     pre_test_score: 95,
     pre_test_grade: 'A',
     post_test_score: 100,

@@ -26,18 +26,11 @@ namespace api_hrgis.Models
         [RegularExpression(@"^[\p{L}\p{N}\p{P}\p{Sm}\s]+$", ErrorMessage = "Characters are not allowed only English, number, and symbol")]
         public string course_name_en { get; set; }
         [Required]
-<<<<<<< .working
         [Display(Name = "GROUP")]
         public string org_code { get; set; }
-||||||| .merge-left.r108
-        public string dept_abb_name { get; set; }
-=======
-        public string org_code { get; set; }
->>>>>>> .merge-right.r109
         [Required]
         [Display(Name = "CAPACITY")]
         public int capacity { get; set; }
-        public string prev_course_no { get; set; }
         [Required]
         public int days { get; set; }
         public string category { get; set; }
@@ -51,9 +44,7 @@ namespace api_hrgis.Models
         public string updated_by { get { return _username; } set { _username = value; } }
         public bool? status_active { get; set; }
         public List<tr_course_master_band> course_masters_bands { get; set; }
-        [ForeignKey("prev_course_no")]
-        public virtual tr_course_master prev_course { get; set; }
-        public virtual ICollection<tr_course_master> next_course { get; set; }
+        public virtual ICollection<tr_course_master_previous> prev_course { get; set; }
         [ForeignKey("org_code")]
         public virtual tb_organization organization { get; set; }
         private DateTime _date = DateTime.Now;

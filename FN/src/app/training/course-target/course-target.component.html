@@ -19,11 +19,11 @@
                     <th>no.</th>
                     <th>emp_no</th>
                     <th>status_eng</th>
-                    <th>gname_eng</th>
-                    <th>fname_eng</th>
+                    <th>firstname_en</th>
+                    <th>lastname_en</th>
                     <th>posn_name</th>
-                    <th>dept_abb_name</th>
-                    <th>div_abb_name</th>
+                    <th>dept_abb</th>
+                    <th>div_abb</th>
                     <th>status_th</th>
                     <th>gname_th</th>
                     <th>fname_th</th>
@@ -33,15 +33,15 @@
                 <tr *ngFor="let item of data_grid; let i = index">
                     <td>{{ i + 1 }}</td>
                     <td>{{ item.emp_no }}</td>
-                    <td>{{ item.sname_eng }}</td>
-                    <td>{{ item.gname_eng }}</td>
-                    <td>{{ item.fname_eng }}</td>
-                    <td>{{ item.posn_ename }}</td>
-                    <td>{{ item.dept_abb_name }}</td>
-                    <td>{{ item.div_abb_name }}</td>
-                    <td>{{ item.sname_tha }}</td>
-                    <td>{{ item.gname_tha }}</td>
-                    <td>{{ item.fname_tha }}</td>
+                    <td>{{ item.title_name_en }}</td>
+                    <td>{{ item.firstname_en }}</td>
+                    <td>{{ item.lastname_en }}</td>
+                    <td>{{ item.position_name_en }}</td>
+                    <td>{{ item.dept_abb }}</td>
+                    <td>{{ item.div_abb }}</td>
+                    <td>{{ item.title_name_th }}</td>
+                    <td>{{ item.firstname_th }}</td>
+                    <td>{{ item.lastname_th }}</td>
                 </tr>
             </tbody>
         </table>

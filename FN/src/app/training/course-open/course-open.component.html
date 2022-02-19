@@ -6,7 +6,6 @@
                     <label class="az-content-label tx-11 tx-medium tx-gray-600">course no&nbsp;&nbsp;&nbsp;
                         <i class="typcn typcn-zoom tx-20 lh--9 op-6 pointer" (click)="openCourse(contentCourse)"></i>
                     </label>
-                    <!-- <label class="az-content-label tx-11 tx-medium tx-gray-600">course no.</label> -->
                     <input type="text" class="form-control" [readonly]="isreadonly" placeholder="Enter key..." autofocus (keyup)="onKeyCourse($event)" formControlName="frm_course" [ngClass]="{ 'is-invalid': submitted && f.frm_course.errors }" #txtcourse_no>
                     <div *ngIf="submitted && f.frm_course.errors" class="invalid-feedback">
                         <div *ngIf="f.frm_course.errors.required">Course no is required</div>
@@ -179,16 +178,15 @@
             <div class="col text-right pt-4">
                 <button type="button" *ngIf="visableSave" class="btn btn-az-primary btn-sm" (click)="fnSave()">Save</button>
                 <button type="button" *ngIf="visableUpdate" class="btn btn-az-primary btn-sm" (click)="fnUpdate()">Save</button>
-                <button type="button" class="btn btn-dark btn-sm" (click)="fnClear()">Clear</button>
+                <button type="button" *ngIf="visableClear" class="btn btn-dark btn-sm" (click)="fnClear()">Clear</button>
             </div>
         </div>
     </div>
 </div>
-<hr>
 <div class="row">
     <div class="col-12">
         <div style="position: absolute; top: 2px;" *ngIf="chk_disable"><input type="checkbox" ngModel (ngModelChange)="onNgModelChange($event)" /> All</div>
-        <table datatable [dtOptions]="dt_options" class="table table-bordered table-hover table-sm">
+        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm">
             <thead>
                 <tr class="text-uppercase">
                     <th>no.</th>
@@ -213,11 +211,16 @@
                     <td>{{ item.time_out.substring(0, 5) }}</td>
                     <td>{{ item.place }}</td>
                     <td>{{ item.trainer }}</td>
-                    <td>{{ item.dept_abb_name }}</td>
+                    <td>{{ item.org_code }} : {{ item.org_abb }}</td>
                     <td>
-                        <div *ngIf="item.dept_abb_name != _dept; else elseBlock"><span></span></div>
-                        <ng-template #elseBlock><i class="far fa-edit pointer" (click)="fnEdit(item)"></i>
-                            <i class="far fa-trash-alt pointer" (click)="fnDelete(item)"></i></ng-template>
+                        <div *ngIf="item.org_abb != _ogr_abb; else elseBlock"><span></span></div>
+                        <ng-template #elseBlock>
+                            <div *ngIf="CheckDate(item.date_end) != true; else elseDate"><span></span></div>
+                            <ng-template #elseDate>
+                                <a href="javascript:;" (click)="fnEdit(item)"><i class="far fa-edit pointer"></i></a>
+                                <a href="javascript:;" (click)="fnDelete(item)"><i class="far fa-trash-alt pointer"></i></a>
+                            </ng-template>
+                        </ng-template>
                     </td>
                 </tr>
             </tbody>
@@ -233,49 +236,25 @@
       </button>
     </div>
     <div class="modal-body text-capitalize">
-        <!-- <img src="assets/report/trainer.png" class="img-fluid" alt="Responsive image"> -->
         <app-trainer></app-trainer>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-outline-dark btn-sm" (click)="modal.close('Close click')">Close</button>
     </div>
-<<<<<<< .working
-</ng-template>
-
-
-
-
-<!-- <div class="col-md-4">
-    <h4>No of Selected Hobbies: {{selectedItemsList.length}} </h4>
-    <ul>
-        <li *ngFor="let item of selectedItemsList">{{item.label}}</li>
-    </ul>
-</div>
-
-<div class="col-md-4">
-    <h4>Object</h4>
-    <code>
-    {{selectedItemsList | json}}
-    </code>
-
-    <h4>Array of IDs</h4>
-    <code>{{checkedIDs}}</code>
-</div> -->||||||| .merge-left.r108
-</ng-template>=======
 </ng-template>
 
 <ng-template #contentCourse let-modal>
-    <app-dialog-course (newItemEvent)="addItemCourse($event)"></app-dialog-course>
-    <!-- <div class="modal-header">
-        <h4 class="modal-title text-capitalize" id="modal-basic-title">Find Course</h4>
+    <div class="modal-header">
+        <h4 class="modal-title text-capitalize" id="modal-basic-title">Find Course: {{v_course_no}}</h4>
         <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
     <div class="modal-body text-capitalize">
-        <app-dialog-course (newItemEvent)="addItemCourse($event)"></app-dialog-course>
+        <app-dialog-course [inputitem]="inputitem" (newItemEvent)="addItemCourse($event)"></app-dialog-course>
     </div>
     <div class="modal-footer">
+        <button type="button" class="btn btn-az-primary btn-sm" (click)="modal.close('OK')">Ok</button>
         <button type="button" class="btn btn-outline-dark btn-sm" (click)="modal.close('Close click')">Close</button>
-    </div> -->
-</ng-template>>>>>>>> .merge-right.r109
+    </div>
+</ng-template>

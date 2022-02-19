@@ -33,12 +33,12 @@ namespace api_hrgis.Controllers
             from emp in z.DefaultIfEmpty()
             select new { 
                     emp_no = center.emp_no,
-                    sname_eng = emp.sname_eng,
-                    gname_eng = emp.gname_eng,
-                    fname_eng = emp.fname_eng,
-                    posn_ename = emp.posn_ename,
-                    div_abb_name = emp.div_abb_name,
-                    dept_abb_name = emp.dept_abb_name,
+                    title_name_en = emp.title_name_en,
+                    firstname_en = emp.firstname_en,
+                    lastname_en = emp.lastname_en,
+                    position_name_en = emp.position_name_en,
+                    div_abb = emp.div_abb,
+                    dept_abb = emp.dept_abb,
                     employed_status = emp.employed_status,
             }).ToListAsync();
 

@@ -26,7 +26,10 @@ namespace api_hrgis.Data
             //Composite Key
      
             modelBuilder.Entity<tr_course_master_band>()
-                .HasKey(t => new { t.course_no, t.band });            
+                .HasKey(t => new { t.course_no, t.band }); 
+
+            modelBuilder.Entity<tr_course_master_previous>()
+                .HasKey(t => new { t.course_no, t.prev_course_no });               
             
             modelBuilder.Entity<tr_course_band>()
                 .HasKey(t => new { t.course_no, t.band });
@@ -100,10 +103,8 @@ namespace api_hrgis.Data
         public DbSet<tr_survey_file> tr_survey_file{ get; set; }
         public DbSet<tr_survey_setting> tr_survey_setting { get; set; }
         public DbSet<tr_trainer> tr_trainer { get; set; }
-
         public DbSet<tr_course_trainer> tr_course_trainer { get; set; }
         public DbSet<tr_course_band> tr_course_band { get; set; }
-
         public DbSet<tb_organization> tb_organization { get; set; }
         public DbSet<tb_user> tb_user { get; set; }
     }

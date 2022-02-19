@@ -33,46 +33,69 @@ namespace api_hrgis.Controllers
         }
 
         // GET: api/Employees/Course
-        [HttpGet("Course/{org_code}/{employed_status}")]
+        // GET: api/Employees/Course/55
+        // GET: api/Employees/Course/5510
+        // GET: api/Employees/Course/55/employed
+        // GET: api/Employees/Course/5510/employed
+        // GET: api/Employees/Course/55/resigned
+        // GET: api/Employees/Course/5510/resigned
+        [HttpGet("Course/{org_code}/{employed_status?}")]
         public async Task<ActionResult<IEnumerable<tb_employee>>> course_map(string org_code, string employed_status)
         {
-            // return await _context.tb_employee.ToListAsync();
-            if(employed_status == "employed"){
+            if(employed_status==null || employed_status=="")
+            {
                 return await _context.tb_employee
                             .Include(e => e.courses_registrations)
-                            .Where(e => (e.div_cls==org_code || e.dept_code.Contains(org_code)) && (e.resn_date==null ||e.resn_date < DateTime.Today))
+                            .Where(e => (e.div_code==org_code || e.dept_code==org_code))
+                            .AsNoTracking()
                             .ToListAsync();
             }
-            else{
+            else if(employed_status.ToLower() == "employed")
+            {
                 return await _context.tb_employee
                             .Include(e => e.courses_registrations)
-                            .Where(e => (e.div_cls==org_code || e.dept_code.Contains(org_code)) && (e.resn_date > DateTime.Today))
+                            .Where(e => (e.div_code==org_code || e.dept_code==org_code) && (e.resign_date==null ||e.resign_date > DateTime.Today))
+                            .AsNoTracking()
+                            .ToListAsync();
+            }
+            else
+            {
+                return await _context.tb_employee
+                            .Include(e => e.courses_registrations)
+                            .Where(e => (e.div_code==org_code || e.dept_code==org_code) && (e.resign_date < DateTime.Today))
+                            .AsNoTracking()
                             .ToListAsync();
             }
         }
 
         // GET: api/Employees/Organization/55
         // GET: api/Employees/Organization/5510
-        [HttpGet("Organization/{org_code}")]
-        public async Task<ActionResult<IEnumerable<tb_employee>>> GetEmployeeDivision(string org_code)
+        // GET: api/Employees/Organization/55/employed
+        // GET: api/Employees/Organization/5510/employed
+        // GET: api/Employees/Organization/55/resigned
+        // GET: api/Employees/Organization/5510/resigned
+        [HttpGet("Organization/{org_code}/{employed_status?}")]
+        public async Task<ActionResult<IEnumerable<tb_employee>>> get_employee_from_org(string org_code, string employed_status)
         {
-            var employees =  await _context.tb_employee
-                             .Where(e => e.div_abb_name==org_code ||
-                             e.dept_code==org_code).ToListAsync();
-
-            if (employees == null)
-            {
-                return NotFound("Data not found");
+            Console.WriteLine("Employed: "+employed_status);
+            if(employed_status==null || employed_status==""){
+                return await _context.tb_employee
+                            .Where(e => (e.div_code==org_code || e.dept_code==org_code))
+                            .AsNoTracking()
+                            .ToListAsync();
             }
-
-            return employees;
-        }
-
-        // GET: api/Employees/Update
-        [HttpGet("Update")]
-        public async Task<ActionResult<IEnumerable<tb_employee>>> UpdateFromHRMS()
-        {
-            return await _context.tb_employee.ToListAsync();
+            else if(employed_status.ToLower() == "employed"){
+                return await _context.tb_employee
+                            .Where(e => (e.div_code==org_code || e.dept_code==org_code) && (e.resign_date==null ||e.resign_date > DateTime.Today))
+                            .AsNoTracking()
+                            .ToListAsync();
+            }
+            else{
+                return await _context.tb_employee
+                            .Where(e => (e.div_code==org_code || e.dept_code==org_code) && (e.resign_date < DateTime.Today))
+                            .AsNoTracking()
+                            .ToListAsync();
+            }
         }
 
         // GET: api/Employees/5
@@ -187,27 +210,27 @@ namespace api_hrgis.Controllers
                         {
                             old_emp_no = worksheet.Cells[row, 2].Value==null ? null:worksheet.Cells[row, 1].Value.ToString().Trim(),
                             emp_no = worksheet.Cells[row, 1].Value.ToString().Trim(),
-                            sname_eng = worksheet.Cells[row, 3].Value==null ? null:worksheet.Cells[row, 3].Value.ToString().Trim(),
-                            gname_eng = worksheet.Cells[row, 4].Value==null ? null:worksheet.Cells[row, 4].Value.ToString().Trim(),
-                            fname_eng = worksheet.Cells[row, 5].Value==null ? null:worksheet.Cells[row, 5].Value.ToString().Trim(),	
-                            sname_tha = worksheet.Cells[row, 6].Value==null ? null:worksheet.Cells[row, 6].Value.ToString().Trim(),	
-                            gname_tha = worksheet.Cells[row, 7].Value==null ? null:worksheet.Cells[row, 7].Value.ToString().Trim(),
-                            fname_tha = worksheet.Cells[row, 8].Value==null ? null:worksheet.Cells[row, 8].Value.ToString().Trim(),	
-                            div_cls = worksheet.Cells[row, 9].Value==null ? null:worksheet.Cells[row, 9].Value.ToString().Trim(),	
+                            title_name_en = worksheet.Cells[row, 3].Value==null ? null:worksheet.Cells[row, 3].Value.ToString().Trim(),
+                            firstname_en = worksheet.Cells[row, 4].Value==null ? null:worksheet.Cells[row, 4].Value.ToString().Trim(),
+                            lastname_en = worksheet.Cells[row, 5].Value==null ? null:worksheet.Cells[row, 5].Value.ToString().Trim(),	
+                            title_name_th = worksheet.Cells[row, 6].Value==null ? null:worksheet.Cells[row, 6].Value.ToString().Trim(),	
+                            firstname_th = worksheet.Cells[row, 7].Value==null ? null:worksheet.Cells[row, 7].Value.ToString().Trim(),
+                            lastname_th = worksheet.Cells[row, 8].Value==null ? null:worksheet.Cells[row, 8].Value.ToString().Trim(),	
+                            div_code = worksheet.Cells[row, 9].Value==null ? null:worksheet.Cells[row, 9].Value.ToString().Trim(),	
                             div_name = worksheet.Cells[row, 10].Value==null ? null:worksheet.Cells[row, 10].Value.ToString().Trim(),
-                            div_abb_name = worksheet.Cells[row, 11].Value==null ? null:worksheet.Cells[row, 11].Value.ToString().Trim(),
+                            div_abb = worksheet.Cells[row, 11].Value==null ? null:worksheet.Cells[row, 11].Value.ToString().Trim(),
                             dept_code = worksheet.Cells[row, 12].Value==null ? null:worksheet.Cells[row, 12].Value.ToString().Trim(),
-                            dept_abb_name = worksheet.Cells[row, 13].Value==null ? null:worksheet.Cells[row, 13].Value.ToString().Trim(),
+                            dept_abb = worksheet.Cells[row, 13].Value==null ? null:worksheet.Cells[row, 13].Value.ToString().Trim(),
                             dept_name = worksheet.Cells[row, 14].Value==null ? null:worksheet.Cells[row, 14].Value.ToString().Trim(),
                             wc_code = worksheet.Cells[row, 15].Value==null ? null:worksheet.Cells[row, 15].Value.ToString().Trim(),
-                            wc_abb_name = worksheet.Cells[row, 16].Value==null ? null:worksheet.Cells[row, 16].Value.ToString().Trim(),
+                            wc_abb = worksheet.Cells[row, 16].Value==null ? null:worksheet.Cells[row, 16].Value.ToString().Trim(),
                             wc_name	= worksheet.Cells[row, 17].Value==null ? null:worksheet.Cells[row, 17].Value.ToString().Trim(),
                             band = worksheet.Cells[row, 18].Value==null ? null:worksheet.Cells[row, 18].Value.ToString().Trim(),
-                            posn_code = worksheet.Cells[row, 19].Value==null ? null:worksheet.Cells[row, 19].Value.ToString().Trim(),
-                            posn_ename = worksheet.Cells[row, 20].Value==null ? null:worksheet.Cells[row, 20].Value.ToString().Trim(),
+                            position_code = worksheet.Cells[row, 19].Value==null ? null:worksheet.Cells[row, 19].Value.ToString().Trim(),
+                            position_name_en = worksheet.Cells[row, 20].Value==null ? null:worksheet.Cells[row, 20].Value.ToString().Trim(),
                             email = worksheet.Cells[row, 21].Value==null ? null:worksheet.Cells[row, 21].Value.ToString().Trim(),
-                            resn_date = worksheet.Cells[row, 22].Value==null ? null:DateTime.Parse(worksheet.Cells[row, 22].Value.ToString().Trim()),
-                            prob_date = worksheet.Cells[row, 23].Value==null ? null:DateTime.Parse(worksheet.Cells[row, 23].Value.ToString().Trim()),
+                            resign_date = worksheet.Cells[row, 22].Value==null ? null:DateTime.Parse(worksheet.Cells[row, 22].Value.ToString().Trim()),
+                            probation_date = worksheet.Cells[row, 23].Value==null ? null:DateTime.Parse(worksheet.Cells[row, 23].Value.ToString().Trim()),
                         });
                         await _context.SaveChangesAsync();
                     }

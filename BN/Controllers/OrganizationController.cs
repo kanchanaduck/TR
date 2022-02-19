@@ -58,6 +58,7 @@ namespace api_hrgis.Controllers
                             .Include(e => e.children_org)
                             .Include(e => e.parent_org)
                             .Where(c => c.level_name.ToUpper().Contains(level.ToUpper()))
+                            .AsNoTracking()
                             .OrderBy(e => e.org_abb)
                             .ToListAsync();
         }
@@ -70,6 +71,7 @@ namespace api_hrgis.Controllers
             return await _context.tb_organization
                             .Include(e => e.children_org)
                             .Where(c => c.level_name.ToUpper().Contains(level.ToUpper()))
+                            .AsNoTracking()
                             .OrderBy(e => e.org_abb)
                             .ToListAsync();
         }
@@ -81,6 +83,7 @@ namespace api_hrgis.Controllers
             return await _context.tb_organization
                             .Include(e => e.parent_org)
                             .Where(c => c.level_name.ToUpper().Contains(level.ToUpper()))
+                            .AsNoTracking()
                             .OrderBy(e => e.org_abb)
                             .ToListAsync();
         }
@@ -199,8 +202,6 @@ namespace api_hrgis.Controllers
                             org_abb = worksheet.Cells[row, 4].Value==null ? null:worksheet.Cells[row, 4].Value.ToString().Trim(),
                             org_name = worksheet.Cells[row, 5].Value.ToString().Trim(),
                             parent_org_code = worksheet.Cells[row, 6].Value==null ? null:worksheet.Cells[row, 6].Value.ToString().Trim(),
-                            updated_at = DateTime.Now,
-                            updated_by = "014496",
                             // status_active=true,
                         });
                         await _context.SaveChangesAsync();

@@ -36,10 +36,10 @@
                 [(ngModel)]="stakeholder.committees"
                 >
                 <ng-template ng-label-tmp let-item="item" let-index="index">
-                    {{ item.emp_no+': '+item.shortname_eng  }}
+                    {{ item.emp_no+': '+item.shortname_en  }}
                 </ng-template>
                 <ng-template ng-option-tmp let-item="item" let-index="index">
-                    {{ item.emp_no+': '+item.shortname_eng  }}
+                    {{ item.emp_no+': '+item.shortname_en  }}
                 </ng-template>
             </ng-select>
       </div><!-- form-group -->
@@ -54,10 +54,10 @@
                 [(ngModel)]="stakeholder.approvers"
                 >
                 <ng-template ng-label-tmp let-item="item" let-index="index">
-                    {{ item.emp_no+': '+item.shortname_eng  }}
+                    {{ item.emp_no+': '+item.shortname_en  }}
                 </ng-template>
                 <ng-template ng-option-tmp let-item="item" let-index="index">
-                    {{ item.emp_no+': '+item.shortname_eng  }}
+                    {{ item.emp_no+': '+item.shortname_en  }}
                 </ng-template>
             </ng-select>
       </div><!-- form-group -->
@@ -98,14 +98,14 @@
             <td>
                 <div *ngFor="let j of i.stakeholders">
                     <div *ngIf="j.role=='COMMITTEE'">
-                        {{ j.emp_no + ": " + j.employee.shortname_eng }}
+                        {{ j.emp_no + ": " + j.employee.shortname_en }}
                     </div>
                 </div>
             </td>
             <td>
                 <div *ngFor="let j of i.stakeholders">
                     <div *ngIf="j.role=='APPROVER'">
-                        {{ j.emp_no + ": " + j.employee.shortname_eng }}
+                        {{ j.emp_no + ": " + j.employee.shortname_en }}
                     </div>
                 </div>
             </td>

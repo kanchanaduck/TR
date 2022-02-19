@@ -25,37 +25,37 @@
         </div><!-- form-group -->
         <div class="form-group col mb-0 p-1">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Title</label>
-            <select type="text" name="sname_en" class="form-control" required 
-                [(ngModel)]="center.sname_eng" 
+            <select type="text" name="title_name_en" class="form-control" required 
+                [(ngModel)]="center.title_name_en" 
                 [disabled]="true"
                 >
                 <option>MR.</option>
                 <option>MRS.</option>
-                <option>MISS</option>
+                <option>MS.</option>
                 </select>
         </div><!-- form-group -->
         <div class="form-group col mb-0 p-1">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">FIRSTNAME</label>
-            <input type="text" name="fname_en" class="form-control" required 
-                [(ngModel)]="center.gname_eng" 
+            <input type="text" name="firstname_en" class="form-control" required 
+                [(ngModel)]="center.firstname_en" 
                 [disabled]="true">
         </div><!-- form-group -->
         <div class="form-group col mb-0 p-1">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">LASTNAME</label>
-            <input type="text" name="gname_en" class="form-control" required 
-                [(ngModel)]="center.fname_eng" 
+            <input type="text" name="lastname_en" class="form-control" required 
+                [(ngModel)]="center.lastname_en" 
                 [disabled]="true">
         </div><!-- form-group -->
         <div class="form-group col mb-0 p-1">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">DIVISION</label>
-            <input type="text" name="div_abb_name" class="form-control" required 
-                [(ngModel)]="center.div_abb_name"
+            <input type="text" name="div_abb" class="form-control" required 
+                [(ngModel)]="center.div_abb"
                 [disabled]="true">
         </div><!-- form-group -->
         <div class="form-group col mb-0 p-1">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">DEPARTMENT</label>
-            <input type="text" name="dept_abb_name" class="form-control" required 
-                [(ngModel)]="center.dept_abb_name"
+            <input type="text" name="dept_abb" class="form-control" required 
+                [(ngModel)]="center.dept_abb"
                 [disabled]="true">
         </div><!-- form-group -->
         <div class="form-group col mb-0 p-1">
@@ -94,12 +94,12 @@
     <tbody>
         <tr *ngFor="let center of centers">
             <td>{{ center.emp_no }}</td>
-            <td>{{ center.sname_eng }}</td>
-            <td>{{ center.gname_eng }}</td>
-            <td>{{ center.fname_eng }}</td>
-            <td>{{ center.posn_ename }}</td>
-            <td>{{ center.div_abb_name }}</td>
-            <td>{{ center.dept_abb_name }}</td>
+            <td>{{ center.title_name_en }}</td>
+            <td>{{ center.firstname_en }}</td>
+            <td>{{ center.firstname_en }}</td>
+            <td>{{ center.position_name_en }}</td>
+            <td>{{ center.div_abb }}</td>
+            <td>{{ center.dept_abb }}</td>
             <td>{{ center.employed_status }}</td>
             <td class="text-center">
                 <a href="javascript:;" (click)="delete_center(center.emp_no)"><i class="far fa-trash-alt"></i></a>

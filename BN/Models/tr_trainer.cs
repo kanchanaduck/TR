@@ -16,16 +16,16 @@ namespace api_hrgis.Models
         [RequiredIf("trainer_type","Internal",ErrorMessage = "EMP NO. is required due to TRAINER TYPE is Internal")]
         [Display(Name = "EMP NO.")]
         public string emp_no { get; set; }
-        public string sname_en { get; set; }
+        public string title_name_en { get; set; }
         [RequiredIf("trainer_type","External",ErrorMessage = "FIRSTNAME is required due to TRAINER TYPE is External")]
         [Display(Name = "FIRSTNAME")]
-        public string gname_en { get; set; }
+        public string firstname_en { get; set; }
         [RequiredIf("trainer_type","External",ErrorMessage = "LASTNAME is required due to TRAINER TYPE is External")]
         [Display(Name = "LASTNAME")]
-        public string fname_en { get; set; }
-        public string sname_th { get; set; }
-        public string gname_th { get; set; }
-        public string fname_th { get; set; }
+        public string lastname_en { get; set; }
+        public string title_name_th { get; set; }
+        public string firstname_th { get; set; }
+        public string lastname_th { get; set; }
         [Required]
         [Display(Name = "TRAINER TYPE")]
         public string trainer_type { get; set; } = "Internal";

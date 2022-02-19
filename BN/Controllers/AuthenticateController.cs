@@ -55,19 +55,20 @@ namespace api_hrgis.Controllers
                   signingCredentials: credentials);
 
                 var query = await (from tb in _context.tb_employee
-                                   join tbs in _context.tr_stakeholder on tb.emp_no equals tbs.emp_no
+                                   join tbs in _context.tr_stakeholder on tb.emp_no equals tbs.emp_no into lj
+                                   from stk in lj.DefaultIfEmpty()
                                    where tb.emp_no == model.Username
                                    select new
                                    {
                                        tb.emp_no,
-                                       tb.sname_eng,
-                                       tb.gname_eng,
-                                       tb.fname_eng,
+                                       tb.title_name_en,
+                                       tb.firstname_en,
+                                       tb.lastname_en,
                                        tb.dept_code,
-                                       tb.dept_abb_name,
-                                       tbs.org_code,
+                                       tb.dept_abb,
+                                       stk.org_code,
                                        tb.band,
-                                       tb.posn_ename
+                                       tb.position_name_en
                                    }
                                     ).FirstOrDefaultAsync();
 

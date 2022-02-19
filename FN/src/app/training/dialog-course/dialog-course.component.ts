@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { NgbActiveModal, NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { DataTableDirective } from 'angular-datatables';
 import { Subject } from 'rxjs';
@@ -19,14 +19,17 @@ export class DialogCourseComponent implements OnInit {
   dtElement: DataTableDirective;
   isDtInitialized: boolean = false
   // end datatable
+  isVisable1: boolean = false
+  isVisable2: boolean = false
 
   _ogr_code: string = "";
   _getjwt: any;
   _emp_no: any;
 
+  @Input() inputitem = '';
   @Output() newItemEvent = new EventEmitter<string>();
 
-  constructor(private service: AppServiceService, public activeModal: NgbActiveModal) { 
+  constructor(private service: AppServiceService, public activeModal: NgbActiveModal, private modalService: NgbModal, config: NgbModalConfig) {
 
   }
 
@@ -50,26 +53,20 @@ export class DialogCourseComponent implements OnInit {
     this.fnGetStakeholder(this._emp_no);
   }
 
-  onSelect(selectedItem: any) {
-    // console.log("Selected item: ", selectedItem); // You get the Id of the selected item here
+  async onSelect(selectedItem: any) {
+    console.log("Selected item: ", selectedItem);
     this.newItemEvent.emit(selectedItem.course_no);
-    // this.dialogRef.disableClose = true;
-    //     this.dialogRef.close();
-
-    // this.activeModal.dismiss();
-    console.log(this.activeModal);
-    
-    // this.activeModal.close(true);
   }
-
 
   async fnGetStakeholder(emp_no: any) {
     await this.service.gethttp('Stakeholder/Employee/' + emp_no)
       .subscribe((response: any) => {
         console.log(response);
-        if (response.role.toUpperCase() == environment.role.committee) {
+        if (response.role.toUpperCase() == environment.role.committee || response.role.toUpperCase() == environment.role.approver) {
           this._ogr_code = response.organization.org_code;
           this.fnGet(this._ogr_code);
+        } else {
+          this.fnGetCenter(this._emp_no);
         }
       }, (error: any) => {
         console.log(error);
@@ -77,28 +74,62 @@ export class DialogCourseComponent implements OnInit {
       });
   }
 
-  async fnGet(_ogr_code: string) {
-
-    await this.service.gethttp('CourseMasters/Org/' + _ogr_code)
+  async fnGetCenter(emp_no: any) {
+    await this.service.gethttp('Center/' + emp_no)
       .subscribe((response: any) => {
-        console.log('co: ', response);
-
-        this.data_grid = response;
-
-        // Calling the DT trigger to manually render the table
-        if (this.isDtInitialized) {
-          this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-            dtInstance.destroy();
-            this.dtTrigger.next();
-          });
-        } else {
-          this.isDtInitialized = true
-          this.dtTrigger.next();
-        }
+        this.fnGet(this._ogr_code);
       }, (error: any) => {
         console.log(error);
-        this.data_grid = [];
+        this.fnGet(this._ogr_code);
       });
+  }
+
+  async fnGet(_ogr_code: string) {
+    console.log(this.inputitem);
+    if (this.inputitem == 'course-open') {
+      await this.service.gethttp('CourseMasters/Org/' + _ogr_code)
+        .subscribe((response: any) => {
+          console.log('co: ', response);
+
+          this.data_grid = response;
+
+          // Calling the DT trigger to manually render the table
+          if (this.isDtInitialized) {
+            this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+              dtInstance.destroy();
+              this.dtTrigger.next();
+            });
+          } else {
+            this.isDtInitialized = true
+            this.dtTrigger.next();
+          }
+        }, (error: any) => {
+          console.log(error);
+          this.data_grid = [];
+        });
+    } else {
+      await this.service.gethttp('CourseOpen/GetCourse')
+        .subscribe((response: any) => {
+          console.log('co: ', response);
+
+          this.data_grid = response;
+
+          // Calling the DT trigger to manually render the table
+          if (this.isDtInitialized) {
+            this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+              dtInstance.destroy();
+              this.dtTrigger.next();
+            });
+          } else {
+            this.isDtInitialized = true
+            this.dtTrigger.next();
+          }
+        }, (error: any) => {
+          console.log(error);
+          this.data_grid = [];
+        });
+    }
+
   }
 
   ngOnDestroy(): void {

@@ -24,7 +24,7 @@ export class ApproveCenterComponent implements OnInit {
   @ViewChild("txtband") txtband: any;
   @ViewChild("txtdept") txtdept: any;
   _getjwt: any;
-  dept_abb_name = '';
+  dept_abb = '';
   checkboxesDataList: any[];
   not_pass: boolean = false;
   disabled_chkall: boolean = false;
@@ -35,6 +35,12 @@ export class ApproveCenterComponent implements OnInit {
 
   form: FormGroup;
   submitted = false;
+  private _dept: string;
+  _org_abb: string | Blob;
+  visableButton: boolean;
+  isDtInitialized: any;
+  dtElement: any;
+  dtTrigger: any;
 
   constructor(private modalService: NgbModal, private formBuilder: FormBuilder, private service: AppServiceService, private exportexcel: ExportService) {
 
@@ -132,7 +138,7 @@ export class ApproveCenterComponent implements OnInit {
 
     this.fnGetband();
     this._getjwt = this.service.service_jwt();
-    this.dept_abb_name = this._getjwt.user.dept_abb_name == 'MTP' ? environment.text.all : this._getjwt.user.dept_abb_name;
+    this.dept_abb = this._getjwt.user.dept_abb == 'MTP' ? environment.text.all : this._getjwt.user.dept_abb;
   }
   get f(): { [key: string]: AbstractControl } {
     return this.form.controls;
@@ -185,7 +191,7 @@ export class ApproveCenterComponent implements OnInit {
     }
     // console.log(JSON.stringify(this.form.value, null, 2));
 
-    if (this._dept != this.dept_abb_name) {
+    if (this._dept != this.dept_abb) {
       Swal.fire({
         icon: 'error',
         title: "",
@@ -215,21 +221,36 @@ export class ApproveCenterComponent implements OnInit {
     }
     // console.log(send_data);
     await this.service.axios_post('Registration', send_data, environment.text.success);
-    await this.fnGet(this.form.controls['frm_course'].value, this.dept_abb_name);
+    await this.fnGet(this.form.controls['frm_course'].value, this.dept_abb);
   }
   fnApproved() {
+    let text = "";
+    if (this.array_grid.length > 0) {
+      text = "you want to approve these trainees";
+    } else {
+      text = "you want to cancle approve these trainees"
+    }
+
     Swal.fire({
-      text: 'Approve ?',
+      title: 'Are you sure?',
+      text: text,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes',
       cancelButtonText: 'No'
     }).then(async (result) => {
       if (result.value) {
-        // if (this.array_grid.length > 0) {
+        for (var i = 0; i < this.data_grid.length; i++) {
+          this.data_grid[i].center_approved_checked = false;
+        }
 
-        Array.prototype.push.apply(this.array_grid, this.data_grid); // console.log(this.array_grid);
-        this.array_grid = removeDuplicateObjectFromArray(this.array_grid, 'emp_no'); // console.log(removeDuplicateObjectFromArray(this.array_grid, 'emp_no'));
+        for (const iterator of this.array_grid) {
+          let _objIndex = this.data_grid.findIndex((obj => obj.emp_no == iterator.emp_no));
+          this.data_grid[_objIndex].center_approved_checked = true;
+        }
+
+        Array.prototype.push.apply(this.array_grid, this.data_grid);  // console.log('array_grid: ',this.array_grid);
+        this.array_grid = removeDuplicateObjectFromArray(this.array_grid, 'emp_no');  // console.log('remove: ',removeDuplicateObjectFromArray(this.array_grid, 'emp_no'));
 
         const send_data = {
           course_no: this.form.controls['frm_course'].value,
@@ -241,8 +262,7 @@ export class ApproveCenterComponent implements OnInit {
         this.selection.clear();
         this.array_grid = [];
         await this.service.axios_put('/Registration/CenterApprove/' + this.form.controls['frm_course'].value, send_data, environment.text.success);
-        await this.fnGet(this.form.controls['frm_course'].value, this.dept_abb_name);
-        // }
+        await this.fnGet(this.form.controls['frm_course'].value, this.dept_abb);
       }
     })
   }
@@ -267,7 +287,7 @@ export class ApproveCenterComponent implements OnInit {
     }).then(async (result) => {
       if (result.value) {
         await this.service.axios_delete('Registration/' + item.course_no + '/' + item.emp_no + '/' + this.txtqty.nativeElement.value, environment.text.delete);
-        this.fnGet(item.course_no, this.dept_abb_name);
+        this.fnGet(item.course_no, this.dept_abb);
       }
     })
   }
@@ -279,7 +299,7 @@ export class ApproveCenterComponent implements OnInit {
       this.res_course = await this.service.axios_get('CourseOpen/' + event.target.value);
       if (this.res_course != undefined) {
         this.form.controls['frm_course_name'].setValue(this.res_course.course_name_en);
-        this.txtgroup.nativeElement.value = this.res_course.dept_abb_name;
+        this.txtgroup.nativeElement.value = this.res_course.dept_abb;
         this.txtqty.nativeElement.value = this.res_course.capacity;
         this.v_capacity = this.res_course.capacity;
         this.txtdate_from.nativeElement.value = formatDate(this.res_course.date_start).toString() + ' ' + this.res_course.time_in;
@@ -293,7 +313,7 @@ export class ApproveCenterComponent implements OnInit {
         } // console.log(this.array_chk);
         this.checkboxesDataList = this.array_chk;
 
-        await this.fnGet(event.target.value, this.dept_abb_name);
+        await this.fnGet(event.target.value, this.dept_abb);
       }
     } else if (event.target.value.length < 11) {
       this.form.controls['frm_course_name'].setValue("");
@@ -305,6 +325,10 @@ export class ApproveCenterComponent implements OnInit {
         value.isChecked = false;
       });
       this.fnClear();
+    }
+
+    if (event.target.value.length == 0) {
+      await this.fnGet("No", "No");
     }
   }
 
@@ -318,12 +342,13 @@ export class ApproveCenterComponent implements OnInit {
   }
 
   res_emp: any = [];
-  _dept: any = '';
+  dept_emp: any = ''; div_emp: any = '';
   async searchEmp(empno: any) {
     this.res_emp = await this.service.axios_get('Employees/' + empno); // console.log('searchEmp: ', this.res_emp);
     if (this.res_emp != null || this.res_emp != undefined) {
       this.form.controls['frm_emp_name'].setValue(this.res_emp.sname_eng + " " + this.res_emp.gname_eng + " " + this.res_emp.fname_eng);
-      this._dept = this.res_emp.dept_abb_name;
+      this.dept_emp = this.res_emp.dept_abb_name;
+      this.div_emp = this.res_emp.div_abb_name;
       this.txtdept.nativeElement.value = this.res_emp.dept_code + ":" + this.res_emp.dept_abb_name;
       this.txtposition.nativeElement.value = this.res_emp.posn_ename;
       this.txtband.nativeElement.value = this.res_emp.band;
@@ -379,7 +404,7 @@ export class ApproveCenterComponent implements OnInit {
     if (this.file !== undefined && this.file !== "" && this.file !== null) {
       formData.append('file_form', this.file)
       formData.append('file_name', this.fileName)
-      formData.append('dept_abb_name', this.dept_abb_name)
+      formData.append('dept_abb_name', this._org_abb)
       formData.append('capacity', this.txtqty.nativeElement.value)
     }
 
@@ -391,7 +416,7 @@ export class ApproveCenterComponent implements OnInit {
     }
 
     this.nameFile = 'Choose file';
-    await this.fnGet(this.form.controls['frm_course'].value, this.dept_abb_name);
+    await this.fnGet(this.form.controls['frm_course'].value, this._org_abb);
   }
   /** End File Upload, Download */
 
@@ -443,30 +468,125 @@ export class ApproveCenterComponent implements OnInit {
     }
   } // Popup chart
 
-  res_get: any;
-  async fnGet(course_no, dept_abb_name) {
-    this.res_get = await this.service.axios_get('Registration/GetGridView/' + course_no + '/' + dept_abb_name);
-    // console.log('res_get: ', this.res_get);
-    this.data_grid = this.res_get.your;
-
-    this.v_regis = this.res_get.your.filter(x => x.last_status != environment.text.wait).length;
-    this.v_wait = this.res_get.your.filter(x => x.last_status == environment.text.wait).length;
-    this.v_total = this.res_get.your.length;
-
-    let chk_true = this.res_get.your.filter(x => x.center_approved_checked == true);
-    if (chk_true.length > 0) {
-      this.selection = new SelectionModel<DataTablesResponse>(true, chk_true)
-      // console.log("1", this.selection.selected);
-    }
+  async fnGetCenter(emp_no: any) {
+    await this.service.gethttp('Center/' + emp_no)
+      .subscribe((response: any) => {
+        this.visableButton = true;
+        this._org_abb = environment.text.all;
+        this.fnGet("No", "No");
+      }, (error: any) => {
+        console.log(error);
+        this.fnGet("No", "No");
+        this.visableButton = false;
+      });
   }
 
-  array_chk:any;
+  async fnGet(course_no, dept_abb_name) {
+    await this.service.gethttp('Registration/GetGridView/' + course_no + '/' + dept_abb_name)
+      .subscribe((response: any) => {
+        this.data_grid = response.your;
+
+        this.v_regis = response.your.filter(x => x.last_status != environment.text.wait).length;
+        this.v_wait = response.your.filter(x => x.last_status == environment.text.wait).length;
+        this.v_total = response.your.length;
+
+        let chk_true = response.your.filter(x => x.center_approved_checked == true);
+        if (chk_true.length > 0) {
+          this.selection = new SelectionModel<DataTablesResponse>(true, chk_true)
+          // console.log("1", this.selection.selected);
+        }
+
+        // Calling the DT trigger to manually render the table
+        if (this.isDtInitialized) {
+          this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+            dtInstance.destroy();
+            this.dtTrigger.next();
+          });
+        } else {
+          this.isDtInitialized = true
+          this.dtTrigger.next();
+        }
+      }, (error: any) => {
+        console.log(error);
+        this.data_grid = [];
+      });
+  }
+
+  array_chk: any;
   async fnGetband() {
     this.array_chk = await this.service.axios_get('Bands'); //console.log(this.array_chk);
     this.array_chk.forEach(object => {
       object.isChecked = false;
     }); //console.log(this.array_chk);
     this.checkboxesDataList = this.array_chk; //console.log(this.checkboxesDataList);
+  }
+
+  // Open popup Course
+  inputitem = 'approve-center';
+  openCourse(content) {
+    //   size: 'lg' //sm, mb, lg, xl
+    this.v_course_no = "";
+    const modalRef = this.modalService.open(content, { size: 'lg' });
+    modalRef.result.then(
+      (result) => {
+        console.log(result);
+        if (result != "OK") {
+          this.form.controls['frm_course'].setValue("");
+          this.fnGetCourse("NULL");
+          this.v_course_no = "";
+        }
+      },
+      (reason) => {
+        console.log(reason);
+        this.form.controls['frm_course'].setValue("");
+        this.fnGetCourse("NULL");
+        this.v_course_no = "";
+      }
+    );
+  }
+
+  v_course_no: string = "";
+  addItemCourse(newItem: string) {
+    this.v_course_no = newItem;
+    this.form.controls['frm_course'].setValue(newItem);
+    this.fnGetCourse(newItem);
+  }
+
+  async fnGetCourse(course_no: any) {
+    this.res_course = await this.service.axios_get('CourseOpen/Open/' + course_no);
+    console.log('fnGetCourse: ', this.res_course);
+    if (this.res_course != undefined) {
+      this.form.controls['frm_course_name'].setValue(this.res_course.course_name_en);
+        this.txtgroup.nativeElement.value = this.res_course.org_code;
+        this.txtqty.nativeElement.value = this.res_course.capacity;
+        this.txtdate_from.nativeElement.value = formatDate(this.res_course.date_start).toString() + ' ' + this.res_course.time_in.substring(0, 5);
+        this.txtdate_to.nativeElement.value = formatDate(this.res_course.date_end).toString() + ' ' + this.res_course.time_out.substring(0, 5);
+
+        this.arr_band = this.res_course.courses_bands; // console.log(this.arr_band);
+
+        var nameArr = this.res_course.courses_bands; // console.log(nameArr);
+        for (const iterator of nameArr) {
+          this.array_chk.find(v => v.band === iterator.band).isChecked = true;
+        } // console.log(this.array_chk);
+        this.checkboxesDataList = this.array_chk;
+
+        this.fnGet(course_no, this._org_abb);
+    } else {
+      this.form.controls['frm_course_name'].setValue("");
+      this.txtgroup.nativeElement.value = "";
+      this.txtqty.nativeElement.value = "";
+      this.txtdate_from.nativeElement.value = "";
+      this.txtdate_to.nativeElement.value = "";
+      this.checkboxesDataList.forEach((value, index) => {
+        value.isChecked = false;
+      });
+      await this.fnGet("No", "No");
+    }
+  }
+  // End Open popup Course
+
+  ngOnDestroy(): void {
+    this.dtTrigger.unsubscribe();
   }
 }
 
@@ -517,248 +637,3 @@ class DataTablesResponse {
   seq_no: number;
   sname_eng: string;
 }
-
-export interface PeriodicElement2 {
-  emp_no: string;
-  sname_eng: string;
-  gname_eng: string;
-  fname_eng: string;
-  posn_ename: string;
-  band: string;
-  dept_code: string;
-  dept_abb_name: string;
-  last_status: string;
-  remark: string;
-  course_name_en: string;
-}
-const ELEMENT_DATA: PeriodicElement2[] = [
-  {
-    emp_no: '014748',
-    sname_eng: 'MISS',
-    gname_eng: 'NUTTAYA',
-    fname_eng: 'KALLA',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    last_status: '',
-    remark: 'Not passed CPT-001',
-    course_name_en: 'Basic Excel'
-  }, {
-    emp_no: '014749',
-    sname_eng: 'MR.',
-    gname_eng: 'NATIRUT',
-    fname_eng: 'DAUNGPAK',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    last_status: 'Wait',
-    remark: 'Not passed CPT-001',
-    course_name_en: 'Basic Excel'
-  }, {
-    emp_no: '014748',
-    sname_eng: 'MISS',
-    gname_eng: 'NUTTAYA',
-    fname_eng: 'KALLA',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    last_status: '',
-    remark: 'Not passed CPT-001',
-    course_name_en: 'Basic Excel'
-  }, {
-    emp_no: '014749',
-    sname_eng: 'MR.',
-    gname_eng: 'NATIRUT',
-    fname_eng: 'DAUNGPAK',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    last_status: 'Wait',
-    remark: 'Not passed CPT-001',
-    course_name_en: 'Basic Excel'
-  }, {
-    emp_no: '014748',
-    sname_eng: 'MISS',
-    gname_eng: 'NUTTAYA',
-    fname_eng: 'KALLA',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    last_status: '',
-    remark: 'Not passed CPT-001',
-    course_name_en: 'Basic Excel'
-  }, {
-    emp_no: '014749',
-    sname_eng: 'MR.',
-    gname_eng: 'NATIRUT',
-    fname_eng: 'DAUNGPAK',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    last_status: 'Wait',
-    remark: 'Not passed CPT-001',
-    course_name_en: 'Basic Excel'
-  }, {
-    emp_no: '014750',
-    sname_eng: 'MISS',
-    gname_eng: 'NUTTAYA',
-    fname_eng: 'KALLA',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    last_status: '',
-    remark: '',
-    course_name_en: ''
-  }, {
-    emp_no: '014751',
-    sname_eng: 'MR.',
-    gname_eng: 'NATIRUT',
-    fname_eng: 'DAUNGPAK',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    last_status: 'Wait',
-    remark: '',
-    course_name_en: ''
-  }, {
-    emp_no: '014752',
-    sname_eng: 'MISS',
-    gname_eng: 'NUTTAYA',
-    fname_eng: 'KALLA',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    last_status: '',
-    remark: '',
-    course_name_en: ''
-  }, {
-    emp_no: '014753',
-    sname_eng: 'MR.',
-    gname_eng: 'NATIRUT',
-    fname_eng: 'DAUNGPAK',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    last_status: 'Wait',
-    remark: '',
-    course_name_en: ''
-  }, {
-    emp_no: '014754',
-    sname_eng: 'MR.',
-    gname_eng: 'NATIRUT',
-    fname_eng: 'DAUNGPAK',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    last_status: 'Wait',
-    remark: '',
-    course_name_en: ''
-  }, {
-    emp_no: '014755',
-    sname_eng: 'MISS',
-    gname_eng: 'NUTTAYA',
-    fname_eng: 'KALLA',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    last_status: '',
-    remark: '',
-    course_name_en: ''
-  }, {
-    emp_no: '014756',
-    sname_eng: 'MR.',
-    gname_eng: 'NATIRUT',
-    fname_eng: 'DAUNGPAK',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    last_status: 'Wait',
-    remark: '',
-    course_name_en: ''
-  }, {
-    emp_no: '014757',
-    sname_eng: 'MR.',
-    gname_eng: 'NATIRUT',
-    fname_eng: 'DAUNGPAK',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    last_status: 'Wait',
-    remark: '',
-    course_name_en: ''
-  }, {
-    emp_no: '014758',
-    sname_eng: 'MISS',
-    gname_eng: 'NUTTAYA',
-    fname_eng: 'KALLA',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    last_status: '',
-    remark: '',
-    course_name_en: ''
-  }, {
-    emp_no: '014759',
-    sname_eng: 'MR.',
-    gname_eng: 'NATIRUT',
-    fname_eng: 'DAUNGPAK',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    last_status: 'Wait',
-    remark: '',
-    course_name_en: ''
-  }, {
-    emp_no: '014760',
-    sname_eng: 'MR.',
-    gname_eng: 'NATIRUT',
-    fname_eng: 'DAUNGPAK',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    last_status: 'Wait',
-    remark: '',
-    course_name_en: ''
-  }, {
-    emp_no: '014761',
-    sname_eng: 'MISS',
-    gname_eng: 'NUTTAYA',
-    fname_eng: 'KALLA',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    last_status: '',
-    remark: '',
-    course_name_en: ''
-  }, {
-    emp_no: '014762',
-    sname_eng: 'MR.',
-    gname_eng: 'NATIRUT',
-    fname_eng: 'DAUNGPAK',
-    posn_ename: 'PROGRAMMER',
-    band: 'J2',
-    dept_code: '2230',
-    dept_abb_name: 'ICD',
-    last_status: 'Wait',
-    remark: '',
-    course_name_en: ''
-  },
-];

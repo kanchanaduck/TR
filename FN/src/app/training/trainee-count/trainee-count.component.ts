@@ -62,24 +62,6 @@ export class TraineeCountComponent implements OnInit {
           {
             extend: 'collection',
             text: '<i class="fas fa-cloud-download-alt"></i> Download</button>',
-<<<<<<< .working
-            split: ['csv', 'pdf', 'excel'],
-||||||| .merge-left.r108
-            buttons: [
-              {
-                extend: 'excel',
-                text: '<i class="far fa-file-excel"></i> Excel</button>',
-              },
-              {
-                extend: 'csv',
-                text: '<i class="far fa-file-excel"></i> Csv</button>',
-              },
-              {
-                extend: 'pdf',
-                text: '<i class="far fa-file-pdf"></i> Pdf</button>',
-              },              
-            ]
-=======
             buttons: [
               {
                 extend: 'excel',
@@ -94,7 +76,6 @@ export class TraineeCountComponent implements OnInit {
                 text: '<i class="far fa-file-pdf"></i> Pdf</button>',
               },
             ]
->>>>>>> .merge-right.r109
           }
         ],
       },

@@ -5,6 +5,7 @@ import axios from 'axios';
 import { Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
+import { AppServiceService } from 'src/app/app-service.service';
 
 @Component({
   selector: 'app-course-map',
@@ -14,8 +15,8 @@ import Swal from 'sweetalert2';
 export class CourseMapComponent implements OnInit {
 
   course_map: any = [];
-  org_code: string = "2230";
   employed_status: string = "employed";
+  org_code: string;
 
   dtOptions: any = {};
   dtTrigger: Subject<any> = new Subject();
@@ -30,12 +31,12 @@ export class CourseMapComponent implements OnInit {
     }
   }
   departments: any;
-  group_by_parent_org_code_fn: (item: any) => any;
-  group_value_parent_org_code_fn: (_: string, children: any[]) => { org_abb: any; org_code: any; };
-  compare_org: (item: any, selected: any) => boolean;
+  _dept_code: any;
+  _getjwt: any;
+  _emp_no: any;
 
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(private service: AppServiceService, private httpClient: HttpClient)  { }
 
   ngOnInit(): void {
 
@@ -87,10 +88,35 @@ export class CourseMapComponent implements OnInit {
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
     };
 
+
+    this._getjwt = this.service.service_jwt();  // get jwt
+    this._emp_no = this._getjwt.user.emp_no; // set emp_no
+    this._dept_code = this._getjwt.user.dept_code; // set emp_no
+    this.org_code = this._dept_code
+    
     this.get_course_map()
     this.get_departments()
   }
 
+  custom_search_org_fn(term: string, item: any) {
+    term = term.toLowerCase();
+    return item.org_code.toLowerCase().indexOf(term) > -1 ||  item.org_abb.toLowerCase().indexOf(term) > -1 ||item.org_abb.toLowerCase() === term;
+  }
+
+  group_by_parent_org_code_fn = (item) => item.parent_org_code;
+  group_value_parent_org_code_fn = (_: string, children: any[]) => ({ org_abb: children[0].parent_org.org_abb, org_code: children[0].parent_org.org_code });
+  
+  compare_org = (item, selected) => {
+    console.log(item)
+    console.log(selected)
+    if (item.org_code && selected) {
+      return item.org_code === selected;
+    }
+    return false;
+  };
+
+
+ 
 
 
   async get_course_map(){
@@ -119,18 +145,6 @@ export class CourseMapComponent implements OnInit {
     await axios.get(`${environment.API_URL}Organization/Level/Department/Parent`, this.headers)
     .then(function (response) {
       self.departments = response
-      //console.log(response)
-      self.group_by_parent_org_code_fn = (item) => item.parent_org_code;
-      self.group_value_parent_org_code_fn = (_: string, children: any[]) => ({ org_abb: children[0].parent_org.org_abb, org_code: children[0].parent_org.org_code });
-      self.compare_org = (item, selected) => {
-        if (selected.Grouby_parent_org_code_fn && item.Groupvalue_parent_org_code_fn) {
-            return item.Grouby_parent_org_code_fn === selected.Grouby_parent_org_code_fn;
-        }
-        if (item.oeg_abb && selected.oeg_abb) {
-            return item.oeg_abb === selected.oeg_abb;
-        }
-        return false;
-      };
     })
     .catch(function (error) {
       //console.log(error)

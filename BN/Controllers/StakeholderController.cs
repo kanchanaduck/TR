@@ -32,6 +32,7 @@ namespace api_hrgis.Controllers
                             .Include(e => e.parent_org)
                             .Include(e => e.stakeholders)
                             .ThenInclude(p => p.employee)
+                            .AsNoTracking()
                             .Where(e => e.level_name=="department" || e.level_name=="division")
                             .ToListAsync();
         }
@@ -44,6 +45,7 @@ namespace api_hrgis.Controllers
             var tr_stakeholder = await _context.tb_organization
                                     .Include(e => e.stakeholders)
                                     .ThenInclude(p => p.employee)
+                                    .AsNoTracking()
                                     .Where(e => e.org_code==org_code)
                                     .FirstOrDefaultAsync();
 
@@ -63,6 +65,7 @@ namespace api_hrgis.Controllers
             var tr_stakeholder = await _context.tb_organization
                                     .Include(e => e.stakeholders)
                                     .ThenInclude(p => p.employee)
+                                    .AsNoTracking()
                                     .Where(e => e.org_code==org_code)
                                     .FirstOrDefaultAsync();
 
@@ -82,6 +85,7 @@ namespace api_hrgis.Controllers
                                     .Include(e => e.organization)
                                     .ThenInclude(p => p.parent_org)
                                     .ThenInclude(p => p.children_org)
+                                    .AsNoTracking()
                                     .Where(e => e.emp_no == emp_no) 
                                     .FirstOrDefaultAsync();
 

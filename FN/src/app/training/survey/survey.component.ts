@@ -23,28 +23,28 @@ export class SurveyComponent implements OnInit {
     this.emp = [
       {
         "emp_no": "J032931",
-        "gname_eng": "HIDEKI",
-        "fname_eng": "KUSADOME"
+        "firstname_en": "HIDEKI",
+        "lastname_en": "KUSADOME"
       },
       {
         "emp_no": "000094",
-        "gname_eng": "NOPPAMAS",
-        "fname_eng": "TONGDEE"
+        "firstname_en": "NOPPAMAS",
+        "lastname_en": "TONGDEE"
       },
       {
         "emp_no": "000083",
-        "gname_eng": "SARAWUT",
-        "fname_eng": "JINATO"
+        "firstname_en": "SARAWUT",
+        "lastname_en": "JINATO"
       },
       {
         "emp_no": "005042",
-        "gname_eng": "CHALERMCHAI",
-        "fname_eng": "PONANG"
+        "firstname_en": "CHALERMCHAI",
+        "lastname_en": "PONANG"
       },
       {
         "emp_no": "014496",
-        "gname_eng": "KANCHANA",
-        "fname_eng": "SAIPANUS"
+        "firstname_en": "KANCHANA",
+        "lastname_en": "SAIPANUS"
       },
     ]
 

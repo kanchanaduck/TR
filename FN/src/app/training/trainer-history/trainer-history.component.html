@@ -7,19 +7,19 @@
         <dd class="col-sm-9">{{ trainer.emp_no || '-' }}</dd>
       
         <dt class="col-sm-3">TITLE:</dt>
-        <dd class="col-sm-9">{{ trainer.sname_en || '-' }}</dd>
+        <dd class="col-sm-9">{{ trainer.title_name_en || '-' }}</dd>
       
         <dt class="col-sm-3">FIRSTNAME:</dt>
-        <dd class="col-sm-9">{{ trainer.gname_en || '-' }}</dd>
+        <dd class="col-sm-9">{{ trainer.firstname_en || '-' }}</dd>
 
         <dt class="col-sm-3">LASTNAME: </dt>
-        <dd class="col-sm-9">{{ trainer.fname_en || '-' }}</dd>
+        <dd class="col-sm-9">{{ trainer.lastname_en || '-' }}</dd>
       
         <dt class="col-sm-3">DIVISION:</dt>
-        <dd class="col-sm-9">{{ trainer.div_abb_name || '-' }}</dd>
+        <dd class="col-sm-9">{{ trainer.div_abb || '-' }}</dd>
 
         <dt class="col-sm-3">DEPARTMENT: </dt>
-        <dd class="col-sm-9">{{ trainer.dept_abb_name || '-' }}</dd>
+        <dd class="col-sm-9">{{ trainer.dept_abb || '-' }}</dd>
       
         <dt class="col-sm-3">ORGANIZATION:</dt>
         <dd class="col-sm-9">{{ trainer.organization || '-' }}</dd>
@@ -42,13 +42,12 @@
     </thead>
     <tbody>
         <tr *ngFor="let i of trainer_history">
-            <td>{{ i.course_no }}</td>
-            <td>{{ i.course_thai_name }}</td>
-            <td>{{ i.course_english_name }}</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>{{ i.courses.course_no }}</td>
+            <td>{{ i.courses.course_name_th }}</td>
+            <td>{{ i.courses.course_name_en }}</td>
+            <td>{{ i.courses.date_start | date:'dd-MMM-yy' }}</td>
+            <td>{{ i.courses.date_end | date:'dd-MMM-yy'}}</td>
+            <td>{{ i.courses.place }}</td>
         </tr>
     </tbody>
 </table>

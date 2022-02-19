@@ -91,7 +91,7 @@ export class UsersComponent implements OnInit {
     {
       "command": "SELECT * FROM ADMIN.v_emp_data_all_cpt "+
                 "WHERE dept_code in ('2230')  "+
-                "ORDER BY div_cls, dept_code"
+                "ORDER BY div_code, dept_code"
     })
     .then((response) => {
       // this.employees = response.data;

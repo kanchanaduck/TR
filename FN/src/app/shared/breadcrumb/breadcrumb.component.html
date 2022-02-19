@@ -20,7 +20,12 @@
                 </li>
             </ol>
         </nav>
-        <h2 class="az-content-title mb-20">{{ breadcrumb.label }}</h2>
+        <h2 class="az-content-title mb-20">
+            {{ breadcrumb.label }}
+            <!-- <a *ngIf="show_suggestion" (href="javascript:;" (click)="suggestion_info()">
+                <i class="fa-solid fa-circle-info"></i>
+            </a> -->
+        </h2>
     </div>
 </div>
 

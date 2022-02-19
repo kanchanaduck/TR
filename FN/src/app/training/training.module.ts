@@ -17,7 +17,7 @@ import { ChartsModule } from 'ng2-charts';
 
 import { TrainingComponent } from './training/training.component';
 import { CourseMasterComponent } from './course-master/course-master.component';
-import { CourseOpenComponent } from './course-open/course-open.component';
+// import { CourseOpenComponent } from './course-open/course-open.component';
 import { SurveyCenterComponent } from './survey-center/survey-center.component';
 import { SurveyComponent } from './survey/survey.component';
 import { CourseTargetComponent } from './course-target/course-target.component';
@@ -35,14 +35,10 @@ import { EmployeeCourseHistoryComponent } from './employee-course-history/employ
 import { CourseHistoryComponent } from './course-history/course-history.component';
 import { StakeholderComponent } from './stakeholder/stakeholder.component';
 import { CenterComponent } from './center/center.component';
-<<<<<<< .working
+// import { DialogCourseComponent } from './dialog-course/dialog-course.component';
 import { EvaluationFormComponent } from './evaluation-form/evaluation-form.component';
 import { TrainerComponent } from './trainer/trainer.component';
 import { TrainerHistoryComponent } from './trainer-history/trainer-history.component';
-||||||| .merge-left.r108
-=======
-import { DialogCourseComponent } from './dialog-course/dialog-course.component';
->>>>>>> .merge-right.r109
 
 const routes: Routes = [
   { path: '', component: TrainingComponent },
@@ -53,7 +49,7 @@ const routes: Routes = [
   { path: 'course-score', component: CourseScoreComponent, data: { title: 'Input score by manual key and import excel', active: true } },
   { path: 'course-confirmation-sheet', component: CourseConfirmationSheetComponent, data: { title: 'List trainee of course and send email', active: true } },
   { path: 'course-master', component: CourseMasterComponent, data: { title: 'Master course control', active: true } },
-  { path: 'course-open', component: CourseOpenComponent, data: { title: 'Open course', active: true } },
+  // { path: 'course-open', component: CourseOpenComponent, data: { title: 'Open course', active: true } },
   { path: 'course-map', component: CourseMapComponent, data: { title: 'Course map', active: true } },
   { path: 'course-signature-sheet', component: CourseSignatureSheetComponent, data: { title: 'ใบเซ็นชื่อ', active: true } },
   { path: 'trainer', component: TrainerComponent, data: { title: 'Trainer', active: true} },
@@ -75,7 +71,7 @@ const routes: Routes = [
   declarations: [
     TrainingComponent,
     CourseMasterComponent,
-    CourseOpenComponent,
+    // CourseOpenComponent,
     TrainerComponent,
     SurveyCenterComponent,
     SurveyComponent,
@@ -93,16 +89,10 @@ const routes: Routes = [
     EmployeeCourseHistoryComponent,
     CourseHistoryComponent,
     StakeholderComponent,
-<<<<<<< .working
-    CenterComponent,
     EvaluationFormComponent,
+    // DialogCourseComponent,
     TrainerHistoryComponent,
-||||||| .merge-left.r108
     CenterComponent
-=======
-    CenterComponent,
-    DialogCourseComponent
->>>>>>> .merge-right.r109
   ],
   imports: [
     CommonModule,

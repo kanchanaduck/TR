@@ -55,19 +55,19 @@ namespace api_hrgis.Controllers
             return tr_course_registration;
         }
 
-        // GET: api/Registration/GetGridView/{course_no}/{dept_abb_name}
-        [HttpGet("GetGridView/{course_no}/{dept_abb_name}")]
-        public async Task<ActionResult> GetGridView(string course_no, string dept_abb_name)
+        // GET: api/Registration/GetGridView/{course_no}/{dept_abb}
+        [HttpGet("GetGridView/{course_no}/{dept_abb}")]
+        public async Task<ActionResult> GetGridView(string course_no, string dept_abb)
         {
             string _dept ="";
-            _dept = dept_abb_name == _config.GetValue<string>("Text:all") ? "" : dept_abb_name;
+            _dept = dept_abb == _config.GetValue<string>("Text:all") ? "" : dept_abb;
 
             var query = await (
                 from tb1 in _context.tr_course_registration
                 join tb3 in _context.tr_course on tb1.course_no equals tb3.course_no
                 join tb2 in _context.tb_employee on tb1.emp_no equals tb2.emp_no into tb
                 from table in tb.DefaultIfEmpty()
-                where tb1.course_no == course_no && (table.dept_abb_name.Contains(_dept))
+                where tb1.course_no == course_no && (table.dept_abb.Contains(_dept))
                 select new
                 {
                     tb1.course_no,
@@ -79,13 +79,13 @@ namespace api_hrgis.Controllers
                     tb1.manager_approved_checked,
                     tb1.center_approved_checked,
                     table.dept_code,
-                    table.dept_abb_name,
-                    table.fname_eng,
-                    table.gname_eng,
-                    table.sname_eng,
+                    table.dept_abb,
+                    table.lastname_en,
+                    table.firstname_en,
+                    table.title_name_en,
                     table.band,
-                    table.posn_code,
-                    table.posn_ename
+                    table.position_code,
+                    table.position_name_en
                 }).OrderBy(x => x.seq_no).ToListAsync();
 
             var query_other = await (
@@ -93,7 +93,7 @@ namespace api_hrgis.Controllers
                 join tb3 in _context.tr_course on tb1.course_no equals tb3.course_no
                 join tb2 in _context.tb_employee on tb1.emp_no equals tb2.emp_no into tb
                 from table in tb.DefaultIfEmpty()
-                where tb1.course_no == course_no && (!table.dept_abb_name.Contains(_dept))
+                where tb1.course_no == course_no && (!table.dept_abb.Contains(_dept))
                 select new
                 {
                     tb1.course_no,
@@ -105,13 +105,13 @@ namespace api_hrgis.Controllers
                     tb1.manager_approved_checked,
                     tb1.center_approved_checked,
                     table.dept_code,
-                    table.dept_abb_name,
-                    table.fname_eng,
-                    table.gname_eng,
-                    table.sname_eng,
+                    table.dept_abb,
+                    table.lastname_en,
+                    table.firstname_en,
+                    table.title_name_en,
                     table.band,
-                    table.posn_code,
-                    table.posn_ename
+                    table.position_code,
+                    table.position_name_en
                 }).OrderBy(x => x.seq_no).ToListAsync();
 
             return Ok(new
@@ -134,7 +134,7 @@ namespace api_hrgis.Controllers
             var query = await _context.tr_course_master.Where(x => x.course_no == course_no.Substring(0, 7)).FirstOrDefaultAsync();
             if (query != null)
             {
-                prev_c = query.prev_course_no;
+                // prev_c = query.prev_course_no;
                 if (prev_c != null)
                 {
                     var query2 = await _context.tr_course_registration.Where(x => x.course_no == course_no && x.emp_no == emp_no && x.last_status == _config.GetValue<string>("Status:center_approved")).FirstOrDefaultAsync();
@@ -334,7 +334,7 @@ namespace api_hrgis.Controllers
                             edits.last_status = _config.GetValue<string>("Status:center_approved");
                             edits.center_approved_at = DateTime.Now;
                             edits.center_approved_by = User.FindFirst("emp_no").Value;
-                            edits.center_approved_checked = true;
+                            edits.center_approved_checked = item.center_approved_checked;
                         }
                         // Console.WriteLine("===== 1: " + item.emp_no + " : " + _seq_no);
                         
@@ -488,7 +488,7 @@ namespace api_hrgis.Controllers
                             string _last_status = "";
 
                             var query_emp = await _context.tb_employee.Where(x => x.emp_no == _emp_no).FirstOrDefaultAsync();
-                            if(query_emp.dept_abb_name == model.dept_abb_name){
+                            if(query_emp.dept_abb == model.dept_abb){
                                 var query_course = await _context.tr_course_band.Where(x => x.course_no == course_no && x.band.Contains(query_emp.band)).FirstOrDefaultAsync();
                                 if(query_course != null){
                                     var query_seq = await _context.tr_course_registration.Where(x => x.course_no == course_no).OrderByDescending(x => x.seq_no).FirstOrDefaultAsync();
@@ -562,7 +562,7 @@ public class req_tr_course_registration
     public bool? manager_approved_checked { get; set; }
     public bool? center_approved_checked { get; set; }
     public int capacity { get; set; }
-    public string dept_abb_name { get; set; }
+    public string dept_abb { get; set; }
     public List<req_array_regis> array { get; set; }
 }
 
@@ -582,7 +582,7 @@ public class req_fileform
 {
     public IFormFile file_form { get; set; }
     public string file_name { get; set; }
-    public string dept_abb_name { get; set; }
+    public string dept_abb { get; set; }
     public int capacity { get; set; }
 }
 

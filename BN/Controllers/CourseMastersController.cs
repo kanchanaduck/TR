@@ -30,11 +30,13 @@ namespace api_hrgis.Controllers
         public async Task<ActionResult<IEnumerable<tr_course_master>>> get_course_master()
         {
             return await _context.tr_course_master
-                        .Include(e => e.course_masters_bands)
-                        // .Include(e => e.organization)
+                        // .Include(e => e.course_masters_bands)
                         // .Include(e => e.prev_course)
+                        .Include(e => e.organization)
+                        .AsNoTracking()
                         .ToListAsync();
         }
+
         // GET: api/CourseMasters/{course_no}
         [HttpGet("{course_no}")]
         public async Task<ActionResult<tr_course_master>> search_from_course_no(string course_no)
@@ -52,7 +54,8 @@ namespace api_hrgis.Controllers
 
             return tr_course_master;
         }
-		// GET: api/CourseMasters/Org/{org_code}
+
+        // GET: api/CourseMasters/Org/{org_code}
         // GET: api/CourseMasters/Org/55
         // GET: api/CourseMasters/Org/5510
         [HttpGet("Org/{org_code}")]
@@ -62,6 +65,7 @@ namespace api_hrgis.Controllers
                                         .Include(e => e.course_masters_bands)
                                         .Include(e => e.prev_course)
                                         .Where(e => e.org_code == org_code)
+                                        .AsNoTracking()
                                         .ToListAsync();
 
             if (tr_course_master == null)
@@ -71,7 +75,52 @@ namespace api_hrgis.Controllers
 
             return tr_course_master;
         }
+
+        // GET: api/CourseMasters/SearchCourse/{course_no}/{org_code}
+        [HttpGet("SearchCourse/{course_no}/{org_code}")]
+        public async Task<ActionResult<tr_course_master>> SearchCourse(string course_no, string org_code)
+        {
+
+            var tr_course_master = await _context.tr_course_master
+                                    .Include(e => e.course_masters_bands)
+                                    .Where(e => e.course_no == course_no &&
+                                    e.org_code == org_code)
+                                    .AsNoTracking()
+                                    .FirstOrDefaultAsync();
+
+            if (tr_course_master == null)
+            {
+                return NotFound();
+            }
+
+            return tr_course_master;
         }
+
+        // GET: api/CourseMasters/GetBand
+        [HttpGet("GetBand")]
+        public async Task<ActionResult<IEnumerable<tb_band>>> GetBand()
+        {
+            return await _context.tb_band.ToListAsync();
+        }
+
+        // GET: api/CourseMasters/Search/{course_no}
+        [HttpGet("Search")]
+        public async Task<ActionResult<tr_course_master>> Search(string course_no)
+        {
+            Console.WriteLine("Search: " + course_no);
+            var tr_course_master = await _context.tr_course_master
+                                        .Where(
+                                        e => e.course_no == course_no
+                                        ).FirstOrDefaultAsync();
+
+            if (tr_course_master == null)
+            {
+                return NotFound();
+            }
+
+            return tr_course_master;
+        }
+
         // PUT: api/CourseMasters/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{course_no}")]
@@ -84,12 +133,12 @@ namespace api_hrgis.Controllers
 
             _context.Entry(tr_course_master).State = EntityState.Modified;
             await _context.SaveChangesAsync();
+
             var course = await _context.tr_course_master
                             .Include(b => b.course_masters_bands)
                             .Where(b => b.course_no==tr_course_master.course_no)
                             .FirstOrDefaultAsync();
             await _context.SaveChangesAsync(); 
-
             if(course.course_masters_bands!=null){
                 foreach(var i in course.course_masters_bands.Where(b => b.course_no==tr_course_master.course_no).ToList()){
                     course.course_masters_bands.Remove(i);
@@ -148,8 +197,8 @@ namespace api_hrgis.Controllers
             return NoContent();
         }
         private bool course_master_exists(string course_no)
-        {
-            return _context.tr_course_master.Any(e => e.course_no == course_no);
+        {            
+			return _context.tr_course_master.Any(e => e.course_no == course_no);
         }
         [AllowAnonymous]
         [HttpGet("Mock")]
@@ -178,7 +227,7 @@ namespace api_hrgis.Controllers
                             course_name_en = worksheet.Cells[row, 3].Value==null ? null:worksheet.Cells[row, 3].Value.ToString().Trim(),
                             org_code = worksheet.Cells[row, 4].Value==null ? null:worksheet.Cells[row, 4].Value.ToString().Trim(),
                             capacity = int.Parse(worksheet.Cells[row, 5].Value.ToString().Trim()),
-                            prev_course_no = worksheet.Cells[row, 6].Value==null ? null:worksheet.Cells[row, 6].Value.ToString().Trim(),
+                            // prev_course_no = worksheet.Cells[row, 6].Value==null ? null:worksheet.Cells[row, 6].Value.ToString().Trim(),
                             days = int.Parse(worksheet.Cells[row, 7].Value.ToString().Trim()),
                             category = worksheet.Cells[row, 8].Value==null ? null:worksheet.Cells[row, 8].Value.ToString().Trim(),
                             level = worksheet.Cells[row, 9].Value==null ? null:worksheet.Cells[row, 9].Value.ToString().Trim(),

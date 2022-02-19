@@ -11,16 +11,26 @@ export const environment = {
     approved: "Approved",
     center_app: "Center approved"
   },
+  role: {
+    committee: "COMMITTEE",
+    approver: "APPROVER",
+    center: "CENTER"
+  },
+  level: {
+    department: "department",
+    division: "division"
+  },
   call: "8005",
   text: {
-    success: "Update data success.",
-    delete: "Delete data success.",
-    wait: "Wait",
-    duplication: "Duplication Data.",
-    not_found: "Data not found.",
-    all : "All",
-    invalid_department : "Invalid department.",
-    unequal_band : "Unequal band."
+    all: "All",
+    delete: "Delete data success.", // เมื่อกดลบข้อมูลสำเร็จ
+    duplication: "Data is already exists", // เมื่อมีข้อมูลซ้ำ
+    invalid_department: "Please select staff in your own organization.", // เมื่อพนักงานคนนั้นไม่ได้อยู่ใน orgnization เดียวกับ committee
+    not_found: "Data not found.", // เมื่อค้นหาข้อมูลไม่พบ
+    success: "Update data success.", // เมื่อกดบันทึกข้อมูลสำเร็จ
+    score_incorrect: "Score should be between 0 and 100", // เมื่อกรอกคะแนนไม่ได้อยู่ในช่วง 0-100
+    unequal_band: "This band is not allowed.",  // เมื่อพนักงานคนนั้นไม่ได้อยู่ใน band ของการตั้งค่า course
+    wait: "Wait"
   }
 };
 

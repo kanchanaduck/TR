@@ -19,22 +19,11 @@ namespace api_hrgis.Models
         [Required]
         public string org_name { get; set; }
         public string parent_org_code { get; set; }
-        public string description { get; set; }        
-        public string spare1 { get; set; }
-        public string spare2 { get; set; }
-        public string spare3 { get; set; }
-        public string spare4 { get; set; }
-        [Column(TypeName = "datetime")]
-        public DateTime updated_at { get { return _date; } set { _date = value; } }
-        [Required]
-        public string updated_by { get { return _username; } set { _username = value; } }
         [ForeignKey("parent_org_code")]
         public virtual tb_organization parent_org { get; set; }
         public virtual ICollection<tb_organization> children_org { get; set; }
         public virtual ICollection<tr_stakeholder> stakeholders { get; set; }
         public virtual ICollection<tr_course_master> course_masters { get; set; }
         public virtual ICollection<tr_course> courses { get; set; }
-        private DateTime _date = DateTime.Now;
-        private string _username = "014496";
     }
 }

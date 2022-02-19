@@ -53,13 +53,13 @@ namespace api_hrgis.Controllers
         {
             var query = string.Format(@"SELECT tc.course_no, tc.course_name_th, tc.course_name_en, tc.date_start, tc.date_end, tc.place
                         , tr.emp_no, tr.pre_test_score, tr.pre_test_grade, tr.post_test_score, tr.post_test_grade
-                        , te.sname_eng
-                        , case when te.band = 'JP' then te.fname_eng else te.gname_eng end as gname_eng
-                        , case when te.band = 'JP' then te.gname_eng else te.fname_eng end as fname_eng
-                        , te.sname_tha
-                        , case when te.band = 'JP' then te.fname_tha else te.gname_tha end as gname_tha
-                        , case when te.band = 'JP' then te.gname_tha else te.fname_tha end as fname_tha
-                        , te.band, te.posn_ename, te.dept_abb_name, te.div_abb_name
+                        , te.title_name_en
+                        , case when te.band = 'JP' then te.lastname_en else te.firstname_en end as firstname_en
+                        , case when te.band = 'JP' then te.firstname_en else te.lastname_en end as lastname_en
+                        , te.title_name_th
+                        , case when te.band = 'JP' then te.lastname_th else te.firstname_th end as firstname_th
+                        , case when te.band = 'JP' then te.firstname_th else te.lastname_th end as lastname_th
+                        , te.band, te.position_name_en, te.dept_abb, te.div_abb
                         FROM [HRGIS].[dbo].[tr_course] tc
                         left join [HRGIS].[dbo].[tr_course_registration] tr on tc.course_no = tr.course_no
                         left join tb_employee te on tr.emp_no = te.emp_no
@@ -76,24 +76,25 @@ namespace api_hrgis.Controllers
         [HttpGet("GetEmployeeTraining")]
         public IActionResult GetEmployeeTraining(string emp_no)
         {
-            var query = string.Format(@"SELECT tc.course_no, tc.course_name_th, tc.course_name_en, tc.date_start, tc.date_end, tc.place, tc.dept_abb_name as org
+            var query = string.Format(@"SELECT tc.course_no, tc.course_name_th, tc.course_name_en, tc.date_start, tc.date_end, tc.place, tbo.org_abb as org
                                 , tr.emp_no, tr.pre_test_score, tr.pre_test_grade, tr.post_test_score, tr.post_test_grade
-                                , te.sname_eng
-                                , case when te.band = 'JP' then te.fname_eng else te.gname_eng end as gname_eng
-                                , case when te.band = 'JP' then te.gname_eng else te.fname_eng end as fname_eng
-                                , te.sname_tha
-                                , case when te.band = 'JP' then te.fname_tha else te.gname_tha end as gname_tha
-                                , case when te.band = 'JP' then te.gname_tha else te.fname_tha end as fname_tha
-                                , te.band, te.posn_ename, te.dept_abb_name, te.div_abb_name
+                                , te.title_name_en
+                                , case when te.band = 'JP' then te.lastname_en else te.firstname_en end as firstname_en
+                                , case when te.band = 'JP' then te.firstname_en else te.lastname_en end as lastname_en
+                                , te.title_name_th
+                                , case when te.band = 'JP' then te.lastname_th else te.firstname_th end as firstname_th
+                                , case when te.band = 'JP' then te.firstname_th else te.lastname_th end as lastname_th
+                                , te.band, te.position_name_en, te.dept_abb, te.div_abb
                                 , tbt.full_trainer
                                 FROM [HRGIS].[dbo].[tr_course] tc
+                                left join tb_organization tbo on tc.org_code = tbo.org_code
                                 left join [HRGIS].[dbo].[tr_course_registration] tr on tc.course_no = tr.course_no
                                 left join tb_employee te on tr.emp_no = te.emp_no
                                 left join (
                                     SELECT course_no ,full_trainer = STUFF(
                                                 (
                                                     SELECT ',' + tb.full_trainer from (
-                                                        select CASE WHEN trt.trainer_type = '{0}' THEN te.sname_eng + te.gname_eng + ' ' + LEFT(te.fname_eng,1) + ' ('+ te.dept_abb_name +')' 
+                                                        select CASE WHEN trt.trainer_type = '{0}' THEN te.title_name_en + te.firstname_en + ' ' + LEFT(te.lastname_en,1) + ' ('+ te.dept_abb +')' 
                                                                 ELSE trt.sname_en + trt.gname_en + ' ' + LEFT(trt.fname_en,1) + '.' END AS full_trainer
                                                         FROM [HRGIS].[dbo].[tr_course]  tc
                                                         left join tr_course_trainer tt on tc.course_no = tt.course_no

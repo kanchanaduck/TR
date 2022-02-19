@@ -3,21 +3,24 @@
             <div class="form-group col-4 offset-3 mb-0 p-1">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Organization</label>
             <ng-select
-                autofocus
-                [items]="departments" 
-                [groupBy]="group_by_parent_org_code_fn"
-                [groupValue]="group_value_parent_org_code_fn"
-                [selectableGroup]="true"
-                bindLabel="org_abb" 
-                bindValue="org_code"
-                [(ngModel)]="org_code" 
-                [ngModelOptions]="{standalone: true}"
-                (change)="get_course_map()">
-                <ng-template ng-optgroup-tmp let-item="item" let-index="index">
-                    {{ item.org_abb + '('+item.org_code+')' }}
-                </ng-template>
+                    [items]="departments" 
+                    [searchFn]="custom_search_org_fn"
+                    [selectableGroup]="true"
+                    bindLabel="org_abb" 
+                    bindValue="org_code"
+                    [groupBy]="group_by_parent_org_code_fn"
+                    [groupValue]="group_value_parent_org_code_fn"
+                    [compareWith]="compare_org"
+                    [(ngModel)]="org_code" 
+                    [ngModelOptions]="{standalone: true}"
+                    >
+                    <ng-template ng-label-tmp let-item="item">
+                        {{ item.org_abb + '('+item.org_code+')' }}
+                    </ng-template>
+                    <ng-template ng-optgroup-tmp let-item="item" let-index="index">
+                        {{ item.org_abb + '('+item.org_code+')' }}
+                    </ng-template>
             </ng-select>
-            {{ org_code | json }}
         </div><!-- form-group -->
         <div class="form-group col-2 mb-0 p-1">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Employed status</label>
@@ -43,6 +46,7 @@
             <th class="text-center">LASTNAME</th>
             <th class="text-center">POSITION</th>
             <th class="text-center">BAND</th>
+            <th class="text-center">EMPLOYED STATUS</th>
             <th class="tx-rotate nosort"><span>CPT-001</span></th>
             <th class="tx-rotate nosort"><span>CPT-002</span></th>
         </tr>
@@ -50,11 +54,12 @@
     <tbody>
         <tr *ngFor="let i of course_map">
             <td>{{ i.emp_no }}</td> 
-            <td>{{ i.sname_eng }}</td>
-            <td>{{ i.gname_eng }}</td>
-            <td>{{ i.fname_eng }}</td>
-            <td>{{ i.posn_ename }}</td>
+            <td>{{ i.title_name_en }}</td>
+            <td>{{ i.firstname_en }}</td>
+            <td>{{ i.firstname_en }}</td>
+            <td>{{ i.position_name_en }}</td>
             <td class="text-center">{{ i.band }}</td>
+            <td class="text-center" [ngClass]="i.employed_status=='Resigned'? 'tx-danger':''">{{ i.employed_status }}</td>
             <td></td>
             <td></td>
         </tr>
